@@ -15,7 +15,6 @@ public class Postgres {
 
     private Postgres() throws ClassNotFoundException, SQLException {
         Class.forName(DRIVER_CLASS);
-        connection = DriverManager.getConnection(DATABASE_URL, USERNAME, PASSWORD);
     }
 
     public static synchronized Postgres getInstance() throws ClassNotFoundException, SQLException {
@@ -25,7 +24,8 @@ public class Postgres {
         return instance;
     }
 
-    public Connection getConnection() {
+    public Connection getConnection() throws SQLException {
+        connection = DriverManager.getConnection(DATABASE_URL, USERNAME, PASSWORD);
         return connection;
     }
 }
