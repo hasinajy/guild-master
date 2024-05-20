@@ -1,0 +1,46 @@
+/* Stat */
+.body {
+  flex-grow: 1;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.solo-stat {
+  width: fit-content;
+}
+
+.stat-container > * + * {
+  margin-top: 2rem;
+}
+
+.stat-container > .solo-stat {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.stat__label,
+.stat__data {
+  display: block;
+}
+
+.stat__label {
+  color: var(--copy--muted);
+  font-family: "Segoe UI";
+  font-size: 2rem;
+}
+
+.stat__data {
+  margin-top: -1.5rem;
+
+  color: var(--heading--white);
+  font-family: "Candara";
+  font-size: 6rem;
+}
+
+.stat-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

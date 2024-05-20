@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="../assets/css/style.css">
+    <link rel="stylesheet" href="../assets/css/header.css">
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+</head>
+
+<body>
+    <div class="body-bg dark">
+        <img src="../assets/img/background.PNG" alt="">
+    </div>
+
+    <header class="header">
+        <h1 class="header__logo">Guild Master</h1>
+
+        <nav class="header__nav nav">
+            <ul>
+                <li class="nav__item"><a href="dashboard.html" class="nav__link">Dashboard</a></li>
+                <li class="nav__item"><a href="transactions.html" class="nav__link">Transactions</a></li>
+                <li class="nav__item dropdown">
+                    <span class="nav__link dropdown__label">
+                        Storage
+                        <svg class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" width="8" height="4.23"
+                            viewBox="0 0 8 4.23">
+                            <path id="Path_4" data-name="Path 4"
+                                d="M3.4.2A1.007,1.007,0,0,1,4.6.2L7.59,2.413a1.007,1.007,0,0,1-.6,1.816H1.009a1.007,1.007,0,0,1-.6-1.816Z"
+                                transform="translate(8 4.23) rotate(180)" fill="#aaa" />
+                        </svg>
+                    </span>
+
+                    <ul class="dropdown__items-container">
+                        <li class="dropdown__item"><a href="" class="dropdown__link">Inventory</a></li>
+                        <li class="dropdown__item"><a href="" class="dropdown__link">Item</a></li>
+                    </ul>
+                </li>
+                <li class="nav__item dropdown">
+                    <span class="nav__link dropdown__label">
+                        Adventurers
+                        <svg class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" width="8" height="4.23"
+                            viewBox="0 0 8 4.23">
+                            <path id="Path_4" data-name="Path 4"
+                                d="M3.4.2A1.007,1.007,0,0,1,4.6.2L7.59,2.413a1.007,1.007,0,0,1-.6,1.816H1.009a1.007,1.007,0,0,1-.6-1.816Z"
+                                transform="translate(8 4.23) rotate(180)" fill="#aaa" />
+                        </svg>
+                    </span>
+
+                    <ul class="dropdown__items-container">
+                        <li class="dropdown__item"><a href="" class="dropdown__link">Player</a></li>
+                        <li class="dropdown__item"><a href="" class="dropdown__link">Faction</a></li>
+                    </ul>
+                </li>
+                <li class="nav__item dropdown">
+                    <span class="nav__link dropdown__label">
+                        Properties
+                        <svg class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" width="8" height="4.23"
+                            viewBox="0 0 8 4.23">
+                            <path id="Path_4" data-name="Path 4"
+                                d="M3.4.2A1.007,1.007,0,0,1,4.6.2L7.59,2.413a1.007,1.007,0,0,1-.6,1.816H1.009a1.007,1.007,0,0,1-.6-1.816Z"
+                                transform="translate(8 4.23) rotate(180)" fill="#aaa" />
+                        </svg>
+                    </span>
+
+                    <ul class="dropdown__items-container">
+                        <li class="dropdown__item"><a href="" class="dropdown__link">Rarity</a></li>
+                        <li class="dropdown__item"><a href="" class="dropdown__link">Type</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="body wrapper">
+        <div class="stat-container">
+            <div class="stat-group">
+                <div class="solo-stat">
+                    <span class="stat__label">Players Count</span>
+                    <span class="stat__data">72,867 players</span>
+                </div>
+
+                <div class="solo-stat">
+                    <span class="stat__label">Stored Items</span>
+                    <span class="stat__data">245,622 items</span>
+                </div>
+            </div>
+
+            <div class="solo-stat">
+                <span class="stat__label">Transactions Count</span>
+                <span class="stat__data">100,432 transactions</span>
+            </div>
+        </div>
+    </div>
+
+    <footer></footer>
+</body>
+
+</html>
