@@ -27,7 +27,7 @@ public class TypeCUServlet extends HttpServlet {
                 req.setAttribute("updated_type", updatedType);
             }
 
-            req.getRequestDispatcher("pages/insertion-form/type-form.jsp").forward(req, resp);
+            req.getRequestDispatcher("WEB-INF/jsp/insertion-form/type-form.jsp").forward(req, resp);
         } catch (Exception err) {
             err.printStackTrace(resp.getWriter());
         }

@@ -35,7 +35,7 @@ public class PlayerCUServlet extends HttpServlet {
 
             req.setAttribute("gender_list", Gender.getAll());
             req.setAttribute("faction_list", Faction.getAll());
-            req.getRequestDispatcher("pages/insertion-form/player-form.jsp").forward(req, resp);
+            req.getRequestDispatcher("WEB-INF/jsp/insertion-form/player-form.jsp").forward(req, resp);
         } catch (Exception err) {
             err.printStackTrace(resp.getWriter());
         }

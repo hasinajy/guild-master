@@ -27,7 +27,7 @@ public class RarityCUServlet extends HttpServlet {
                 req.setAttribute("updated_rarity", updatedRarity);
             }
 
-            req.getRequestDispatcher("pages/insertion-form/rarity-form.jsp").forward(req, resp);
+            req.getRequestDispatcher("WEB-INF/jsp/insertion-form/rarity-form.jsp").forward(req, resp);
         } catch (Exception err) {
             err.printStackTrace(resp.getWriter());
         }

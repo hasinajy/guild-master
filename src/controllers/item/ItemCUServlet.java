@@ -20,7 +20,7 @@ public class ItemCUServlet extends HttpServlet {
                 req.setAttribute("updated_item", updatedItem);
             }
 
-            req.getRequestDispatcher("pages/insertion-form/item-form.jsp").forward(req, resp);
+            req.getRequestDispatcher("WEB-INF/jsp/insertion-form/item-form.jsp").forward(req, resp);
         } catch (Exception err) {
             err.printStackTrace(resp.getWriter());
         }
