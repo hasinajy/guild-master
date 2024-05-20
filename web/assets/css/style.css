@@ -1,0 +1,122 @@
+:root {
+  --heading--black: #4c4c4c;
+  --heading--white: #ffffff;
+  --copy--black: #666666;
+  /* --copy--white: #f2f2f2; */
+  --copy--white: #ffffff;
+  --copy--muted: #aaaaaa;
+
+  --blue--main: #213f52;
+
+  --weight--light: 300;
+  --weight--regular: 500;
+  --weight--bold: 700;
+
+  --border-radius: 0.5rem;
+
+  font-size: 1em;
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  position: relative;
+
+  min-height: 100vh;
+  overflow: auto;
+  background-color: var(--blue--main);
+
+  font-family: "Segoe UI";
+}
+
+.body-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -999;
+
+  width: 100vw;
+  height: 100vh;
+}
+
+.body-bg img {
+  filter: blur(2px);
+
+  object-fit: cover;
+  object-position: 0 calc(2 * 1rem);
+
+  width: 100%;
+  height: 100%;
+}
+
+@media (min-height: 1080px) {
+  .body-bg img {
+    object-position: 0 calc(10 * 1rem);
+  }
+}
+
+.body-bg.light img {
+  filter: blur(6px);
+}
+
+.body-bg::after {
+  content: "";
+
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
+  background-color: rgba(11, 40, 59, 0.7);
+}
+
+.body-bg.light::after {
+  content: "";
+
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+
+  background-color: rgba(242, 242, 242, 0.8);
+}
+
+a {
+  color: var(--copy--black);
+  text-decoration: none;
+}
+
+.btn {
+  user-select: none;
+}
+
+.btn:hover {
+  cursor: pointer;
+}
+
+/* Body */
+body {
+  display: flex;
+  flex-direction: column;
+}
+
+.body {
+  flex-grow: 1;
+}
+
+.wrapper {
+  width: 1400px;
+  margin-right: auto;
+  margin-left: auto;
+}

@@ -1,0 +1,197 @@
+/* Grid container */
+.grid-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+/* Card */
+.card-container {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+
+  width: calc(1rem + 500px + 1rem);
+  padding: 1rem;
+  border: 1px solid var(--blue--main);
+  border-radius: var(--border-radius);
+}
+
+.card-container > * {
+  aspect-ratio: 1 / 1;
+  width: 250px;
+  overflow: hidden;
+}
+
+.card__img {
+  position: relative;
+
+  border-radius: var(--border-radius);
+  overflow: hidden;
+}
+
+.card__img:hover {
+  cursor: pointer;
+}
+
+.card__img:hover .action-container {
+  border-radius: var(--border-radius);
+
+  transform: scale(1);
+}
+
+.card__img img {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+}
+
+/* .card__img.male {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card__img.male img {
+  object-fit: contain;
+  object-position: center center;
+  width: 90%;
+  height: 90%;
+} */
+
+/* Actions */
+
+.action-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.3);
+  
+  overflow: hidden;
+
+  transform-origin: center;
+  transform: scale(0);
+
+  transition: 200ms;
+}
+
+.action-icon {
+  padding: 1rem;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.8);
+
+  color: #353535;
+}
+
+.action-icon.text {
+  border-radius: .875rem;
+}
+
+/* Actions end */
+
+.card__desc {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  padding: 1rem;
+  border-radius: var(--border-radius);
+  background-color: var(--blue--main);
+}
+
+.card__title,
+.card__detail-data {
+  color: var(--copy--white);
+  font-family: "Candara";
+}
+
+.card__title {
+  font-size: 1.125rem;
+  text-transform: uppercase;
+}
+
+.card__details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+
+  margin-top: 1rem;
+}
+
+.card__detail-group {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.card__detail-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card__detail-label {
+  color: var(--copy--muted);
+  font-family: "Segoe UI";
+  font-size: 0.875rem;
+  font-style: italic;
+  font-weight: var(--weight--light);
+}
+
+.card__detail-data {
+  display: inline-block;
+  margin-top: -0.125rem;
+}
+
+.card-container.single {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.5rem;
+
+  width: 282px;
+  height: 339px;
+  padding: 0.5rem;
+}
+
+.card-container.single > * {
+  aspect-ratio: unset;
+}
+
+.single .sep--small rect,
+.single .sep--small line {
+  stroke: var(--blue--main);
+  fill: var(--blue--main);
+}
+
+.card-container.single .card__desc {
+  background-color: unset;
+  padding: 0;
+}
+
+.card-container.single .card__detail-label {
+  color: var(--copy--black);
+  font-size: 1.5rem;
+  font-style: unset;
+  font-weight: var(--weight--bold);
+  text-transform: capitalize;
+}
+
+.grid-container:has(.card-container.single) {
+  grid-template-columns: 1fr 1fr 1fr;
+}
