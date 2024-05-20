@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_4_0.xsd"
+    version="4.0">
+
+    <!-- Faction -->
+    <servlet>
+        <servlet-name>FactionCU</servlet-name>
+        <servlet-class>controllers.faction.FactionCUServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>FactionCU</servlet-name>
+        <url-pattern>/FactionCU</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>FactionRD</servlet-name>
+        <servlet-class>controllers.faction.FactionRDServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>FactionRD</servlet-name>
+        <url-pattern>/FactionRD</url-pattern>
+    </servlet-mapping>
+
+    <!-- Player -->
+    <servlet>
+        <servlet-name>PlayerCU</servlet-name>
+        <servlet-class>controllers.player.PlayerCUServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>PlayerCU</servlet-name>
+        <url-pattern>/PlayerCU</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>PlayerRD</servlet-name>
+        <servlet-class>controllers.player.PlayerRDServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>PlayerRD</servlet-name>
+        <url-pattern>/PlayerRD</url-pattern>
+    </servlet-mapping>
+
+    <!-- Staff -->
+    <servlet>
+        <servlet-name>StaffCU</servlet-name>
+        <servlet-class>controllers.staff.StaffCUServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>StaffCU</servlet-name>
+        <url-pattern>/StaffCU</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>StaffRD</servlet-name>
+        <servlet-class>controllers.staff.StaffRDServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>StaffRD</servlet-name>
+        <url-pattern>/StaffRD</url-pattern>
+    </servlet-mapping>
+
+    <!-- Item -->
+    <servlet>
+        <servlet-name>ItemCU</servlet-name>
+        <servlet-class>controllers.item.ItemCUServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ItemCU</servlet-name>
+        <url-pattern>/ItemCU</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>ItemRD</servlet-name>
+        <servlet-class>controllers.item.ItemRDServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ItemRD</servlet-name>
+        <url-pattern>/ItemRD</url-pattern>
+    </servlet-mapping>
+
+    <!-- Type -->
+    <servlet>
+        <servlet-name>TypeCU</servlet-name>
+        <servlet-class>controllers.type.TypeCUServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>TypeCU</servlet-name>
+        <url-pattern>/TypeCU</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>TypeRD</servlet-name>
+        <servlet-class>controllers.type.TypeRDServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>TypeRD</servlet-name>
+        <url-pattern>/TypeRD</url-pattern>
+    </servlet-mapping>
+
+    <!-- Rarity -->
+    <servlet>
+        <servlet-name>RarityCU</servlet-name>
+        <servlet-class>controllers.rarity.RarityCUServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>RarityCU</servlet-name>
+        <url-pattern>/RarityCU</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>RarityRD</servlet-name>
+        <servlet-class>controllers.rarity.RarityRDServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>RarityRD</servlet-name>
+        <url-pattern>/RarityRD</url-pattern>
+    </servlet-mapping>
+
+    <!-- Inventory -->
+    <servlet>
+        <servlet-name>InventoryCU</servlet-name>
+        <servlet-class>controllers.inventory.InventoryCUServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>InventoryCU</servlet-name>
+        <url-pattern>/InventoryCU</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>InventoryRD</servlet-name>
+        <servlet-class>controllers.inventory.InventoryRDServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>InventoryRD</servlet-name>
+        <url-pattern>/InventoryRD</url-pattern>
+    </servlet-mapping>
+
+    <!-- Transaction -->
+    <servlet>
+        <servlet-name>TransactionCU</servlet-name>
+        <servlet-class>controllers.transaction.TransactionCUServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>TransactionCU</servlet-name>
+        <url-pattern>/TransactionCU</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
+        <servlet-name>TransactionRD</servlet-name>
+        <servlet-class>controllers.transaction.TransactionRDServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>TransactionRD</servlet-name>
+        <url-pattern>/TransactionRD</url-pattern>
+    </servlet-mapping>
+
+</web-app>

@@ -1,0 +1,39 @@
+/* Content */
+
+
+/* Table */
+.transaction {
+  border-spacing: 0;
+  width: 1250px;
+}
+
+th,
+td {
+  padding: 0.875rem 1rem;
+  text-align: left;
+}
+
+tr:first-child th,
+tr:first-child td {
+  border-bottom: 1px solid var(--copy--muted);
+}
+
+tr:last-child td {
+  border-bottom: 2px solid var(--copy--black);
+}
+
+th {
+  color: var(--heading--black);
+  font-size: 1.5rem;
+  font-weight: var(--weight--bold);
+}
+
+td {
+  color: var(--copy--black);
+}
+
+.transaction__item,
+.transaction__owner,
+.transaction__staff {
+    width: 20%;
+}
