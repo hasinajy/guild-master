@@ -10,8 +10,7 @@ import jakarta.servlet.ServletException;
 public class RarityFormServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String path = req.getServletContext().getRealPath("/") + "WEB-INF/jsp/";
-        req.getRequestDispatcher(path + "insertion-form/rarity-form.jsp").forward(req, resp);
+        req.getRequestDispatcher("WEB-INF/jsp/insertion-form/rarity-form.jsp").forward(req, resp);
     }
 
     @Override
