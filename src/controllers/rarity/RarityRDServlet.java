@@ -20,7 +20,7 @@ public class RarityRDServlet extends HttpServlet {
             }
 
             req.setAttribute("rarity_list", Rarity.getAll());
-            req.getRequestDispatcher("pages/rarities.jsp").forward(req, resp);
+            req.getRequestDispatcher("WEB-INF/jsp/rarities.jsp").forward(req, resp);
         } catch (Exception err) {
             err.printStackTrace(resp.getWriter());
         }

@@ -28,7 +28,7 @@ public class InventoryRDServlet extends HttpServlet {
             }
 
             req.setAttribute("inventory_list", InventoryFull.getAll());
-            req.getRequestDispatcher("pages/inventory.jsp").forward(req, resp);
+            req.getRequestDispatcher("WEB-INF/jsp/inventory.jsp").forward(req, resp);
         } catch (Exception err) {
             err.printStackTrace(resp.getWriter());
         }

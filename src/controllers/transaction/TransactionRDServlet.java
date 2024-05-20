@@ -21,7 +21,7 @@ public class TransactionRDServlet extends HttpServlet {
             }
 
             req.setAttribute("transaction_list", TransactionFull.getAll());
-            req.getRequestDispatcher("pages/transactions.jsp").forward(req, resp);
+            req.getRequestDispatcher("WEB-INF/jsp/transactions.jsp").forward(req, resp);
         } catch (Exception err) {
             err.printStackTrace(resp.getWriter());
         }

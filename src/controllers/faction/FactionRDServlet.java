@@ -20,7 +20,7 @@ public class FactionRDServlet extends HttpServlet {
             }
 
             req.setAttribute("faction_list", Faction.getAll());
-            req.getRequestDispatcher("pages/factions.jsp").forward(req, resp);
+            req.getRequestDispatcher("WEB-INF/jsp/factions.jsp").forward(req, resp);
         } catch (Exception err) {
             err.printStackTrace(resp.getWriter());
         }
