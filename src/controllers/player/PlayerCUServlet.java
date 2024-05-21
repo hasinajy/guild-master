@@ -60,7 +60,7 @@ public class PlayerCUServlet extends HttpServlet {
                 String extension = FileProcessing.extractExtension(ogName);
                 String newName = FileProcessing.generateUniqueFileName(extension);
                 imgPath += newName;
-                String savePath = getServletContext().getRealPath("/upload/player");
+                String savePath = getServletContext().getRealPath("/uploads/player");
 
                 try (InputStream inputStream = imgPart.getInputStream()) {
                     File imgFile = new File(savePath + File.separator + newName);

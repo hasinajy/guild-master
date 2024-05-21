@@ -48,7 +48,7 @@ public class RarityCUServlet extends HttpServlet {
                 String extension = FileProcessing.extractExtension(ogName);
                 String newName = FileProcessing.generateUniqueFileName(extension);
                 imgPath += newName;
-                String savePath = getServletContext().getRealPath("/upload/rarity");
+                String savePath = getServletContext().getRealPath("/uploads/rarity");
 
                 try (InputStream inputStream = imgPart.getInputStream()) {
                     File imgFile = new File(savePath + File.separator + newName);

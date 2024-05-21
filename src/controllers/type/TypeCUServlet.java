@@ -48,7 +48,7 @@ public class TypeCUServlet extends HttpServlet {
                 String extension = FileProcessing.extractExtension(ogName);
                 String newName = FileProcessing.generateUniqueFileName(extension);
                 imgPath += newName;
-                String savePath = getServletContext().getRealPath("/upload/type");
+                String savePath = getServletContext().getRealPath("/uploads/type");
 
                 try (InputStream inputStream = imgPart.getInputStream()) {
                     File imgFile = new File(savePath + File.separator + newName);
