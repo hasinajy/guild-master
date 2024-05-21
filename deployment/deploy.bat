@@ -16,6 +16,7 @@ mkdir "temp/WEB-INF/classes"
 mkdir "temp/WEB-INF/lib"
 mkdir "temp/WEB-INF/jsp"
 mkdir "temp/assets"
+mkdir "temp/uploads"
 
 @REM Copy the contents to each server directory
 echo D | xcopy /q/s/y %src-dir% "temp/WEB-INF/classes/"
