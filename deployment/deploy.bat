@@ -8,6 +8,7 @@ set lib-dir="../lib"
 set web-dir="../web/jsp"
 set assets="../web/assets"
 set config="../config"
+set uploads="../web/uploads"
 
 @REM Create the server directory structure
 rmdir /q/s "temp"
@@ -24,6 +25,7 @@ echo D | xcopy /q/s/y %lib-dir% "temp/WEB-INF/lib/"
 echo D | xcopy /q/s/y %web-dir% "temp/WEB-INF/jsp/"
 echo D | xcopy /q/s/y %assets% "temp/assets/"
 echo D | xcopy /q/s/y %config% "temp/WEB-INF/"
+echo D | xcopy /q/s/e/y %uploads% "temp/uploads/"
 
 @REM Create WAR file and copy it to the server directory
 jar -cvf %project-name%.war -C temp/ .
