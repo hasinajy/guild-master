@@ -83,7 +83,7 @@
                 <%
                     String imgPath = (rarity.getImgPath() == null || rarity.getImgPath().equals("rarity/")) ? "rarity/default.jpeg" : rarity.getImgPath();
                 %>
-                <img src="upload/<% out.print(imgPath); %>" alt="Armor image">
+                <img src="uploads/<% out.print(imgPath); %>" alt="Armor image">
             </div>
 
             <svg class="sep--small" xmlns="http://www.w3.org/2000/svg" width="84" height="5.657"
