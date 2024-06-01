@@ -12,6 +12,7 @@ public class Item {
     private int itemID;
     private String name;
     private int typeID;
+    private String imgPath;
 
     // Constructors
     public Item() {
@@ -26,6 +27,11 @@ public class Item {
         this.itemID = itemID;
         this.name = name;
         this.typeID = typeID;
+    }
+
+    public Item(int itemID, String name, int typeID, String imgPath) {
+        this(itemID, name, typeID);
+        this.setImgPath(imgPath);
     }
 
     // Getters & Setters
@@ -53,6 +59,14 @@ public class Item {
         this.typeID = typeID;
     }
 
+    public String getImgPath() {
+        return this.imgPath;
+    }
+
+    public void setImgPath(String imgPath) {
+        this.imgPath = imgPath;
+    }
+
     // User methods
     public static Item getByID(int itemID) throws ClassNotFoundException, SQLException {
         Item item = null;
@@ -72,8 +86,9 @@ public class Item {
             while (rs.next()) {
                 String name = rs.getString("name");
                 int typeID = rs.getInt("type_id");
+                String imgPath = rs.getString("img_path");
 
-                item = new Item(itemID, name, typeID);
+                item = new Item(itemID, name, typeID, imgPath);
             }
         } catch (Exception e) {
             if (conn != null) {
@@ -116,8 +131,9 @@ public class Item {
                 int itemID = rs.getInt("item_id");
                 String name = rs.getString("name");
                 int typeID = rs.getInt("type_id");
+                String imgPath = rs.getString("img_path");
 
-                data.add(new Item(itemID, name, typeID));
+                data.add(new Item(itemID, name, typeID, imgPath));
             }
         } catch (Exception e) {
             if (conn != null) {
@@ -168,12 +184,13 @@ public class Item {
         PreparedStatement stmt = null;
 
         try {
-            String query = "INSERT INTO item(name, type_id) VALUES (?, ?)";
+            String query = "INSERT INTO item(name, type_id, img_path) VALUES (?, ?, ?)";
 
             conn = Postgres.getInstance().getConnection();
             stmt = conn.prepareStatement(query);
             stmt.setString(1, this.name);
             stmt.setInt(2, this.typeID);
+            stmt.setString(3, this.imgPath);
             stmt.executeUpdate();
         } catch (Exception e) {
             if (conn != null) {
