@@ -159,7 +159,7 @@ public class Item {
         PreparedStatement stmt = null;
 
         try {
-            String query = "DELETE FROM item WHERE item_id = ?";
+            String query = "UPDATE item SET is_deleted = true WHERE item_id = ?";
 
             conn = Postgres.getInstance().getConnection();
             stmt = conn.prepareStatement(query);
