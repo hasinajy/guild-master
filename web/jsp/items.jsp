@@ -114,6 +114,12 @@
                         <a href="ItemRD?mode=d&&item_id=<%= item.getItemID() %>"><span
                                 class="fa fa-trash-alt action-icon"></span></a>
                     </div>
+
+                    <%
+                        String imgPath = (item.getImgPath() == null || item.getImgPath().equals("item/")) ? "item/default.jpeg" : item.getImgPath();
+                    %>
+
+                    <img src="uploads/<%= imgPath %>" alt="Armor image">
                 </div>
 
                 <svg class="sep--small" xmlns="http://www.w3.org/2000/svg" width="84" height="5.657"
