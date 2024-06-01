@@ -76,7 +76,7 @@ public class Item {
         ResultSet rs = null;
 
         try {
-            String query = "SELECT * FROM item WHERE item_id = ?";
+            String query = "SELECT * FROM item WHERE (is_deleted = false AND item_id = ?)";
 
             conn = Postgres.getInstance().getConnection();
             stmt = conn.prepareStatement(query);
@@ -121,7 +121,7 @@ public class Item {
         ResultSet rs = null;
 
         try {
-            String query = "SELECT * FROM item";
+            String query = "SELECT * FROM item WHERE is_deleted = false";
 
             conn = Postgres.getInstance().getConnection();
             stmt = conn.prepareStatement(query);
