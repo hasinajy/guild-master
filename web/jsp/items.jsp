@@ -108,7 +108,7 @@
             %>
             <div class="card-container card single">
                 <div class="card__img">
-                    <img src="assets/item/default.jpeg" alt="Armor image">
+                    <img src="uploads/item/default.jpeg" alt="Armor image">
                 </div>
 
                 <svg class="sep--small" xmlns="http://www.w3.org/2000/svg" width="84" height="5.657"
