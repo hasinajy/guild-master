@@ -139,17 +139,17 @@
                 <div class="card__details">
                     <div class="card__detail-item">
                         <span class="card__detail-label">name</span>
-                        <span class="card__detail-data"><%= item.getName() %></span>
+                        <span class="card__detail-data"><%= (item.getItemID() == 0) ? "None" : item.getName() %></span>
                     </div>
 
                     <div class="card__detail-group">
                         <div class="card__detail-item">
                             <span class="card__detail-label">type</span>
-                            <span class="card__detail-data"><%= item.getType() %></span>
+                            <span class="card__detail-data"><%= (item.getTypeID() == 0) ? "None" : item.getType() %></span>
                         </div>
                         <div class="card__detail-item">
                             <span class="card__detail-label">rarity</span>
-                            <span class="card__detail-data"><%= item.getRarity() %></span>
+                            <span class="card__detail-data"><%= (item.getRarityID() == 0) ? "None" : item.getRarity() %></span>
                         </div>
                     </div>
                 </div>
