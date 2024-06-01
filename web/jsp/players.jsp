@@ -158,7 +158,7 @@
                 <%
                     String imgPath = (player.getImgPath() == null || player.getImgPath().equals("player/")) ? "player/default.jpeg" : player.getImgPath();
                 %>
-                <img src="upload/<% out.print(imgPath); %>" alt="Armor image">
+                <img src="uploads/<% out.print(imgPath); %>" alt="Armor image">
             </div>
             <div class="card__desc">
                 <span class="card__title">Player Description</span>

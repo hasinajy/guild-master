@@ -186,7 +186,7 @@
                 <%
                     String imgPath = (inventory.getImgPath() == null || inventory.getImgPath().equalsIgnoreCase("item/")) ? "item/default.jpeg" : inventory.getImgPath();
                 %>
-                <img src="upload/<% out.print(imgPath); %>" alt="Armor image">
+                <img src="uploads/<% out.print(imgPath); %>" alt="Armor image">
             </div>
             <div class="card__desc">
                 <span class="card__title">Item Description</span>

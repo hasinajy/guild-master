@@ -48,7 +48,7 @@ public class FactionCUServlet extends HttpServlet {
                 String extension = FileProcessing.extractExtension(ogName);
                 String newName = FileProcessing.generateUniqueFileName(extension);
                 imgPath += newName;
-                String savePath = getServletContext().getRealPath("/upload/faction");
+                String savePath = getServletContext().getRealPath("/uploads/faction");
 
                 try (InputStream inputStream = imgPart.getInputStream()) {
                     File imgFile = new File(savePath + File.separator + newName);

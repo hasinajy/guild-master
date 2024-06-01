@@ -80,7 +80,7 @@
             </div>
 
             <div class="form__group horizontal large form__input-field form__image-container">
-                <img src="upload/<% out.print(imgPath); %>" alt="Rarity image" id="img-display">
+                <img src="uploads/<% out.print(imgPath); %>" alt="Rarity image" id="img-display">
 
                 <div class="form__control">
                     <label for="imageUpload" class="control__label">

@@ -29,7 +29,7 @@ public class InventoryCUServlet extends HttpServlet {
             req.setAttribute("player_list", PlayerFull.getAll());
             req.setAttribute("type_list", Type.getAll());
             req.setAttribute("rarity_list", Rarity.getAll());
-            req.getRequestDispatcher("pages/insertion-form/inventory-form.jsp").forward(req, resp);
+            req.getRequestDispatcher("WEB-INF/jsp/insertion-form/inventory-form.jsp").forward(req, resp);
         } catch (Exception err) {
             err.printStackTrace(resp.getWriter());
         }

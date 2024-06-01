@@ -88,7 +88,7 @@
         <url-pattern>/ItemRD</url-pattern>
     </servlet-mapping>
 
-    <!-- Type -->
+    <!-- Inventory -->
     <servlet>
         <servlet-name>TypeCU</servlet-name>
         <servlet-class>controllers.type.TypeCUServlet</servlet-class>
@@ -170,6 +170,152 @@
     <servlet-mapping>
         <servlet-name>TransactionRD</servlet-name>
         <url-pattern>/TransactionRD</url-pattern>
+    </servlet-mapping>
+
+    <!-- Redirection -->
+
+    <!-- Dashboard -->
+    <servlet>
+        <servlet-name>Dashboard</servlet-name>
+        <servlet-class>controllers.redirection.DashboardServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Dashboard</servlet-name>
+        <url-pattern>/Dashboard</url-pattern>
+    </servlet-mapping>
+
+    <!-- Faction -->
+    <servlet>
+        <servlet-name>Faction</servlet-name>
+        <servlet-class>controllers.redirection.FactionServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Faction</servlet-name>
+        <url-pattern>/Faction</url-pattern>
+    </servlet-mapping>
+
+    <!-- Item -->
+    <servlet>
+        <servlet-name>Item</servlet-name>
+        <servlet-class>controllers.redirection.ItemServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Item</servlet-name>
+        <url-pattern>/Item</url-pattern>
+    </servlet-mapping>
+
+    <!-- Rarity -->
+    <servlet>
+        <servlet-name>Rarity</servlet-name>
+        <servlet-class>controllers.redirection.RarityServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Rarity</servlet-name>
+        <url-pattern>/Rarity</url-pattern>
+    </servlet-mapping>
+
+    <!-- Type -->
+    <servlet>
+        <servlet-name>Type</servlet-name>
+        <servlet-class>controllers.redirection.TypeServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Type</servlet-name>
+        <url-pattern>/Type</url-pattern>
+    </servlet-mapping>
+
+    <!-- Transaction -->
+    <servlet>
+        <servlet-name>Transaction</servlet-name>
+        <servlet-class>controllers.redirection.TransactionServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Transaction</servlet-name>
+        <url-pattern>/Transaction</url-pattern>
+    </servlet-mapping>
+
+    <!-- Player -->
+    <servlet>
+        <servlet-name>Player</servlet-name>
+        <servlet-class>controllers.redirection.PlayerServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Player</servlet-name>
+        <url-pattern>/Player</url-pattern>
+    </servlet-mapping>
+
+    <!-- Inventory -->
+    <servlet>
+        <servlet-name>Inventory</servlet-name>
+        <servlet-class>controllers.redirection.InventoryServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Inventory</servlet-name>
+        <url-pattern>/Inventory</url-pattern>
+    </servlet-mapping>
+
+    <!-- Form Mapping -->
+    <!-- Faction form -->
+    <servlet>
+        <servlet-name>FactionForm</servlet-name>
+        <servlet-class>controllers.redirection.FactionFormServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>FactionForm</servlet-name>
+        <url-pattern>/FactionForm</url-pattern>
+    </servlet-mapping>
+
+    <!-- Rarity -->
+    <servlet>
+        <servlet-name>RarityForm</servlet-name>
+        <servlet-class>controllers.redirection.RarityFormServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>RarityForm</servlet-name>
+        <url-pattern>/RarityForm</url-pattern>
+    </servlet-mapping>
+
+    <!-- Type -->
+    <servlet>
+        <servlet-name>TypeForm</servlet-name>
+        <servlet-class>controllers.redirection.TypeFormServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>TypeForm</servlet-name>
+        <url-pattern>/TypeForm</url-pattern>
+    </servlet-mapping>
+
+    <!-- Player -->
+    <servlet>
+        <servlet-name>PlayerForm</servlet-name>
+        <servlet-class>controllers.redirection.PlayerFormServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>PlayerForm</servlet-name>
+        <url-pattern>/PlayerForm</url-pattern>
+    </servlet-mapping>
+
+    <!-- Inventory -->
+    <servlet>
+        <servlet-name>InventoryForm</servlet-name>
+        <servlet-class>controllers.redirection.InventoryFormServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>InventoryForm</servlet-name>
+        <url-pattern>/InventoryForm</url-pattern>
     </servlet-mapping>
 
 </web-app>

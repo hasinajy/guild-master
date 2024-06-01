@@ -20,7 +20,7 @@ public class TypeRDServlet extends HttpServlet {
             }
 
             req.setAttribute("type_list", Type.getAll());
-            req.getRequestDispatcher("pages/types.jsp").forward(req, resp);
+            req.getRequestDispatcher("WEB-INF/jsp/types.jsp").forward(req, resp);
         } catch (Exception err) {
             err.printStackTrace(resp.getWriter());
         }

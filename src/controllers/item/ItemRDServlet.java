@@ -20,7 +20,7 @@ public class ItemRDServlet extends HttpServlet {
             }
 
             req.setAttribute("item_list", Item.getAll());
-            req.getRequestDispatcher("pages/items.jsp").forward(req, resp);
+            req.getRequestDispatcher("WEB-INF/jsp/items.jsp").forward(req, resp);
         } catch (Exception err) {
             err.printStackTrace(resp.getWriter());
         }

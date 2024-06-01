@@ -22,7 +22,7 @@ public class PlayerRDServlet extends HttpServlet {
             }
 
             req.setAttribute("player_list", PlayerFull.getAll());
-            req.getRequestDispatcher("pages/players.jsp").forward(req, resp);
+            req.getRequestDispatcher("WEB-INF/jsp/players.jsp").forward(req, resp);
         } catch (Exception err) {
             err.printStackTrace(resp.getWriter());
         }
