@@ -91,9 +91,14 @@ FROM
     LEFT JOIN type ON item.type_id = type.type_id
     LEFT JOIN rarity ON item.rarity_id = rarity.rarity_id
 WHERE
-    item.name LIKE '%ie%'
-    OR item.type_id = 1
-    OR item.rarity_id = 1;
+    is_deleted = false
+ORDER BY 
+    item_name;
+
+-- WHERE
+--     item.name LIKE '%ie%'
+--     OR item.type_id = 1
+--     OR item.rarity_id = 1;
 
 -- Transaction
 SELECT

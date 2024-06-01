@@ -12,6 +12,10 @@ public class Item {
     private int itemID;
     private String name;
     private int typeID;
+    private String sType;
+    private int rarityID;
+    private String sRarity;
+    private String imgPath;
 
     // Constructors
     public Item() {
@@ -26,6 +30,18 @@ public class Item {
         this.itemID = itemID;
         this.name = name;
         this.typeID = typeID;
+    }
+
+    public Item(int itemID, String name, int typeID, String imgPath) {
+        this(itemID, name, typeID);
+        this.setImgPath(imgPath);
+    }
+
+    public Item(int itemID, String name, int typeID, String sType, int rarityID, String sRarity, String imgPath) {
+        this(itemID, name, typeID, imgPath);
+        this.setType(sType);
+        this.setRarityID(rarityID);
+        this.setRarity(sRarity);
     }
 
     // Getters & Setters
@@ -46,11 +62,43 @@ public class Item {
     }
 
     public int getTypeID() {
-        return this.typeID;
+        return typeID;
     }
 
     public void setTypeID(int typeID) {
         this.typeID = typeID;
+    }
+
+    public String getType() {
+        return sType;
+    }
+
+    public void setType(String sType) {
+        this.sType = sType;
+    }
+
+    public int getRarityID() {
+        return rarityID;
+    }
+
+    public void setRarityID(int rarityID) {
+        this.rarityID = rarityID;
+    }
+
+    public String getRarity() {
+        return sRarity;
+    }
+
+    public void setRarity(String sRarity) {
+        this.sRarity = sRarity;
+    }
+
+    public String getImgPath() {
+        return imgPath;
+    }
+
+    public void setImgPath(String imgPath) {
+        this.imgPath = imgPath;
     }
 
     // User methods
@@ -62,7 +110,23 @@ public class Item {
         ResultSet rs = null;
 
         try {
-            String query = "SELECT * FROM item WHERE item_id = ?";
+            String query = "SELECT " +
+                    "item.item_id AS item_id, " +
+                    "item.name AS item_name, " +
+                    "item.type_id AS type_id, " +
+                    "type.name AS type_name, " +
+                    "item.rarity_id AS rarity_id, " +
+                    "rarity.name AS rarity_name, " +
+                    "item.img_path AS img_path, " +
+                    "item.is_deleted AS is_deleted " +
+                    "FROM " +
+                    "item " +
+                    "LEFT JOIN type ON item.type_id = type.type_id " +
+                    "LEFT JOIN rarity ON item.rarity_id = rarity.rarity_id " +
+                    "WHERE " +
+                    "(is_deleted = false AND item_id = ?) " +
+                    "ORDER BY " +
+                    "item_name";
 
             conn = Postgres.getInstance().getConnection();
             stmt = conn.prepareStatement(query);
@@ -70,10 +134,14 @@ public class Item {
             rs = stmt.executeQuery();
 
             while (rs.next()) {
-                String name = rs.getString("name");
+                String name = rs.getString("item_name");
                 int typeID = rs.getInt("type_id");
+                String type = rs.getString("type_name");
+                int rarityID = rs.getInt("rarity_id");
+                String rarity = rs.getString("rarity_name");
+                String imgPath = rs.getString("img_path");
 
-                item = new Item(itemID, name, typeID);
+                item = new Item(itemID, name, typeID, type, rarityID, rarity, imgPath);
             }
         } catch (Exception e) {
             if (conn != null) {
@@ -106,7 +174,23 @@ public class Item {
         ResultSet rs = null;
 
         try {
-            String query = "SELECT * FROM item";
+            String query = "SELECT " +
+                    "item.item_id AS item_id, " +
+                    "item.name AS item_name, " +
+                    "item.type_id AS type_id, " +
+                    "type.name AS type_name, " +
+                    "item.rarity_id AS rarity_id, " +
+                    "rarity.name AS rarity_name, " +
+                    "item.img_path AS img_path, " +
+                    "item.is_deleted AS is_deleted " +
+                    "FROM " +
+                    "item " +
+                    "LEFT JOIN type ON item.type_id = type.type_id " +
+                    "LEFT JOIN rarity ON item.rarity_id = rarity.rarity_id " +
+                    "WHERE " +
+                    "is_deleted = false " +
+                    "ORDER BY " +
+                    "item_name";
 
             conn = Postgres.getInstance().getConnection();
             stmt = conn.prepareStatement(query);
@@ -114,10 +198,14 @@ public class Item {
 
             while (rs.next()) {
                 int itemID = rs.getInt("item_id");
-                String name = rs.getString("name");
+                String name = rs.getString("item_name");
                 int typeID = rs.getInt("type_id");
+                String type = rs.getString("type_name");
+                int rarityID = rs.getInt("rarity_id");
+                String rarity = rs.getString("rarity_name");
+                String imgPath = rs.getString("img_path");
 
-                data.add(new Item(itemID, name, typeID));
+                data.add(new Item(itemID, name, typeID, type, rarityID, rarity, imgPath));
             }
         } catch (Exception e) {
             if (conn != null) {
@@ -143,7 +231,7 @@ public class Item {
         PreparedStatement stmt = null;
 
         try {
-            String query = "DELETE FROM item WHERE item_id = ?";
+            String query = "UPDATE item SET is_deleted = true WHERE item_id = ?";
 
             conn = Postgres.getInstance().getConnection();
             stmt = conn.prepareStatement(query);
@@ -168,12 +256,13 @@ public class Item {
         PreparedStatement stmt = null;
 
         try {
-            String query = "INSERT INTO item(name, type_id) VALUES (?, ?)";
+            String query = "INSERT INTO item(name, type_id, img_path) VALUES (?, ?, ?)";
 
             conn = Postgres.getInstance().getConnection();
             stmt = conn.prepareStatement(query);
             stmt.setString(1, this.name);
             stmt.setInt(2, this.typeID);
+            stmt.setString(3, this.imgPath);
             stmt.executeUpdate();
         } catch (Exception e) {
             if (conn != null) {
