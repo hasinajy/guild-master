@@ -1,4 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.ArrayList" %>
+<%@ page import="models.Item" %>
+
+<%
+    ArrayList<Item> itemList = (ArrayList<Item>) request.getAttribute("item_list");
+%>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -97,82 +103,31 @@
         </div>
 
         <div class="content grid-container">
+            <%
+            for (Item item: itemList) {
+            %>
             <div class="card-container card single">
                 <div class="card__img">
-                    <img src="assets/img/Food.jpeg" alt="Armor image">
+                    <img src="assets/item/default.jpeg" alt="Armor image">
                 </div>
 
                 <svg class="sep--small" xmlns="http://www.w3.org/2000/svg" width="84" height="5.657"
-                    viewBox="0 0 84 5.657">
+                     viewBox="0 0 84 5.657">
                     <rect id="Rectangle_3" data-name="Rectangle 3" width="4" height="4"
-                        transform="translate(42) rotate(45)" fill="#fff" />
+                          transform="translate(42) rotate(45)" fill="#fff" />
                     <line id="Line_5" data-name="Line 5" x2="35" transform="translate(0 2.828)" fill="none"
-                        stroke="#fff" stroke-width="1" />
+                          stroke="#fff" stroke-width="1" />
                     <line id="Line_6" data-name="Line 6" x2="35" transform="translate(49 2.828)" fill="none"
-                        stroke="#fff" stroke-width="1" />
+                          stroke="#fff" stroke-width="1" />
                 </svg>
-                
-                <div class="card__desc">
-                    <span class="card__detail-label">Red Apple</span>
-                </div>
-            </div>
-            <div class="card-container card single">
-                <div class="card__img">
-                    <img src="assets/img/Food.jpeg" alt="Armor image">
-                </div>
 
-                <svg class="sep--small" xmlns="http://www.w3.org/2000/svg" width="84" height="5.657"
-                    viewBox="0 0 84 5.657">
-                    <rect id="Rectangle_3" data-name="Rectangle 3" width="4" height="4"
-                        transform="translate(42) rotate(45)" fill="#fff" />
-                    <line id="Line_5" data-name="Line 5" x2="35" transform="translate(0 2.828)" fill="none"
-                        stroke="#fff" stroke-width="1" />
-                    <line id="Line_6" data-name="Line 6" x2="35" transform="translate(49 2.828)" fill="none"
-                        stroke="#fff" stroke-width="1" />
-                </svg>
-                
                 <div class="card__desc">
-                    <span class="card__detail-label">Red Apple</span>
+                    <span class="card__detail-label"><%= item.getName() %></span>
                 </div>
             </div>
-            <div class="card-container card single">
-                <div class="card__img">
-                    <img src="assets/img/Food.jpeg" alt="Armor image">
-                </div>
-
-                <svg class="sep--small" xmlns="http://www.w3.org/2000/svg" width="84" height="5.657"
-                    viewBox="0 0 84 5.657">
-                    <rect id="Rectangle_3" data-name="Rectangle 3" width="4" height="4"
-                        transform="translate(42) rotate(45)" fill="#fff" />
-                    <line id="Line_5" data-name="Line 5" x2="35" transform="translate(0 2.828)" fill="none"
-                        stroke="#fff" stroke-width="1" />
-                    <line id="Line_6" data-name="Line 6" x2="35" transform="translate(49 2.828)" fill="none"
-                        stroke="#fff" stroke-width="1" />
-                </svg>
-                
-                <div class="card__desc">
-                    <span class="card__detail-label">Red Apple</span>
-                </div>
-            </div>
-            <div class="card-container card single">
-                <div class="card__img">
-                    <img src="assets/img/Food.jpeg" alt="Armor image">
-                </div>
-
-                <svg class="sep--small" xmlns="http://www.w3.org/2000/svg" width="84" height="5.657"
-                    viewBox="0 0 84 5.657">
-                    <rect id="Rectangle_3" data-name="Rectangle 3" width="4" height="4"
-                        transform="translate(42) rotate(45)" fill="#fff" />
-                    <line id="Line_5" data-name="Line 5" x2="35" transform="translate(0 2.828)" fill="none"
-                        stroke="#fff" stroke-width="1" />
-                    <line id="Line_6" data-name="Line 6" x2="35" transform="translate(49 2.828)" fill="none"
-                        stroke="#fff" stroke-width="1" />
-                </svg>
-                
-                <div class="card__desc">
-                    <span class="card__detail-label">Red Apple</span>
-                </div>
-            </div>
+            <%
+            }
+            %>
         </div>
     </div>
 
