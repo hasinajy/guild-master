@@ -108,7 +108,7 @@
         <%
             for (Item item : itemList) {
         %>
-        <div class="card-container card single">
+        <div class="card-container card">
             <div class="card__img">
                 <div class="action-container">
                     <a href="ItemCU?mode=u&&item_id=<%= item.getItemID() %>"><span
@@ -124,18 +124,35 @@
                 <img src="uploads/<%= imgPath %>" alt="Armor image">
             </div>
 
-            <svg class="sep--small" xmlns="http://www.w3.org/2000/svg" width="84" height="5.657"
-                 viewBox="0 0 84 5.657">
-                <rect id="Rectangle_3" data-name="Rectangle 3" width="4" height="4"
-                      transform="translate(42) rotate(45)" fill="#fff"/>
-                <line id="Line_5" data-name="Line 5" x2="35" transform="translate(0 2.828)" fill="none"
-                      stroke="#fff" stroke-width="1"/>
-                <line id="Line_6" data-name="Line 6" x2="35" transform="translate(49 2.828)" fill="none"
-                      stroke="#fff" stroke-width="1"/>
-            </svg>
-
             <div class="card__desc">
-                <span class="card__detail-label"><%= item.getName() %></span>
+                <span class="card__title">Item Description</span>
+                <svg class="sep--small" xmlns="http://www.w3.org/2000/svg" width="84" height="5.657"
+                     viewBox="0 0 84 5.657">
+                    <rect id="Rectangle_3" data-name="Rectangle 3" width="4" height="4"
+                          transform="translate(42) rotate(45)" fill="#fff" />
+                    <line id="Line_5" data-name="Line 5" x2="35" transform="translate(0 2.828)" fill="none"
+                          stroke="#fff" stroke-width="1" />
+                    <line id="Line_6" data-name="Line 6" x2="35" transform="translate(49 2.828)" fill="none"
+                          stroke="#fff" stroke-width="1" />
+                </svg>
+
+                <div class="card__details">
+                    <div class="card__detail-item">
+                        <span class="card__detail-label">name</span>
+                        <span class="card__detail-data"><%= item.getName() %></span>
+                    </div>
+
+                    <div class="card__detail-group">
+                        <div class="card__detail-item">
+                            <span class="card__detail-label">type</span>
+                            <span class="card__detail-data"><%= item.getType() %></span>
+                        </div>
+                        <div class="card__detail-item">
+                            <span class="card__detail-label">rarity</span>
+                            <span class="card__detail-data"><%= item.getRarity() %></span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <%
