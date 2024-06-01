@@ -121,7 +121,7 @@ public class Item {
         ResultSet rs = null;
 
         try {
-            String query = "SELECT * FROM item WHERE is_deleted = false";
+            String query = "SELECT * FROM item WHERE is_deleted = false ORDER BY name";
 
             conn = Postgres.getInstance().getConnection();
             stmt = conn.prepareStatement(query);
