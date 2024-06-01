@@ -18,6 +18,8 @@
     <link rel="stylesheet" href="assets/css/layout.css">
     <link rel="stylesheet" href="assets/css/filter.css">
     <link rel="stylesheet" href="assets/css/grid-container.css">
+    <link rel="stylesheet" href="assets/fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="assets/fontawesome/css/solid.min.css">
 </head>
 
 <body>
