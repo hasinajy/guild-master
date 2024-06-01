@@ -12,6 +12,9 @@ public class Item {
     private int itemID;
     private String name;
     private int typeID;
+    private String sType;
+    private int rarityID;
+    private String sRarity;
     private String imgPath;
 
     // Constructors
@@ -34,6 +37,13 @@ public class Item {
         this.setImgPath(imgPath);
     }
 
+    public Item(int itemID, String name, int typeID, String sType, int rarityID, String sRarity, String imgPath) {
+        this(itemID, name, typeID, imgPath);
+        this.setType(sType);
+        this.setRarityID(rarityID);
+        this.setRarity(sRarity);
+    }
+
     // Getters & Setters
     public int getItemID() {
         return itemID;
@@ -52,15 +62,39 @@ public class Item {
     }
 
     public int getTypeID() {
-        return this.typeID;
+        return typeID;
     }
 
     public void setTypeID(int typeID) {
         this.typeID = typeID;
     }
 
+    public String getType() {
+        return sType;
+    }
+
+    public void setType(String sType) {
+        this.sType = sType;
+    }
+
+    public int getRarityID() {
+        return rarityID;
+    }
+
+    public void setRarityID(int rarityID) {
+        this.rarityID = rarityID;
+    }
+
+    public String getRarity() {
+        return sRarity;
+    }
+
+    public void setRarity(String sRarity) {
+        this.sRarity = sRarity;
+    }
+
     public String getImgPath() {
-        return this.imgPath;
+        return imgPath;
     }
 
     public void setImgPath(String imgPath) {
