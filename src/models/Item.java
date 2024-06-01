@@ -110,7 +110,23 @@ public class Item {
         ResultSet rs = null;
 
         try {
-            String query = "SELECT * FROM item WHERE (is_deleted = false AND item_id = ?)";
+            String query = "SELECT " +
+                    "item.item_id AS item_id, " +
+                    "item.name AS item_name, " +
+                    "item.type_id AS type_id, " +
+                    "type.name AS type_name, " +
+                    "item.rarity_id AS rarity_id, " +
+                    "rarity.name AS rarity_name, " +
+                    "item.img_path AS img_path, " +
+                    "item.is_deleted AS is_deleted " +
+                    "FROM " +
+                    "item " +
+                    "LEFT JOIN type ON item.type_id = type.type_id " +
+                    "LEFT JOIN rarity ON item.rarity_id = rarity.rarity_id " +
+                    "WHERE " +
+                    "(is_deleted = false AND item_id = ?) " +
+                    "ORDER BY " +
+                    "item_name";
 
             conn = Postgres.getInstance().getConnection();
             stmt = conn.prepareStatement(query);
@@ -118,11 +134,14 @@ public class Item {
             rs = stmt.executeQuery();
 
             while (rs.next()) {
-                String name = rs.getString("name");
+                String name = rs.getString("item_name");
                 int typeID = rs.getInt("type_id");
+                String type = rs.getString("type_name");
+                int rarityID = rs.getInt("rarity_id");
+                String rarity = rs.getString("rarity_name");
                 String imgPath = rs.getString("img_path");
 
-                item = new Item(itemID, name, typeID, imgPath);
+                item = new Item(itemID, name, typeID, type, rarityID, rarity, imgPath);
             }
         } catch (Exception e) {
             if (conn != null) {
@@ -155,7 +174,23 @@ public class Item {
         ResultSet rs = null;
 
         try {
-            String query = "SELECT * FROM item WHERE is_deleted = false ORDER BY name";
+            String query = "SELECT " +
+                    "item.item_id AS item_id, " +
+                    "item.name AS item_name, " +
+                    "item.type_id AS type_id, " +
+                    "type.name AS type_name, " +
+                    "item.rarity_id AS rarity_id, " +
+                    "rarity.name AS rarity_name, " +
+                    "item.img_path AS img_path, " +
+                    "item.is_deleted AS is_deleted " +
+                    "FROM " +
+                    "item " +
+                    "LEFT JOIN type ON item.type_id = type.type_id " +
+                    "LEFT JOIN rarity ON item.rarity_id = rarity.rarity_id " +
+                    "WHERE " +
+                    "is_deleted = false " +
+                    "ORDER BY " +
+                    "item_name";
 
             conn = Postgres.getInstance().getConnection();
             stmt = conn.prepareStatement(query);
@@ -163,11 +198,14 @@ public class Item {
 
             while (rs.next()) {
                 int itemID = rs.getInt("item_id");
-                String name = rs.getString("name");
+                String name = rs.getString("item_name");
                 int typeID = rs.getInt("type_id");
+                String type = rs.getString("type_name");
+                int rarityID = rs.getInt("rarity_id");
+                String rarity = rs.getString("rarity_name");
                 String imgPath = rs.getString("img_path");
 
-                data.add(new Item(itemID, name, typeID, imgPath));
+                data.add(new Item(itemID, name, typeID, type, rarityID, rarity, imgPath));
             }
         } catch (Exception e) {
             if (conn != null) {
