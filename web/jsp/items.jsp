@@ -45,14 +45,14 @@
 
     </div>
 
-    <span class="add-btn">
+    <a href="ItemForm" class="add-btn">
             <svg class="add-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
                 <path id="add" d="M207.143,312v-7.143H200v-1.714h7.143V296h1.714v7.143H216v1.714h-7.143V312Z"
                       transform="translate(-200 -296)" fill="#f2f2f2"/>
             </svg>
 
             <span>Add Item</span>
-        </span>
+    </a>
 
     <div class="sep--small">
         <svg class="sep--small" xmlns="http://www.w3.org/2000/svg" width="455" height="22.627"
@@ -129,11 +129,11 @@
                 <svg class="sep--small" xmlns="http://www.w3.org/2000/svg" width="84" height="5.657"
                      viewBox="0 0 84 5.657">
                     <rect id="Rectangle_3" data-name="Rectangle 3" width="4" height="4"
-                          transform="translate(42) rotate(45)" fill="#fff" />
+                          transform="translate(42) rotate(45)" fill="#fff"/>
                     <line id="Line_5" data-name="Line 5" x2="35" transform="translate(0 2.828)" fill="none"
-                          stroke="#fff" stroke-width="1" />
+                          stroke="#fff" stroke-width="1"/>
                     <line id="Line_6" data-name="Line 6" x2="35" transform="translate(49 2.828)" fill="none"
-                          stroke="#fff" stroke-width="1" />
+                          stroke="#fff" stroke-width="1"/>
                 </svg>
 
                 <div class="card__details">
