@@ -61,7 +61,7 @@ public class TransactionType {
             rs = stmt.executeQuery();
 
             while (rs.next()) {
-                int transactionTypeID = rs.getInt("transaction_id");
+                int transactionTypeID = rs.getInt("transaction_type_id");
                 char transactionTypeCode = rs.getString("transaction_type_code").charAt(0);
                 String name = rs.getString("name");
 
