@@ -318,4 +318,15 @@
         <url-pattern>/InventoryForm</url-pattern>
     </servlet-mapping>
 
+
+    <!-- Type -->
+    <servlet>
+        <servlet-name>ItemForm</servlet-name>
+        <servlet-class>controllers.redirection.ItemFormServlet</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>ItemForm</servlet-name>
+        <url-pattern>/ItemForm</url-pattern>
+    </servlet-mapping>
 </web-app>
