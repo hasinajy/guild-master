@@ -103,7 +103,7 @@
                     <label for="imageUpload" class="control__label">
                         <span class="fa-solid fa-camera"></span>
                     </label>
-                    <input type="file" name="item_img" id="imageUpload" accept=".jpg,.jpeg,.png"
+                    <input type="file" name="item-img" id="imageUpload" accept=".jpg,.jpeg,.png"
                            class="form__input-field control__input-field" hidden>
                 </div>
             </div>
