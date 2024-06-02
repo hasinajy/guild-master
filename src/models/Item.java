@@ -37,6 +37,14 @@ public class Item {
         this.setImgPath(imgPath);
     }
 
+    public Item(int itemID, String name, int typeID, int rarityID, String imgPath) {
+        this.setItemID(itemID);
+        this.setName(name);
+        this.setTypeID(typeID);
+        this.setRarityID(rarityID);
+        this.setImgPath(imgPath);
+    }
+
     public Item(int itemID, String name, int typeID, String sType, int rarityID, String sRarity, String imgPath) {
         this(itemID, name, typeID, imgPath);
         this.setType(sType);
@@ -256,13 +264,14 @@ public class Item {
         PreparedStatement stmt = null;
 
         try {
-            String query = "INSERT INTO item(name, type_id, img_path) VALUES (?, ?, ?)";
+            String query = "INSERT INTO item(name, type_id, rarity_id, img_path) VALUES (?, ?, ?, ?)";
 
             conn = Postgres.getInstance().getConnection();
             stmt = conn.prepareStatement(query);
             stmt.setString(1, this.name);
             stmt.setInt(2, this.typeID);
-            stmt.setString(3, this.imgPath);
+            stmt.setInt(3, this.rarityID);
+            stmt.setString(4, this.imgPath);
             stmt.executeUpdate();
         } catch (Exception e) {
             if (conn != null) {
