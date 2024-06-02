@@ -1,9 +1,6 @@
 package controllers.transaction;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -11,14 +8,11 @@ import java.time.format.DateTimeFormatter;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.Part;
 import models.Item;
 import models.PlayerFull;
-import models.Rarity;
 import models.Transaction;
 import models.TransactionFull;
-import models.Type;
-import utils.FileProcessing;
+import models.TransactionType;
 import jakarta.servlet.ServletException;
 
 public class TransactionCUServlet extends HttpServlet {
