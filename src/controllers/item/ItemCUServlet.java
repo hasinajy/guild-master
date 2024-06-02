@@ -10,12 +10,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
 import jakarta.servlet.ServletException;
-
+import jakarta.servlet.annotation.MultipartConfig;
 import models.Item;
 import models.Rarity;
 import models.Type;
 import utils.FileProcessing;
 
+@MultipartConfig
 public class ItemCUServlet extends HttpServlet {
 
     @Override
