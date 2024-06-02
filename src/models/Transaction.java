@@ -202,7 +202,7 @@ public class Transaction {
             stmt.setString(5, this.note);
 
             if (this.getDate() != null)
-                stmt.setString(6, this.date.toString());
+                stmt.setDate(6, this.date);
 
             stmt.executeUpdate();
         } catch (Exception e) {
