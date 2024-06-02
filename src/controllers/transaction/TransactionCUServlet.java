@@ -11,7 +11,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import models.Item;
 import models.PlayerFull;
 import models.Transaction;
-import models.TransactionFull;
 import models.TransactionType;
 import jakarta.servlet.ServletException;
 
@@ -22,7 +21,7 @@ public class TransactionCUServlet extends HttpServlet {
         try {
             if (req.getParameter("mode") != null && req.getParameter("mode").equals("u")) {
                 String transactionID = req.getParameter("transaction-id");
-                TransactionFull updatedTransaction = TransactionFull.getByID(Integer.parseInt(transactionID));
+                Transaction updatedTransaction = Transaction.getByID(Integer.parseInt(transactionID));
                 req.setAttribute("updated-transaction", updatedTransaction);
             }
 

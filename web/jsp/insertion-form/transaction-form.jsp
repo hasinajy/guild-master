@@ -1,4 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page import="java.util.ArrayList" %>
 <%@ page import="models.Transaction" %>
 <%@ page import="models.Item" %>
 <%@ page import="models.Player" %>
@@ -86,7 +87,7 @@
 
             <div class="form__group horizontal large">
                 <div class="form__control">
-                    <label for="item" class="form__input-label">Type:</label>
+                    <label for="item" class="form__input-label">Item:</label>
                     <select name="item-id" id="item" class="form__input-field">
                         <%
                             for (Item item : itemList) {
