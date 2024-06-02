@@ -91,7 +91,7 @@
             <div class="form__group horizontal large hidden">
                 <div class="form__control">
                     <label for="item-id" class="form__input-label">Item ID:</label>
-                    <input type="text" name="item_id" value="<%= itemID %>" id="item-id"
+                    <input type="text" name="item-id" value="<%= itemID %>" id="item-id"
                            class="form__input-field" placeholder="Item ID ...">
                 </div>
             </div>

@@ -111,9 +111,9 @@
         <div class="card-container card">
             <div class="card__img">
                 <div class="action-container">
-                    <a href="ItemCU?mode=u&&item_id=<%= item.getItemID() %>"><span
+                    <a href="ItemCU?mode=u&&item-id=<%= item.getItemID() %>"><span
                             class="fa fa-pencil-alt action-icon"></span></a>
-                    <a href="ItemRD?mode=d&&item_id=<%= item.getItemID() %>"><span
+                    <a href="ItemRD?mode=d&&item-id=<%= item.getItemID() %>"><span
                             class="fa fa-trash-alt action-icon"></span></a>
                 </div>
 
