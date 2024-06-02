@@ -292,13 +292,15 @@ public class Item {
         PreparedStatement stmt = null;
 
         try {
-            String query = "UPDATE item SET name = ?, type_id = ? WHERE item_id = ?";
+            String query = "UPDATE item SET name = ?, type_id = ?, rarity_id = ?, img_path = ? WHERE item_id = ?";
 
             conn = Postgres.getInstance().getConnection();
             stmt = conn.prepareStatement(query);
             stmt.setString(1, this.name);
             stmt.setInt(2, this.typeID);
-            stmt.setInt(3, this.itemID);
+            stmt.setInt(3, this.rarityID);
+            stmt.setString(4, this.imgPath);
+            stmt.setInt(5, this.itemID);
             stmt.executeUpdate();
         } catch (Exception e) {
             if (conn != null) {
