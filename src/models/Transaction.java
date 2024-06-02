@@ -205,6 +205,12 @@ public class Transaction {
                 stmt.setDate(6, this.date);
 
             stmt.executeUpdate();
+
+            if (this.getTransactionTypeID() == 2) {
+                new Inventory(0, itemID, playerID, 10, 1, 0, 0).create();
+            } else {
+                // TODO: Remove inventory row after withdrawal
+            }
         } catch (Exception e) {
             if (conn != null) {
                 conn.rollback();
