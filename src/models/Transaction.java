@@ -3,6 +3,7 @@ package models;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import database.Postgres;
 
@@ -108,6 +109,50 @@ public class Transaction {
         new Transaction(1, null, 2, inventory.getItemID(), inventory.getPlayerID(), 1, "").create();
     }
 
+    public static Transaction getByID(int transactionID) throws ClassNotFoundException, SQLException {
+        Transaction transaction = null;
+
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            String query = "SELECT * FROM transaction WHERE transaction_id = ?";
+
+            conn = Postgres.getInstance().getConnection();
+            stmt = conn.prepareStatement(query);
+            stmt.setInt(1, transactionID);
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Date date = rs.getDate("date");
+                int transactionTypeID = rs.getInt("transaction_type_id");
+                int itemID = rs.getInt("item_id");
+                int playerID = rs.getInt("player_id");
+                int staffID = rs.getInt("staff_id");
+                String note = rs.getString("note");
+
+                transaction = new Transaction(transactionID, date, transactionTypeID, itemID, playerID, staffID, note);
+            }
+        } catch (Exception e) {
+            if (conn != null) {
+                conn.rollback();
+            }
+            throw e;
+        } finally {
+            if (rs != null)
+                rs.close();
+
+            if (stmt != null)
+                stmt.close();
+
+            if (conn != null)
+                conn.close();
+        }
+
+        return transaction;
+    }
+
     public void delete() throws ClassNotFoundException, SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -157,9 +202,15 @@ public class Transaction {
             stmt.setString(5, this.note);
 
             if (this.getDate() != null)
-                stmt.setString(6, this.date.toString());
+                stmt.setDate(6, this.date);
 
             stmt.executeUpdate();
+
+            if (this.getTransactionTypeID() == 2) {
+                new Inventory(0, itemID, playerID, 10, 1, 0, 0).create();
+            } else {
+                // TODO: Remove inventory row after withdrawal
+            }
         } catch (Exception e) {
             if (conn != null) {
                 conn.rollback();
