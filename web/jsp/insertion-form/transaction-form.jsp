@@ -2,7 +2,8 @@
 <%@ page import="java.util.ArrayList" %>
 <%@ page import="models.Transaction" %>
 <%@ page import="models.Item" %>
-<%@ page import="models.Player" %>
+<%@ page import="models.PlayerFull" %>
+<%@ page import="models.TransactionType" %>
 
 <%
     String sectionTitle = "Transaction Insertion", btnValue = "Insert";
@@ -10,8 +11,9 @@
     Transaction updatedTransaction = null;
     String transactionID = "", transactionTypeID = "", itemID = "", playerID = "";
 
+    ArrayList<TransactionType> transactionTypeList = (ArrayList<TransactionType>) request.getAttribute("transaction-type-list");
     ArrayList<Item> itemList = (ArrayList<Item>) request.getAttribute("item-list");
-    ArrayList<Player> playerList = (ArrayList<Player>) request.getAttribute("player-list");
+    ArrayList<PlayerFull> playerList = (ArrayList<PlayerFull>) request.getAttribute("player-list");
 
     if (mode != null && mode.equals("u")) {
         sectionTitle = "Transaction Update";
@@ -87,6 +89,36 @@
 
             <div class="form__group horizontal large">
                 <div class="form__control">
+                    <label for="transaction-type" class="form__input-label">Transaction Type:</label>
+                    <select name="transaction-type-id" id="transaction-type" class="form__input-field">
+                        <%
+                            for (TransactionType transactionType : transactionTypeList) {
+                                String transactionTypeSelect = "";
+
+                                if (mode != null && updatedTransaction.getTransactionTypeID() == transactionType.getTransactionTypeID()) {
+                                    transactionTypeSelect = "selected";
+                                }
+                        %>
+                        <option value="<%= transactionType.getTransactionTypeID() %>" <%= transactionTypeSelect %>>
+                            <%= transactionType.getName() %>
+                        </option>
+                        <%
+                            }
+                        %>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form__group horizontal large">
+                <div class="form__control">
+                    <label for="transaction-date" class="form__input-label">Transaction Date:</label>
+                    <input type="date" name="transaction-date" value=""
+                           id="transaction-date" class="form__input-field" placeholder="Transaction date ...">
+                </div>
+            </div>
+
+            <div class="form__group horizontal large">
+                <div class="form__control">
                     <label for="item" class="form__input-label">Item:</label>
                     <select name="item-id" id="item" class="form__input-field">
                         <%
@@ -109,10 +141,10 @@
 
             <div class="form__group horizontal large">
                 <div class="form__control">
-                    <label for="player" class="form__input-label">Type:</label>
+                    <label for="player" class="form__input-label">Player:</label>
                     <select name="player-id" id="player" class="form__input-field">
                         <%
-                            for (Player player : playerList) {
+                            for (PlayerFull player : playerList) {
                                 String playerSelect = "";
 
                                 if (mode != null && updatedTransaction.getPlayerID() == player.getPlayerID()) {
