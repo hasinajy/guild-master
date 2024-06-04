@@ -3,7 +3,7 @@
 <%@ page import="models.Item" %>
 
 <%
-    ArrayList<Item> itemList = (ArrayList<Item>) request.getAttribute("item_list");
+    ArrayList<Item> itemList = (ArrayList<Item>) request.getAttribute("item-list");
 %>
 
 <!DOCTYPE html>
@@ -121,7 +121,7 @@
                     String imgPath = (item.getImgPath() == null || item.getImgPath().equals("item/")) ? "item/default.jpeg" : item.getImgPath();
                 %>
 
-                <img src="uploads/<%= imgPath %>" alt="Armor image">
+                <img src="uploads/<%= imgPath %>" alt="Armor">
             </div>
 
             <div class="card__desc">
