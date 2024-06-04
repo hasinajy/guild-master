@@ -19,7 +19,6 @@ import models.Gender;
 
 @MultipartConfig
 public class PlayerCUServlet extends HttpServlet {
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
@@ -97,5 +96,4 @@ public class PlayerCUServlet extends HttpServlet {
             err.printStackTrace(resp.getWriter());
         }
     }
-
 }

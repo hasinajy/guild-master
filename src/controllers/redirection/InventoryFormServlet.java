@@ -12,10 +12,4 @@ public class InventoryFormServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.getRequestDispatcher("/InventoryCU").forward(req, resp);
     }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // TODO Auto-generated method stub
-        super.doPost(req, resp);
-    }
 }

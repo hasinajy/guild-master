@@ -11,7 +11,6 @@ import models.Transaction;
 import models.TransactionFull;
 
 public class TransactionRDServlet extends HttpServlet {
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
@@ -26,11 +25,4 @@ public class TransactionRDServlet extends HttpServlet {
             err.printStackTrace(resp.getWriter());
         }
     }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // TODO Auto-generated method stub
-        super.doPost(req, resp);
-    }
-
 }

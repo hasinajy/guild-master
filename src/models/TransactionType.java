@@ -85,5 +85,4 @@ public class TransactionType {
 
         return data;
     }
-
 }

@@ -5,7 +5,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class Postgres {
-
     private static Postgres instance;
     private static final String DRIVER_CLASS = "org.postgresql.Driver";
     private static final String DATABASE_URL = "jdbc:postgresql://localhost:5432/guild_master";

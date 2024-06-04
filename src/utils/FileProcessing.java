@@ -10,5 +10,4 @@ public class FileProcessing {
         String timestamp = String.valueOf(System.currentTimeMillis());
         return timestamp + extension;
     }
-
 }

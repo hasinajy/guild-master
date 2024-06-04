@@ -12,10 +12,4 @@ public class ItemServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         req.getRequestDispatcher("ItemRD").forward(req, resp);
     }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // TODO Auto-generated method stub
-        super.doPost(req, resp);
-    }
 }

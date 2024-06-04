@@ -18,7 +18,6 @@ import utils.FileProcessing;
 
 @MultipartConfig
 public class ItemCUServlet extends HttpServlet {
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
@@ -90,5 +89,4 @@ public class ItemCUServlet extends HttpServlet {
             err.printStackTrace(resp.getWriter());
         }
     }
-
 }
