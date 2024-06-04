@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.ArrayList" %>
+<%@ page import="java.sql.Date" %>
 <%@ page import="models.Transaction" %>
 <%@ page import="models.Item" %>
 <%@ page import="models.PlayerFull" %>
@@ -9,7 +10,7 @@
     String sectionTitle = "Transaction Insertion", btnValue = "Insert";
     String mode = request.getParameter("mode");
     Transaction updatedTransaction = null;
-    String transactionID = "", transactionTypeID = "", itemID = "", playerID = "";
+    String transactionID = "", transactionTypeID = "", transactionDate = "", itemID = "", playerID = "";
 
     ArrayList<TransactionType> transactionTypeList = (ArrayList<TransactionType>) request.getAttribute("transaction-type-list");
     ArrayList<Item> itemList = (ArrayList<Item>) request.getAttribute("item-list");
@@ -20,6 +21,7 @@
         btnValue = "Update";
         updatedTransaction = (Transaction) request.getAttribute("updated-transaction");
         transactionID = String.valueOf(updatedTransaction.getTransactionID());
+        transactionDate = updatedTransaction.getDate().toString();
         transactionTypeID = String.valueOf(updatedTransaction.getTransactionTypeID());
         itemID = String.valueOf(updatedTransaction.getItemID());
         playerID = String.valueOf(updatedTransaction.getPlayerID());
@@ -112,7 +114,7 @@
             <div class="form__group horizontal large">
                 <div class="form__control">
                     <label for="transaction-date" class="form__input-label">Transaction Date:</label>
-                    <input type="date" name="transaction-date" value=""
+                    <input type="date" name="transaction-date" value="<%= transactionDate %>"
                            id="transaction-date" class="form__input-field" placeholder="Transaction date ...">
                 </div>
             </div>
