@@ -1,6 +1,6 @@
 package utils;
 
-public class FileProcessing {
+public class FileProcessing extends Utility {
     public static String extractExtension(String fileName) {
         int index = fileName.lastIndexOf('.');
         return index > 0 ? fileName.substring(index) : "";
