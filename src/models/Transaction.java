@@ -5,6 +5,9 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+
 import database.Postgres;
 
 public class Transaction {
@@ -16,7 +19,12 @@ public class Transaction {
     private int staffID;
     private String note;
 
+    private static final String BASE_QUERY = "SELECT * FROM transaction WHERE 1=1";
+
     // Constructors
+    public Transaction() {
+    }
+
     public Transaction(int transactionID) {
         this.transactionID = transactionID;
     }
@@ -256,5 +264,79 @@ public class Transaction {
             if (conn != null)
                 conn.close();
         }
+    }
+
+    public static List<Transaction> searchTransactions(TransactionSearchCriteria criteria)
+            throws ClassNotFoundException, SQLException {
+        List<Transaction> transactions = new ArrayList<>();
+        StringBuilder query = new StringBuilder(BASE_QUERY);
+
+        List<Object> parameters = new ArrayList<>();
+        if (criteria.getTransactionTypeId() != null) {
+            query.append(" AND transaction_type_id = ?");
+            parameters.add(criteria.getTransactionTypeId());
+        }
+        if (criteria.getStartDate() != null) {
+            query.append(" AND date >= ?");
+            parameters.add(criteria.getStartDate());
+        }
+        if (criteria.getEndDate() != null) {
+            query.append(" AND date <= ?");
+            parameters.add(criteria.getEndDate());
+        }
+        if (criteria.getItemId() != null) {
+            query.append(" AND item_id = ?");
+            parameters.add(criteria.getItemId());
+        }
+        if (criteria.getPlayerId() != null) {
+            query.append(" AND player_id = ?");
+            parameters.add(criteria.getPlayerId());
+        }
+
+        query.append(" ORDER BY transaction_type_id, date");
+
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            conn = Postgres.getInstance().getConnection();
+            stmt = conn.prepareStatement(query.toString());
+
+            for (int i = 0; i < parameters.size(); i++) {
+                stmt.setObject(i + 1, parameters.get(i));
+            }
+
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Transaction transaction = new Transaction();
+                transaction.setTransactionID(rs.getInt("transaction_id"));
+                transaction.setDate(rs.getDate("date"));
+                transaction.setTransactionTypeID(rs.getInt("transaction_type_id"));
+                transaction.setItemID(rs.getInt("item_id"));
+                transaction.setPlayerID(rs.getInt("player_id"));
+                transaction.setStaffID(rs.getInt("staff_id"));
+                transaction.setNote(rs.getString("note"));
+                transactions.add(transaction);
+            }
+        } catch (Exception e) {
+            if (conn != null) {
+                conn.rollback();
+            }
+
+            throw e;
+        } finally {
+            if (rs != null)
+                rs.close();
+
+            if (stmt != null)
+                stmt.close();
+
+            if (conn != null)
+                conn.close();
+        }
+
+        return transactions;
     }
 }
