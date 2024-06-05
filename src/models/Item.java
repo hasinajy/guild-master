@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import database.Postgres;
 
@@ -314,5 +315,78 @@ public class Item {
             if (conn != null)
                 conn.close();
         }
+    }
+
+    public static List<Item> searchItem(String sName) throws ClassNotFoundException, SQLException {
+        List<Item> data = new ArrayList<>();
+
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            final String BASE_QUERY = "SELECT " +
+                    "item.item_id AS item_id, " +
+                    "item.name AS item_name, " +
+                    "item.type_id AS type_id, " +
+                    "type.name AS type_name, " +
+                    "item.rarity_id AS rarity_id, " +
+                    "rarity.name AS rarity_name, " +
+                    "item.img_path AS img_path, " +
+                    "item.is_deleted AS is_deleted " +
+                    "FROM " +
+                    "item " +
+                    "LEFT JOIN type ON item.type_id = type.type_id " +
+                    "LEFT JOIN rarity ON item.rarity_id = rarity.rarity_id " +
+                    "WHERE " +
+                    "is_deleted = false";
+
+            StringBuilder query = new StringBuilder(BASE_QUERY);
+            List<Object> parameters = new ArrayList<>();
+
+            if (sName != null && !sName.isEmpty()) {
+                query.append(" AND item.name ILIKE ?");
+                parameters.add("%" + sName + "%");
+            }
+
+            query.append(" ORDER BY item_name");
+
+            conn = Postgres.getInstance().getConnection();
+            stmt = conn.prepareStatement(query.toString());
+
+            for (int i = 0; i < parameters.size(); i++) {
+                stmt.setObject(i + 1, parameters.get(i));
+            }
+
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                int itemID = rs.getInt("item_id");
+                String name = rs.getString("item_name");
+                int typeID = rs.getInt("type_id");
+                String type = rs.getString("type_name");
+                int rarityID = rs.getInt("rarity_id");
+                String rarity = rs.getString("rarity_name");
+                String imgPath = rs.getString("img_path");
+
+                data.add(new Item(itemID, name, typeID, type, rarityID, rarity, imgPath));
+            }
+        } catch (Exception e) {
+            if (conn != null) {
+                conn.rollback();
+            }
+            throw e;
+        } finally {
+            if (rs != null)
+                rs.close();
+
+            if (stmt != null)
+                stmt.close();
+
+            if (conn != null)
+                conn.close();
+        }
+
+        return data;
     }
 }
