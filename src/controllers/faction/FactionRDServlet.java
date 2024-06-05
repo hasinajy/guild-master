@@ -10,7 +10,6 @@ import jakarta.servlet.ServletException;
 import models.Faction;
 
 public class FactionRDServlet extends HttpServlet {
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
@@ -25,10 +24,4 @@ public class FactionRDServlet extends HttpServlet {
             err.printStackTrace(resp.getWriter());
         }
     }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        super.doPost(req, resp);
-    }
-
 }

@@ -12,7 +12,6 @@ import models.InventoryFull;
 import models.Transaction;
 
 public class InventoryRDServlet extends HttpServlet {
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
@@ -33,11 +32,4 @@ public class InventoryRDServlet extends HttpServlet {
             err.printStackTrace(resp.getWriter());
         }
     }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // TODO Auto-generated method stub
-        super.doPost(req, resp);
-    }
-
 }

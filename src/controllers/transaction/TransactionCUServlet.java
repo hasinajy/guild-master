@@ -15,7 +15,6 @@ import models.TransactionType;
 import jakarta.servlet.ServletException;
 
 public class TransactionCUServlet extends HttpServlet {
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
@@ -64,5 +63,4 @@ public class TransactionCUServlet extends HttpServlet {
             err.printStackTrace(resp.getWriter());
         }
     }
-
 }

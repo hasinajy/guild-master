@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<db-config>
+    <database-url>jdbc:postgresql://localhost:5432/guild_master</database-url>
+    <username>postgres</username>
+    <password>root</password>
+</db-config>

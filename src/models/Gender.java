@@ -82,5 +82,4 @@ public class Gender {
 
         return data;
     }
-
 }

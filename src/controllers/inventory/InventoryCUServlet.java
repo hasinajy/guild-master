@@ -15,7 +15,6 @@ import models.Type;
 import models.Inventory;
 
 public class InventoryCUServlet extends HttpServlet {
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
@@ -62,5 +61,4 @@ public class InventoryCUServlet extends HttpServlet {
             err.printStackTrace(resp.getWriter());
         }
     }
-
 }

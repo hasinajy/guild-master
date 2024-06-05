@@ -17,7 +17,6 @@ import utils.FileProcessing;
 
 @MultipartConfig
 public class FactionCUServlet extends HttpServlet {
-
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
