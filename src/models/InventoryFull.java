@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import database.Postgres;
 
@@ -287,35 +288,96 @@ public class InventoryFull {
         return data;
     }
 
-    public static ArrayList<InventoryFull> search(String sItemName, String sCharName, int minD, int maxD, int sTypeID,
-            int sRarityID, int minQtt, int maxQtt) throws ClassNotFoundException, SQLException {
+    public static List<InventoryFull> searchInventory(InventorySearchCriteria criteria)
+            throws ClassNotFoundException, SQLException {
 
-        ArrayList<InventoryFull> data = new ArrayList<>();
+        List<InventoryFull> data = new ArrayList<>();
 
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
 
         try {
-            String query = buildQuery(sItemName, sCharName, minD, maxD, sTypeID, sRarityID, minQtt, maxQtt);
+            final String BASE_QUERY = "SELECT\r\n" + //
+                    "    inventory.inventory_id AS inventory_id,\r\n" + //
+                    "    item.item_id AS item_id,\r\n" + //
+                    "    item.name AS item_name,\r\n" + //
+                    "    player.character_name AS character_name,\r\n" + //
+                    "    durability,\r\n" + //
+                    "    quantity,\r\n" + //
+                    "    type.type_id AS type_id,\r\n" + //
+                    "    type.name AS type_name,\r\n" + //
+                    "    rarity.rarity_id AS rarity_id,\r\n" + //
+                    "    rarity.name AS rarity_name,\r\n" + //
+                    "    item.img_path AS img_path,\r\n" + //
+                    "    player.is_deleted AS player_deleted\r\n" + //
+                    "FROM\r\n" + //
+                    "    inventory\r\n" + //
+                    "    JOIN item ON inventory.item_id = item.item_id\r\n" + //
+                    "    LEFT JOIN type ON item.type_id = type.type_id\r\n" + //
+                    "    LEFT JOIN rarity ON item.rarity_id = rarity.rarity_id\r\n" + //
+                    "    JOIN player ON inventory.player_id = player.player_id\r\n" + //
+                    "WHERE\r\n" + //
+                    "    item.is_deleted = false AND 1 = 1";
+
+            StringBuilder query = new StringBuilder(BASE_QUERY);
+
+            List<Object> parameters = new ArrayList<>();
+
+            if (criteria.getItemId() != null) {
+                query.append(" AND inventory.item_id = ?");
+                parameters.add(criteria.getItemId());
+            }
+            if (criteria.getCharacterName() != null && !criteria.getCharacterName().isEmpty()) {
+                query.append(" AND player.character_name LIKE ?");
+                parameters.add("%" + criteria.getCharacterName() + "%");
+            }
+            if (criteria.getMinDurability() != null) {
+                query.append(" AND durability >= ?");
+                parameters.add(criteria.getMinDurability());
+            }
+            if (criteria.getMaxDurability() != null) {
+                query.append(" AND durability <= ?");
+                parameters.add(criteria.getMaxDurability());
+            }
+            if (criteria.getTypeId() != null) {
+                query.append(" AND item.type_id = ?");
+                parameters.add(criteria.getTypeId());
+            }
+            if (criteria.getRarityId() != null) {
+                query.append(" AND item.rarity_id = ?");
+                parameters.add(criteria.getRarityId());
+            }
+
+            query.append(" ORDER BY inventory_id ASC");
 
             conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
+            stmt = conn.prepareStatement(query.toString());
+
+            for (int i = 0; i < parameters.size(); i++) {
+                stmt.setObject(i + 1, parameters.get(i));
+            }
+
             rs = stmt.executeQuery();
 
             while (rs.next()) {
                 int inventoryID = rs.getInt("inventory_id");
+                int itemID = rs.getInt("item_id");
                 String itemName = rs.getString("item_name");
                 String characterName = rs.getString("character_name");
-                double durability = 10 * (double) rs.getFloat("durability");
+                double durability = Math.round(10 * (double) rs.getFloat("durability"));
                 int quantity = rs.getInt("quantity");
+                int typeID = rs.getInt("type_id");
                 String typeName = rs.getString("type_name");
+                int rarityID = rs.getInt("rarity_id");
                 String rarityName = rs.getString("rarity_name");
                 String imgPath = rs.getString("img_path");
 
-                data.add(
-                        new InventoryFull(inventoryID, itemName, characterName, durability, quantity, typeName,
-                                rarityName, imgPath));
+                if (rs.getString("player_deleted").equals("t"))
+                    characterName = null;
+
+                data.add(new InventoryFull(inventoryID, itemID, itemName, characterName, durability, quantity, typeID,
+                        typeName, rarityID, rarityName, imgPath));
             }
         } catch (Exception e) {
             if (conn != null) {
