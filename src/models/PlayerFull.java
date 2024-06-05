@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import database.Postgres;
 
@@ -352,4 +353,103 @@ public class PlayerFull {
 
         return queryBuilder.toString();
     }
+
+    public static List<PlayerFull> searchPlayers(PlayerSearchCriteria criteria)
+            throws ClassNotFoundException, SQLException {
+        List<PlayerFull> data = new ArrayList<>();
+
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            final String BASE_QUERY = "SELECT\r\n" + //
+                    "    player.player_id AS player_id,\r\n" + //
+                    "    player.username AS username,\r\n" + //
+                    "    player.character_name AS character_name,\r\n" + //
+                    "    player.level AS level,\r\n" + //
+                    "    player.description AS description,\r\n" + //
+                    "    player.img_path AS img_path,\r\n" + //
+                    "    gender.gender_id AS gender_id,\r\n" + //
+                    "    gender.name AS gender_name,\r\n" + //
+                    "    faction.faction_id AS faction_id,\r\n" + //
+                    "    faction.name AS faction_name\r\n" + //
+                    "FROM\r\n" + //
+                    "    player\r\n" + //
+                    "    JOIN gender ON player.gender_id = gender.gender_id\r\n" + //
+                    "    LEFT JOIN faction ON player.faction_id = faction.faction_id\r\n" + //
+                    "WHERE\r\n" + //
+                    "    player.is_deleted = false";
+
+            StringBuilder query = new StringBuilder(BASE_QUERY);
+
+            List<Object> parameters = new ArrayList<>();
+
+            if (criteria.getUsername() != null && !criteria.getUsername().isEmpty()) {
+                query.append(" AND username ILIKE ?");
+                parameters.add("%" + criteria.getUsername() + "%");
+            }
+            if (criteria.getCharacterName() != null && !criteria.getCharacterName().isEmpty()) {
+                query.append(" AND character_name ILIKE ?");
+                parameters.add("%" + criteria.getCharacterName() + "%");
+            }
+            if (criteria.getMinLevel() != null) {
+                query.append(" AND level >= ?");
+                parameters.add(criteria.getMinLevel());
+            }
+            if (criteria.getMaxLevel() != null) {
+                query.append(" AND level <= ?");
+                parameters.add(criteria.getMaxLevel());
+            }
+            if (criteria.getFactionId() != null) {
+                query.append(" AND player.faction_id = ?");
+                parameters.add(criteria.getFactionId());
+            }
+
+            query.append(" ORDER BY character_name");
+
+            conn = Postgres.getInstance().getConnection();
+            stmt = conn.prepareStatement(query.toString());
+
+            for (int i = 0; i < parameters.size(); i++) {
+                stmt.setObject(i + 1, parameters.get(i));
+            }
+
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                int playerID = rs.getInt("player_id");
+                String username = rs.getString("username");
+                String characterName = rs.getString("character_name");
+                int level = rs.getInt("level");
+                String description = rs.getString("description");
+                String imgPath = rs.getString("img_path");
+                int genderID = rs.getInt("gender_id");
+                String genderName = rs.getString("gender_name");
+                int factionID = rs.getInt("faction_id");
+                String factionName = rs.getString("faction_name");
+
+                data.add(
+                        new PlayerFull(playerID, username, characterName, level, description, imgPath, genderID,
+                                genderName, factionID, factionName));
+            }
+        } catch (Exception e) {
+            if (conn != null) {
+                conn.rollback();
+            }
+            throw e;
+        } finally {
+            if (rs != null)
+                rs.close();
+
+            if (stmt != null)
+                stmt.close();
+
+            if (conn != null)
+                conn.close();
+        }
+
+        return data;
+    }
+
 }
