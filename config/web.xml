@@ -187,13 +187,13 @@
 
     <!-- Faction -->
     <servlet>
-        <servlet-name>Faction</servlet-name>
-        <servlet-class>controllers.redirection.FactionServlet</servlet-class>
+        <servlet-name>Factions</servlet-name>
+        <servlet-class>controllers.redirection.FactionsRedirection</servlet-class>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>Faction</servlet-name>
-        <url-pattern>/Faction</url-pattern>
+        <servlet-name>Factions</servlet-name>
+        <url-pattern>/factions</url-pattern>
     </servlet-mapping>
 
     <!-- Item -->
