@@ -253,13 +253,13 @@
 
     <!-- Inventory -->
     <servlet>
-        <servlet-name>Inventory</servlet-name>
-        <servlet-class>controllers.redirection.InventoryServlet</servlet-class>
+        <servlet-name>Inventories</servlet-name>
+        <servlet-class>controllers.redirection.InventoriesRedirection</servlet-class>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>Inventory</servlet-name>
-        <url-pattern>/Inventory</url-pattern>
+        <servlet-name>Inventories</servlet-name>
+        <url-pattern>/inventories</url-pattern>
     </servlet-mapping>
 
     <!-- Form Mapping -->
