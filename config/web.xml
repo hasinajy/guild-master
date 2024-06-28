@@ -288,12 +288,12 @@
     <!-- Type -->
     <servlet>
         <servlet-name>TypeForm</servlet-name>
-        <servlet-class>controllers.redirection.TypeFormServlet</servlet-class>
+        <servlet-class>controllers.redirection.TypeFormRedirection</servlet-class>
     </servlet>
 
     <servlet-mapping>
         <servlet-name>TypeForm</servlet-name>
-        <url-pattern>/TypeForm</url-pattern>
+        <url-pattern>/type-form</url-pattern>
     </servlet-mapping>
 
     <!-- Player -->
