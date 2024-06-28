@@ -7,16 +7,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.ServletException;
 
-public class StaffCUServlet extends HttpServlet {
+public class StaffRD extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // TODO: Implement StaffCU doGet method
+        // TODO: Implement StaffRD doGet method
         super.doGet(req, resp);
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        // TODO: Implement StaffCU doPost method
-        super.doPost(req, resp);
     }
 }

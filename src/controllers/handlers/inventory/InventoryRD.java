@@ -11,7 +11,7 @@ import models.Inventory;
 import models.InventoryFull;
 import models.Transaction;
 
-public class InventoryRDServlet extends HttpServlet {
+public class InventoryRD extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {

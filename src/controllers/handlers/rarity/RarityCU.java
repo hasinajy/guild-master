@@ -1,4 +1,4 @@
-package controllers.handlers.player;
+package controllers.handlers.rarity;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -12,29 +12,21 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.Part;
 
-import models.Faction;
-import models.Player;
+import models.Rarity;
 import utils.FileProcessing;
-import models.Gender;
 
 @MultipartConfig
-public class PlayerCUServlet extends HttpServlet {
+public class RarityCU extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             if (req.getParameter("mode") != null && req.getParameter("mode").equals("u")) {
-                String playerID = req.getParameter("player_id");
-                Player updatedPlayer = Player.getByID(Integer.parseInt(playerID));
-                req.setAttribute("updated_player", updatedPlayer);
-
-                if (updatedPlayer == null) {
-                    resp.sendRedirect("Player");
-                }
+                String rarityID = req.getParameter("rarity_id");
+                Rarity updatedRarity = Rarity.getByID(Integer.parseInt(rarityID));
+                req.setAttribute("updated_rarity", updatedRarity);
             }
 
-            req.setAttribute("gender_list", Gender.getAll());
-            req.setAttribute("faction_list", Faction.getAll());
-            req.getRequestDispatcher("WEB-INF/jsp/insertion-form/player-form.jsp").forward(req, resp);
+            req.getRequestDispatcher("WEB-INF/jsp/insertion-form/rarity-form.jsp").forward(req, resp);
         } catch (Exception err) {
             err.printStackTrace(resp.getWriter());
         }
@@ -43,23 +35,19 @@ public class PlayerCUServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            String url = "PlayerCU";
-            String username = req.getParameter("username");
-            String characterName = req.getParameter("character_name");
-            int genderID = Integer.parseInt(req.getParameter("gender_id"));
-            int level = Integer.parseInt(req.getParameter("level"));
-            int factionID = Integer.parseInt(req.getParameter("faction_id"));
-            String imgPath = "player/";
+            String url = "RarityCU";
+            String name = req.getParameter("rarity_name");
+            String imgPath = "rarity/";
 
             // Img processing
-            Part imgPart = req.getPart("player_img");
+            Part imgPart = req.getPart("rarity_img");
 
             if (imgPart != null && imgPart.getSize() > 0) {
                 String ogName = imgPart.getSubmittedFileName();
                 String extension = FileProcessing.extractExtension(ogName);
                 String newName = FileProcessing.generateUniqueFileName(extension);
                 imgPath += newName;
-                String savePath = getServletContext().getRealPath("/uploads/player");
+                String savePath = getServletContext().getRealPath("/uploads/rarity");
 
                 try (InputStream inputStream = imgPart.getInputStream()) {
                     File imgFile = new File(savePath + File.separator + newName);
@@ -78,17 +66,18 @@ public class PlayerCUServlet extends HttpServlet {
                 }
             }
 
-            Player player = new Player(0, username, characterName, genderID, level, factionID, "", imgPath);
+            Rarity rarity = new Rarity(0, name, imgPath);
 
             if (req.getParameter("mode") != null && req.getParameter("mode").equals("u")) {
-                int playerID = Integer.parseInt(req.getParameter("player_id"));
-                url += "?mode=u";
-                url += "&player_id=" + playerID;
+                int rarityID = Integer.parseInt(req.getParameter("rarity_id"));
 
-                player.setPlayerID(playerID);
-                player.update();
+                url += "?mode=u";
+                url += "&rarity_id=" + rarityID;
+
+                rarity.setRarityID(rarityID);
+                rarity.update();
             } else {
-                player.create();
+                rarity.create();
             }
 
             resp.sendRedirect(url);

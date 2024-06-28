@@ -1,4 +1,4 @@
-package controllers.handlers.type;
+package controllers.handlers.player;
 
 import java.io.IOException;
 
@@ -7,19 +7,21 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.ServletException;
 
-import models.Type;
+import models.Player;
+import models.PlayerFull;
 
-public class TypeRDServlet extends HttpServlet {
+public class PlayerRD extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             if (req.getParameter("mode") != null && req.getParameter("mode").equals("d")) {
-                String typeID = req.getParameter("type_id");
-                new Type(Integer.parseInt(typeID)).delete();
+                String playerID = req.getParameter("player_id");
+                new Player(Integer.parseInt(playerID)).delete();
+                resp.sendRedirect("Player");
             }
 
-            req.setAttribute("type_list", Type.getAll());
-            req.getRequestDispatcher("WEB-INF/jsp/types.jsp").forward(req, resp);
+            req.setAttribute("player_list", PlayerFull.getAll());
+            req.getRequestDispatcher("WEB-INF/jsp/players.jsp").forward(req, resp);
         } catch (Exception err) {
             err.printStackTrace(resp.getWriter());
         }

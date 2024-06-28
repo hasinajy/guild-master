@@ -16,7 +16,7 @@ import models.Type;
 import utils.FileProcessing;
 
 @MultipartConfig
-public class TypeCUServlet extends HttpServlet {
+public class TypeCU extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {

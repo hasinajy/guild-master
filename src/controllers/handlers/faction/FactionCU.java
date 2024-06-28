@@ -21,9 +21,9 @@ public class FactionCU extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             if (req.getParameter("mode") != null && req.getParameter("mode").equals("u")) {
-                String factionID = req.getParameter("faction_id");
+                String factionID = req.getParameter("faction-id");
                 Faction updatedFaction = Faction.getByID(Integer.parseInt(factionID));
-                req.setAttribute("updated_faction", updatedFaction);
+                req.setAttribute("updated-faction", updatedFaction);
             }
 
             req.getRequestDispatcher("FactionForm").forward(req, resp);
@@ -36,11 +36,11 @@ public class FactionCU extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             String url = "faction-cu";
-            String name = req.getParameter("faction_name");
+            String name = req.getParameter("faction-name");
             String imgPath = "faction/";
 
             // Img processing
-            Part imgPart = req.getPart("faction_img");
+            Part imgPart = req.getPart("faction-img");
 
             if (imgPart != null && imgPart.getSize() > 0) {
                 String ogName = imgPart.getSubmittedFileName();
@@ -69,10 +69,10 @@ public class FactionCU extends HttpServlet {
             Faction faction = new Faction(0, name, imgPath);
 
             if (req.getParameter("mode") != null && req.getParameter("mode").equals("u")) {
-                int factionID = Integer.parseInt(req.getParameter("faction_id"));
+                int factionID = Integer.parseInt(req.getParameter("faction-id"));
 
                 url += "?mode=u";
-                url += "&faction_id=" + factionID;
+                url += "&faction-id=" + factionID;
 
                 faction.setFactionID(factionID);
                 faction.update();
