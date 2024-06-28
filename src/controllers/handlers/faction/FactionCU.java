@@ -14,13 +14,14 @@ import jakarta.servlet.http.Part;
 
 import models.Faction;
 import utils.FileProcessing;
+import utils.RequestChecker;
 
 @MultipartConfig
 public class FactionCU extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            if (req.getParameter("mode") != null && req.getParameter("mode").equals("u")) {
+            if (RequestChecker.isUpdateMode(req)) {
                 String factionID = req.getParameter("faction-id");
                 Faction updatedFaction = Faction.getByID(Integer.parseInt(factionID));
                 req.setAttribute("updated-faction", updatedFaction);
