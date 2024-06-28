@@ -231,13 +231,13 @@
 
     <!-- Transaction -->
     <servlet>
-        <servlet-name>Transaction</servlet-name>
-        <servlet-class>controllers.redirection.TransactionServlet</servlet-class>
+        <servlet-name>Transactions</servlet-name>
+        <servlet-class>controllers.redirection.TransactionsRedirection</servlet-class>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>Transaction</servlet-name>
-        <url-pattern>/Transaction</url-pattern>
+        <servlet-name>Transactions</servlet-name>
+        <url-pattern>/transactions</url-pattern>
     </servlet-mapping>
 
     <!-- Player -->
