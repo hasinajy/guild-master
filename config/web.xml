@@ -277,12 +277,12 @@
     <!-- Rarity -->
     <servlet>
         <servlet-name>RarityForm</servlet-name>
-        <servlet-class>controllers.redirection.RarityFormServlet</servlet-class>
+        <servlet-class>controllers.redirection.RarityFormRedirection</servlet-class>
     </servlet>
 
     <servlet-mapping>
         <servlet-name>RarityForm</servlet-name>
-        <url-pattern>/RarityForm</url-pattern>
+        <url-pattern>/rarity-form</url-pattern>
     </servlet-mapping>
 
     <!-- Type -->
