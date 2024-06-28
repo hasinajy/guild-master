@@ -319,14 +319,14 @@
     </servlet-mapping>
 
 
-    <!-- Type -->
+    <!-- Item -->
     <servlet>
         <servlet-name>ItemForm</servlet-name>
-        <servlet-class>controllers.redirection.ItemFormServlet</servlet-class>
+        <servlet-class>controllers.redirection.ItemFormRedirection</servlet-class>
     </servlet>
 
     <servlet-mapping>
         <servlet-name>ItemForm</servlet-name>
-        <url-pattern>/ItemForm</url-pattern>
+        <url-pattern>/item-form</url-pattern>
     </servlet-mapping>
 </web-app>
