@@ -310,12 +310,12 @@
     <!-- Inventory -->
     <servlet>
         <servlet-name>InventoryForm</servlet-name>
-        <servlet-class>controllers.redirection.InventoryFormServlet</servlet-class>
+        <servlet-class>controllers.redirection.InventoryFormRedirection</servlet-class>
     </servlet>
 
     <servlet-mapping>
         <servlet-name>InventoryForm</servlet-name>
-        <url-pattern>/InventoryForm</url-pattern>
+        <url-pattern>/inventory-form</url-pattern>
     </servlet-mapping>
 
 
