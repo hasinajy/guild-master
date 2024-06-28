@@ -177,12 +177,12 @@
     <!-- Dashboard -->
     <servlet>
         <servlet-name>Dashboard</servlet-name>
-        <servlet-class>controllers.redirection.DashboardServlet</servlet-class>
+        <servlet-class>controllers.redirection.DashboardRedirection</servlet-class>
     </servlet>
 
     <servlet-mapping>
         <servlet-name>Dashboard</servlet-name>
-        <url-pattern>/Dashboard</url-pattern>
+        <url-pattern>/dashboard</url-pattern>
     </servlet-mapping>
 
     <!-- Faction -->
