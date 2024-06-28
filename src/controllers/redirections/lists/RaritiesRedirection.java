@@ -1,19 +1,19 @@
-package controllers.redirection;
+package controllers.redirections.lists;
 
 import java.io.IOException;
 import java.util.logging.Level;
 
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import utils.ExceptionHandler;
+import jakarta.servlet.ServletException;
 
-public class ItemFormRedirection extends HttpServlet {
+public class RaritiesRedirection extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            req.getRequestDispatcher("/ItemCU").forward(req, resp);
+            req.getRequestDispatcher("RarityRD").forward(req, resp);
         } catch (ServletException | IOException e) {
             ExceptionHandler.handleException(e, Level.SEVERE, resp);
         } catch (Exception e) {

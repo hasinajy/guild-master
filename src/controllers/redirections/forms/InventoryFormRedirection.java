@@ -1,4 +1,4 @@
-package controllers.redirection;
+package controllers.redirections.forms;
 
 import java.io.IOException;
 import java.util.logging.Level;

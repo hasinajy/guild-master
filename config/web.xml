@@ -177,7 +177,7 @@
     <!-- Dashboard -->
     <servlet>
         <servlet-name>Dashboard</servlet-name>
-        <servlet-class>controllers.redirection.DashboardRedirection</servlet-class>
+        <servlet-class>controllers.redirections.DashboardRedirection</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -188,7 +188,7 @@
     <!-- Faction -->
     <servlet>
         <servlet-name>Factions</servlet-name>
-        <servlet-class>controllers.redirection.FactionsRedirection</servlet-class>
+        <servlet-class>controllers.redirections.lists.FactionsRedirection</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -199,7 +199,7 @@
     <!-- Item -->
     <servlet>
         <servlet-name>Items</servlet-name>
-        <servlet-class>controllers.redirection.ItemsRedirection</servlet-class>
+        <servlet-class>controllers.redirections.lists.ItemsRedirection</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -210,7 +210,7 @@
     <!-- Rarity -->
     <servlet>
         <servlet-name>Rarities</servlet-name>
-        <servlet-class>controllers.redirection.RaritiesRedirection</servlet-class>
+        <servlet-class>controllers.redirections.lists.RaritiesRedirection</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -221,7 +221,7 @@
     <!-- Type -->
     <servlet>
         <servlet-name>Types</servlet-name>
-        <servlet-class>controllers.redirection.TypesRedirection</servlet-class>
+        <servlet-class>controllers.redirections.lists.TypesRedirection</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -232,7 +232,7 @@
     <!-- Transaction -->
     <servlet>
         <servlet-name>Transactions</servlet-name>
-        <servlet-class>controllers.redirection.TransactionsRedirection</servlet-class>
+        <servlet-class>controllers.redirections.lists.TransactionsRedirection</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -243,7 +243,7 @@
     <!-- Player -->
     <servlet>
         <servlet-name>Players</servlet-name>
-        <servlet-class>controllers.redirection.PlayersRedirection</servlet-class>
+        <servlet-class>controllers.redirections.lists.PlayersRedirection</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -254,7 +254,7 @@
     <!-- Inventory -->
     <servlet>
         <servlet-name>Inventories</servlet-name>
-        <servlet-class>controllers.redirection.InventoriesRedirection</servlet-class>
+        <servlet-class>controllers.redirections.lists.InventoriesRedirection</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -266,7 +266,7 @@
     <!-- Faction form -->
     <servlet>
         <servlet-name>FactionForm</servlet-name>
-        <servlet-class>controllers.redirection.FactionFormRedirection</servlet-class>
+        <servlet-class>controllers.redirections.forms.FactionFormRedirection</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -277,7 +277,7 @@
     <!-- Rarity -->
     <servlet>
         <servlet-name>RarityForm</servlet-name>
-        <servlet-class>controllers.redirection.RarityFormRedirection</servlet-class>
+        <servlet-class>controllers.redirections.forms.RarityFormRedirection</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -288,7 +288,7 @@
     <!-- Type -->
     <servlet>
         <servlet-name>TypeForm</servlet-name>
-        <servlet-class>controllers.redirection.TypeFormRedirection</servlet-class>
+        <servlet-class>controllers.redirections.forms.TypeFormRedirection</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -299,7 +299,7 @@
     <!-- Player -->
     <servlet>
         <servlet-name>PlayerForm</servlet-name>
-        <servlet-class>controllers.redirection.PlayerFormRedirection</servlet-class>
+        <servlet-class>controllers.redirections.forms.PlayerFormRedirection</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -310,7 +310,7 @@
     <!-- Inventory -->
     <servlet>
         <servlet-name>InventoryForm</servlet-name>
-        <servlet-class>controllers.redirection.InventoryFormRedirection</servlet-class>
+        <servlet-class>controllers.redirections.forms.InventoryFormRedirection</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -322,7 +322,7 @@
     <!-- Item -->
     <servlet>
         <servlet-name>ItemForm</servlet-name>
-        <servlet-class>controllers.redirection.ItemFormRedirection</servlet-class>
+        <servlet-class>controllers.redirections.forms.ItemFormRedirection</servlet-class>
     </servlet>
 
     <servlet-mapping>
