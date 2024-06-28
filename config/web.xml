@@ -299,12 +299,12 @@
     <!-- Player -->
     <servlet>
         <servlet-name>PlayerForm</servlet-name>
-        <servlet-class>controllers.redirection.PlayerFormServlet</servlet-class>
+        <servlet-class>controllers.redirection.PlayerFormRedirection</servlet-class>
     </servlet>
 
     <servlet-mapping>
         <servlet-name>PlayerForm</servlet-name>
-        <url-pattern>/PlayerForm</url-pattern>
+        <url-pattern>/player-form</url-pattern>
     </servlet-mapping>
 
     <!-- Inventory -->
