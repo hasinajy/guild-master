@@ -242,13 +242,13 @@
 
     <!-- Player -->
     <servlet>
-        <servlet-name>Player</servlet-name>
-        <servlet-class>controllers.redirection.PlayerServlet</servlet-class>
+        <servlet-name>Players</servlet-name>
+        <servlet-class>controllers.redirection.PlayersRedirection</servlet-class>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>Player</servlet-name>
-        <url-pattern>/Player</url-pattern>
+        <servlet-name>Players</servlet-name>
+        <url-pattern>/players</url-pattern>
     </servlet-mapping>
 
     <!-- Inventory -->
