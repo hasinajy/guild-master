@@ -220,13 +220,13 @@
 
     <!-- Type -->
     <servlet>
-        <servlet-name>Type</servlet-name>
-        <servlet-class>controllers.redirection.TypeServlet</servlet-class>
+        <servlet-name>Types</servlet-name>
+        <servlet-class>controllers.redirection.TypesRedirection</servlet-class>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>Type</servlet-name>
-        <url-pattern>/Type</url-pattern>
+        <servlet-name>Types</servlet-name>
+        <url-pattern>/types</url-pattern>
     </servlet-mapping>
 
     <!-- Transaction -->
