@@ -266,12 +266,12 @@
     <!-- Faction form -->
     <servlet>
         <servlet-name>FactionForm</servlet-name>
-        <servlet-class>controllers.redirection.FactionFormServlet</servlet-class>
+        <servlet-class>controllers.redirection.FactionFormRedirection</servlet-class>
     </servlet>
 
     <servlet-mapping>
         <servlet-name>FactionForm</servlet-name>
-        <url-pattern>/FactionForm</url-pattern>
+        <url-pattern>/faction-form</url-pattern>
     </servlet-mapping>
 
     <!-- Rarity -->
