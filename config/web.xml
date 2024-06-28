@@ -33,7 +33,7 @@
 
     <servlet-mapping>
         <servlet-name>PlayerCU</servlet-name>
-        <url-pattern>/PlayerCU</url-pattern>
+        <url-pattern>/player-cu</url-pattern>
     </servlet-mapping>
 
     <servlet>
@@ -43,7 +43,7 @@
 
     <servlet-mapping>
         <servlet-name>PlayerRD</servlet-name>
-        <url-pattern>/PlayerRD</url-pattern>
+        <url-pattern>/player-rd</url-pattern>
     </servlet-mapping>
 
     <!-- Staff -->
@@ -54,7 +54,7 @@
 
     <servlet-mapping>
         <servlet-name>StaffCU</servlet-name>
-        <url-pattern>/StaffCU</url-pattern>
+        <url-pattern>/staff-cu</url-pattern>
     </servlet-mapping>
 
     <servlet>
@@ -64,7 +64,7 @@
 
     <servlet-mapping>
         <servlet-name>StaffRD</servlet-name>
-        <url-pattern>/StaffRD</url-pattern>
+        <url-pattern>/staff-rd</url-pattern>
     </servlet-mapping>
 
     <!-- Item -->
@@ -75,7 +75,7 @@
 
     <servlet-mapping>
         <servlet-name>ItemCU</servlet-name>
-        <url-pattern>/ItemCU</url-pattern>
+        <url-pattern>/item-cu</url-pattern>
     </servlet-mapping>
 
     <servlet>
@@ -85,7 +85,7 @@
 
     <servlet-mapping>
         <servlet-name>ItemRD</servlet-name>
-        <url-pattern>/ItemRD</url-pattern>
+        <url-pattern>/item-rd</url-pattern>
     </servlet-mapping>
 
     <!-- Inventory -->
@@ -96,7 +96,7 @@
 
     <servlet-mapping>
         <servlet-name>TypeCU</servlet-name>
-        <url-pattern>/TypeCU</url-pattern>
+        <url-pattern>/type-cu</url-pattern>
     </servlet-mapping>
 
     <servlet>
@@ -106,7 +106,7 @@
 
     <servlet-mapping>
         <servlet-name>TypeRD</servlet-name>
-        <url-pattern>/TypeRD</url-pattern>
+        <url-pattern>/type-rd</url-pattern>
     </servlet-mapping>
 
     <!-- Rarity -->
@@ -117,7 +117,7 @@
 
     <servlet-mapping>
         <servlet-name>RarityCU</servlet-name>
-        <url-pattern>/RarityCU</url-pattern>
+        <url-pattern>/rarity-cu</url-pattern>
     </servlet-mapping>
 
     <servlet>
@@ -127,7 +127,7 @@
 
     <servlet-mapping>
         <servlet-name>RarityRD</servlet-name>
-        <url-pattern>/RarityRD</url-pattern>
+        <url-pattern>/rarity-rd</url-pattern>
     </servlet-mapping>
 
     <!-- Inventory -->
@@ -138,7 +138,7 @@
 
     <servlet-mapping>
         <servlet-name>InventoryCU</servlet-name>
-        <url-pattern>/InventoryCU</url-pattern>
+        <url-pattern>/inventory-cu</url-pattern>
     </servlet-mapping>
 
     <servlet>
@@ -148,7 +148,7 @@
 
     <servlet-mapping>
         <servlet-name>InventoryRD</servlet-name>
-        <url-pattern>/InventoryRD</url-pattern>
+        <url-pattern>/inventory-rd</url-pattern>
     </servlet-mapping>
 
     <!-- Transaction -->
@@ -159,7 +159,7 @@
 
     <servlet-mapping>
         <servlet-name>TransactionCU</servlet-name>
-        <url-pattern>/TransactionCU</url-pattern>
+        <url-pattern>/transaction-cu</url-pattern>
     </servlet-mapping>
 
     <servlet>
@@ -169,7 +169,7 @@
 
     <servlet-mapping>
         <servlet-name>TransactionRD</servlet-name>
-        <url-pattern>/TransactionRD</url-pattern>
+        <url-pattern>/transaction-rd</url-pattern>
     </servlet-mapping>
 
     <!-- Redirection -->

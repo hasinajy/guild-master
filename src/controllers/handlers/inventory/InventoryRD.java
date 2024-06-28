@@ -16,17 +16,17 @@ public class InventoryRD extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             if (req.getParameter("mode") != null && req.getParameter("mode").equals("d")) {
-                String inventoryID = req.getParameter("inventory_id");
+                String inventoryID = req.getParameter("inventory-id");
 
                 if (req.getParameter("type") != null && req.getParameter("type").equals("w")) {
                     new Transaction(0).withdraw(Integer.parseInt(inventoryID));
                 }
 
                 new Inventory(Integer.parseInt(inventoryID)).delete();
-                resp.sendRedirect("Inventory");
+                resp.sendRedirect("inventories");
             }
 
-            req.setAttribute("inventory_list", InventoryFull.getAll());
+            req.setAttribute("inventory-list", InventoryFull.getAll());
             req.getRequestDispatcher("WEB-INF/jsp/inventory.jsp").forward(req, resp);
         } catch (Exception err) {
             err.printStackTrace(resp.getWriter());
