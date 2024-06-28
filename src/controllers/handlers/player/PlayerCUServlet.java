@@ -1,4 +1,4 @@
-package controllers.player;
+package controllers.handlers.player;
 
 import java.io.File;
 import java.io.FileOutputStream;

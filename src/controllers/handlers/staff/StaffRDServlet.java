@@ -1,4 +1,4 @@
-package controllers.staff;
+package controllers.handlers.staff;
 
 import java.io.IOException;
 

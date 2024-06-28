@@ -1,4 +1,4 @@
-package controllers.rarity;
+package controllers.handlers.faction;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -12,21 +12,21 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.Part;
 
-import models.Rarity;
+import models.Faction;
 import utils.FileProcessing;
 
 @MultipartConfig
-public class RarityCUServlet extends HttpServlet {
+public class FactionCU extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             if (req.getParameter("mode") != null && req.getParameter("mode").equals("u")) {
-                String rarityID = req.getParameter("rarity_id");
-                Rarity updatedRarity = Rarity.getByID(Integer.parseInt(rarityID));
-                req.setAttribute("updated_rarity", updatedRarity);
+                String factionID = req.getParameter("faction_id");
+                Faction updatedFaction = Faction.getByID(Integer.parseInt(factionID));
+                req.setAttribute("updated_faction", updatedFaction);
             }
 
-            req.getRequestDispatcher("WEB-INF/jsp/insertion-form/rarity-form.jsp").forward(req, resp);
+            req.getRequestDispatcher("FactionForm").forward(req, resp);
         } catch (Exception err) {
             err.printStackTrace(resp.getWriter());
         }
@@ -35,19 +35,19 @@ public class RarityCUServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            String url = "RarityCU";
-            String name = req.getParameter("rarity_name");
-            String imgPath = "rarity/";
+            String url = "faction-cu";
+            String name = req.getParameter("faction_name");
+            String imgPath = "faction/";
 
             // Img processing
-            Part imgPart = req.getPart("rarity_img");
+            Part imgPart = req.getPart("faction_img");
 
             if (imgPart != null && imgPart.getSize() > 0) {
                 String ogName = imgPart.getSubmittedFileName();
                 String extension = FileProcessing.extractExtension(ogName);
                 String newName = FileProcessing.generateUniqueFileName(extension);
                 imgPath += newName;
-                String savePath = getServletContext().getRealPath("/uploads/rarity");
+                String savePath = getServletContext().getRealPath("/uploads/faction");
 
                 try (InputStream inputStream = imgPart.getInputStream()) {
                     File imgFile = new File(savePath + File.separator + newName);
@@ -66,18 +66,18 @@ public class RarityCUServlet extends HttpServlet {
                 }
             }
 
-            Rarity rarity = new Rarity(0, name, imgPath);
+            Faction faction = new Faction(0, name, imgPath);
 
             if (req.getParameter("mode") != null && req.getParameter("mode").equals("u")) {
-                int rarityID = Integer.parseInt(req.getParameter("rarity_id"));
+                int factionID = Integer.parseInt(req.getParameter("faction_id"));
 
                 url += "?mode=u";
-                url += "&rarity_id=" + rarityID;
+                url += "&faction_id=" + factionID;
 
-                rarity.setRarityID(rarityID);
-                rarity.update();
+                faction.setFactionID(factionID);
+                faction.update();
             } else {
-                rarity.create();
+                faction.create();
             }
 
             resp.sendRedirect(url);

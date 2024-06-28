@@ -7,28 +7,28 @@
     <!-- Faction -->
     <servlet>
         <servlet-name>FactionCU</servlet-name>
-        <servlet-class>controllers.faction.FactionCUServlet</servlet-class>
+        <servlet-class>controllers.handlers.faction.FactionCU</servlet-class>
     </servlet>
 
     <servlet-mapping>
         <servlet-name>FactionCU</servlet-name>
-        <url-pattern>/FactionCU</url-pattern>
+        <url-pattern>/faction-cu</url-pattern>
     </servlet-mapping>
 
     <servlet>
         <servlet-name>FactionRD</servlet-name>
-        <servlet-class>controllers.faction.FactionRDServlet</servlet-class>
+        <servlet-class>controllers.handlers.faction.FactionRD</servlet-class>
     </servlet>
 
     <servlet-mapping>
         <servlet-name>FactionRD</servlet-name>
-        <url-pattern>/FactionRD</url-pattern>
+        <url-pattern>/faction-rd</url-pattern>
     </servlet-mapping>
 
     <!-- Player -->
     <servlet>
         <servlet-name>PlayerCU</servlet-name>
-        <servlet-class>controllers.player.PlayerCUServlet</servlet-class>
+        <servlet-class>controllers.handlers.player.PlayerCUServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -38,7 +38,7 @@
 
     <servlet>
         <servlet-name>PlayerRD</servlet-name>
-        <servlet-class>controllers.player.PlayerRDServlet</servlet-class>
+        <servlet-class>controllers.handlers.player.PlayerRDServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -49,7 +49,7 @@
     <!-- Staff -->
     <servlet>
         <servlet-name>StaffCU</servlet-name>
-        <servlet-class>controllers.staff.StaffCUServlet</servlet-class>
+        <servlet-class>controllers.handlers.staff.StaffCUServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -59,7 +59,7 @@
 
     <servlet>
         <servlet-name>StaffRD</servlet-name>
-        <servlet-class>controllers.staff.StaffRDServlet</servlet-class>
+        <servlet-class>controllers.handlers.staff.StaffRDServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -70,7 +70,7 @@
     <!-- Item -->
     <servlet>
         <servlet-name>ItemCU</servlet-name>
-        <servlet-class>controllers.item.ItemCUServlet</servlet-class>
+        <servlet-class>controllers.handlers.item.ItemCUServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -80,7 +80,7 @@
 
     <servlet>
         <servlet-name>ItemRD</servlet-name>
-        <servlet-class>controllers.item.ItemRDServlet</servlet-class>
+        <servlet-class>controllers.handlers.item.ItemRDServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -91,7 +91,7 @@
     <!-- Inventory -->
     <servlet>
         <servlet-name>TypeCU</servlet-name>
-        <servlet-class>controllers.type.TypeCUServlet</servlet-class>
+        <servlet-class>controllers.handlers.type.TypeCUServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -101,7 +101,7 @@
 
     <servlet>
         <servlet-name>TypeRD</servlet-name>
-        <servlet-class>controllers.type.TypeRDServlet</servlet-class>
+        <servlet-class>controllers.handlers.type.TypeRDServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -112,7 +112,7 @@
     <!-- Rarity -->
     <servlet>
         <servlet-name>RarityCU</servlet-name>
-        <servlet-class>controllers.rarity.RarityCUServlet</servlet-class>
+        <servlet-class>controllers.handlers.rarity.RarityCUServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -122,7 +122,7 @@
 
     <servlet>
         <servlet-name>RarityRD</servlet-name>
-        <servlet-class>controllers.rarity.RarityRDServlet</servlet-class>
+        <servlet-class>controllers.handlers.rarity.RarityRDServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -133,7 +133,7 @@
     <!-- Inventory -->
     <servlet>
         <servlet-name>InventoryCU</servlet-name>
-        <servlet-class>controllers.inventory.InventoryCUServlet</servlet-class>
+        <servlet-class>controllers.handlers.inventory.InventoryCUServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -143,7 +143,7 @@
 
     <servlet>
         <servlet-name>InventoryRD</servlet-name>
-        <servlet-class>controllers.inventory.InventoryRDServlet</servlet-class>
+        <servlet-class>controllers.handlers.inventory.InventoryRDServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -154,7 +154,7 @@
     <!-- Transaction -->
     <servlet>
         <servlet-name>TransactionCU</servlet-name>
-        <servlet-class>controllers.transaction.TransactionCUServlet</servlet-class>
+        <servlet-class>controllers.handlers.transaction.TransactionCUServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -164,7 +164,7 @@
 
     <servlet>
         <servlet-name>TransactionRD</servlet-name>
-        <servlet-class>controllers.transaction.TransactionRDServlet</servlet-class>
+        <servlet-class>controllers.handlers.transaction.TransactionRDServlet</servlet-class>
     </servlet>
 
     <servlet-mapping>
@@ -177,7 +177,7 @@
     <!-- Dashboard -->
     <servlet>
         <servlet-name>Dashboard</servlet-name>
-        <servlet-class>controllers.redirections.DashboardRedirection</servlet-class>
+        <servlet-class>controllers.handlers.redirections.DashboardRedirection</servlet-class>
     </servlet>
 
     <servlet-mapping>

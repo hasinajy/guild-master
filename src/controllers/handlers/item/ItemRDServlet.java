@@ -1,4 +1,4 @@
-package controllers.rarity;
+package controllers.handlers.item;
 
 import java.io.IOException;
 
@@ -7,19 +7,19 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.ServletException;
 
-import models.Rarity;
+import models.Item;
 
-public class RarityRDServlet extends HttpServlet {
+public class ItemRDServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             if (req.getParameter("mode") != null && req.getParameter("mode").equals("d")) {
-                String rarityID = req.getParameter("rarity_id");
-                new Rarity(Integer.parseInt(rarityID)).delete();
+                String itemID = req.getParameter("item-id");
+                Item.deleteByID(Integer.parseInt(itemID));
             }
 
-            req.setAttribute("rarity_list", Rarity.getAll());
-            req.getRequestDispatcher("WEB-INF/jsp/rarities.jsp").forward(req, resp);
+            req.setAttribute("item-list", Item.getAll());
+            req.getRequestDispatcher("WEB-INF/jsp/items.jsp").forward(req, resp);
         } catch (Exception err) {
             err.printStackTrace(resp.getWriter());
         }

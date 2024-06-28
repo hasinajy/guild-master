@@ -1,4 +1,4 @@
-package controllers.type;
+package controllers.handlers.rarity;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -12,21 +12,21 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.Part;
 
-import models.Type;
+import models.Rarity;
 import utils.FileProcessing;
 
 @MultipartConfig
-public class TypeCUServlet extends HttpServlet {
+public class RarityCUServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             if (req.getParameter("mode") != null && req.getParameter("mode").equals("u")) {
-                String typeID = req.getParameter("type_id");
-                Type updatedType = Type.getByID(Integer.parseInt(typeID));
-                req.setAttribute("updated_type", updatedType);
+                String rarityID = req.getParameter("rarity_id");
+                Rarity updatedRarity = Rarity.getByID(Integer.parseInt(rarityID));
+                req.setAttribute("updated_rarity", updatedRarity);
             }
 
-            req.getRequestDispatcher("WEB-INF/jsp/insertion-form/type-form.jsp").forward(req, resp);
+            req.getRequestDispatcher("WEB-INF/jsp/insertion-form/rarity-form.jsp").forward(req, resp);
         } catch (Exception err) {
             err.printStackTrace(resp.getWriter());
         }
@@ -35,19 +35,19 @@ public class TypeCUServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            String url = "TypeCU";
-            String name = req.getParameter("type_name");
-            String imgPath = "type/";
+            String url = "RarityCU";
+            String name = req.getParameter("rarity_name");
+            String imgPath = "rarity/";
 
             // Img processing
-            Part imgPart = req.getPart("type_img");
+            Part imgPart = req.getPart("rarity_img");
 
             if (imgPart != null && imgPart.getSize() > 0) {
                 String ogName = imgPart.getSubmittedFileName();
                 String extension = FileProcessing.extractExtension(ogName);
                 String newName = FileProcessing.generateUniqueFileName(extension);
                 imgPath += newName;
-                String savePath = getServletContext().getRealPath("/uploads/type");
+                String savePath = getServletContext().getRealPath("/uploads/rarity");
 
                 try (InputStream inputStream = imgPart.getInputStream()) {
                     File imgFile = new File(savePath + File.separator + newName);
@@ -66,18 +66,18 @@ public class TypeCUServlet extends HttpServlet {
                 }
             }
 
-            Type type = new Type(0, name, imgPath);
+            Rarity rarity = new Rarity(0, name, imgPath);
 
             if (req.getParameter("mode") != null && req.getParameter("mode").equals("u")) {
-                int typeID = Integer.parseInt(req.getParameter("type_id"));
+                int rarityID = Integer.parseInt(req.getParameter("rarity_id"));
 
                 url += "?mode=u";
-                url += "&type_id=" + typeID;
+                url += "&rarity_id=" + rarityID;
 
-                type.setTypeID(typeID);
-                type.update();
+                rarity.setRarityID(rarityID);
+                rarity.update();
             } else {
-                type.create();
+                rarity.create();
             }
 
             resp.sendRedirect(url);

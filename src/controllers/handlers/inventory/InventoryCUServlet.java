@@ -1,4 +1,4 @@
-package controllers.inventory;
+package controllers.handlers.inventory;
 
 import java.io.IOException;
 
