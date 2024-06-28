@@ -209,13 +209,13 @@
 
     <!-- Rarity -->
     <servlet>
-        <servlet-name>Rarity</servlet-name>
-        <servlet-class>controllers.redirection.RarityServlet</servlet-class>
+        <servlet-name>Rarities</servlet-name>
+        <servlet-class>controllers.redirection.RaritiesRedirection</servlet-class>
     </servlet>
 
     <servlet-mapping>
-        <servlet-name>Rarity</servlet-name>
-        <url-pattern>/Rarity</url-pattern>
+        <servlet-name>Rarities</servlet-name>
+        <url-pattern>/rarities</url-pattern>
     </servlet-mapping>
 
     <!-- Type -->
