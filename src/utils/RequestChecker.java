@@ -10,4 +10,8 @@ public class RequestChecker extends Utility {
     public static boolean isDeleteMode(HttpServletRequest req) {
         return (req.getParameter("mode") != null && req.getParameter("mode").equals("d"));
     }
+
+    public static boolean isWithdrawMode(HttpServletRequest req) {
+        return (req.getParameter("type") != null && req.getParameter("type").equals("w"));
+    }
 }
