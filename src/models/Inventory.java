@@ -8,57 +8,57 @@ import java.sql.SQLException;
 import database.Postgres;
 
 public class Inventory {
-    private int inventoryID;
-    private int itemID;
-    private int playerID;
+    private int inventoryId;
+    private int itemId;
+    private int playerId;
     private double durability;
     private int quantity;
     private int typeID;
-    private int rarityID;
+    private int rarityId;
 
     // Constructors
-    public Inventory(int inventoryID) {
-        this.inventoryID = inventoryID;
+    public Inventory(int inventoryId) {
+        this.inventoryId = inventoryId;
     }
 
-    public Inventory(int inventoryID, int itemID, int playerID, double durability, int quantity, int typeID,
-            int rarityID) {
-        this.setInventoryID(inventoryID);
-        this.setItemID(itemID);
-        this.setPlayerID(playerID);
+    public Inventory(int inventoryId, int itemId, int playerId, double durability, int quantity, int typeID,
+            int rarityId) {
+        this.setInventoryId(inventoryId);
+        this.setItemId(itemId);
+        this.setPlayerId(playerId);
         this.setDurability(durability);
         this.setQuantity(quantity);
-        this.setTypeID(typeID);
-        this.setRarityID(rarityID);
+        this.setTypeId(typeID);
+        this.setRarityId(rarityId);
     }
 
     // Getters & Setters
-    public int getInventoryID() {
-        return inventoryID;
+    public int getInventoryId() {
+        return this.inventoryId;
     }
 
-    public void setInventoryID(int inventoryID) {
-        this.inventoryID = inventoryID;
+    public void setInventoryId(int inventoryId) {
+        this.inventoryId = inventoryId;
     }
 
-    public int getItemID() {
-        return itemID;
+    public int getItemId() {
+        return this.itemId;
     }
 
-    public void setItemID(int itemID) {
-        this.itemID = itemID;
+    public void setItemId(int itemId) {
+        this.itemId = itemId;
     }
 
-    public int getPlayerID() {
-        return playerID;
+    public int getPlayerId() {
+        return this.playerId;
     }
 
-    public void setPlayerID(int playerID) {
-        this.playerID = playerID;
+    public void setPlayerId(int playerId) {
+        this.playerId = playerId;
     }
 
     public double getDurability() {
-        return durability;
+        return this.durability;
     }
 
     public void setDurability(double durability) {
@@ -66,31 +66,31 @@ public class Inventory {
     }
 
     public int getQuantity() {
-        return quantity;
+        return this.quantity;
     }
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
 
-    public int getTypeID() {
+    public int getTypeId() {
         return this.typeID;
     }
 
-    public void setTypeID(int typeID) {
+    public void setTypeId(int typeID) {
         this.typeID = typeID;
     }
 
-    public int getRarityID() {
-        return rarityID;
+    public int getRarityId() {
+        return this.rarityId;
     }
 
-    public void setRarityID(int rarityID) {
-        this.rarityID = rarityID;
+    public void setRarityId(int rarityId) {
+        this.rarityId = rarityId;
     }
 
     // User methods
-    public static Inventory getByID(int inventoryID) throws ClassNotFoundException, SQLException {
+    public static Inventory getById(int inventoryId) throws ClassNotFoundException, SQLException {
         Inventory inventory = null;
 
         Connection conn = null;
@@ -116,21 +116,21 @@ public class Inventory {
 
             conn = Postgres.getInstance().getConnection();
             stmt = conn.prepareStatement(query);
-            stmt.setInt(1, inventoryID);
+            stmt.setInt(1, inventoryId);
             rs = stmt.executeQuery();
 
             while (rs.next()) {
-                int itemID = rs.getInt("item_id");
-                int playerID = rs.getInt("player_id");
+                int itemId = rs.getInt("item_id");
+                int playerId = rs.getInt("player_id");
                 double durability = Math.round(10 * (double) rs.getFloat("durability"));
                 int quantity = rs.getInt("quantity");
                 int typeID = rs.getInt("type_id");
-                int rarityID = rs.getInt("rarity_id");
+                int rarityId = rs.getInt("rarity_id");
 
                 if (rs.getString("is_deleted").equals("t"))
-                    playerID = 0;
+                    playerId = 0;
 
-                inventory = new Inventory(inventoryID, itemID, playerID, durability, quantity, typeID, rarityID);
+                inventory = new Inventory(inventoryId, itemId, playerId, durability, quantity, typeID, rarityId);
             }
         } catch (Exception e) {
             if (conn != null) {
@@ -160,7 +160,7 @@ public class Inventory {
 
             conn = Postgres.getInstance().getConnection();
             stmt = conn.prepareStatement(query);
-            stmt.setInt(1, this.inventoryID);
+            stmt.setInt(1, this.getInventoryId());
             stmt.executeUpdate();
         } catch (Exception e) {
             if (conn != null) {
@@ -186,10 +186,10 @@ public class Inventory {
 
             conn = Postgres.getInstance().getConnection();
             stmt = conn.prepareStatement(query);
-            stmt.setInt(1, this.itemID);
-            stmt.setInt(2, this.playerID);
-            stmt.setFloat(3, (float) this.durability);
-            stmt.setInt(4, this.quantity);
+            stmt.setInt(1, this.getItemId());
+            stmt.setInt(2, this.getPlayerId());
+            stmt.setFloat(3, (float) this.getDurability());
+            stmt.setInt(4, this.getQuantity());
             stmt.executeUpdate();
         } catch (Exception e) {
             if (conn != null) {
@@ -216,11 +216,11 @@ public class Inventory {
 
             conn = Postgres.getInstance().getConnection();
             stmt = conn.prepareStatement(query);
-            stmt.setInt(1, this.itemID);
-            stmt.setInt(2, this.playerID);
-            stmt.setFloat(3, (float) this.durability);
-            stmt.setInt(4, this.quantity);
-            stmt.setInt(5, this.inventoryID);
+            stmt.setInt(1, this.getItemId());
+            stmt.setInt(2, this.getPlayerId());
+            stmt.setFloat(3, (float) this.getDurability());
+            stmt.setInt(4, this.getQuantity());
+            stmt.setInt(5, this.getInventoryId());
             stmt.executeUpdate();
         } catch (Exception e) {
             if (conn != null) {
@@ -234,5 +234,10 @@ public class Inventory {
             if (conn != null)
                 conn.close();
         }
+    }
+
+    public void update(int inventoryId) throws ClassNotFoundException, SQLException {
+        this.setInventoryId(inventoryId);
+        this.update();
     }
 }

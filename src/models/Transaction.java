@@ -99,22 +99,22 @@ public class Transaction {
 
     // Class methods
     public void withdraw(int inventoryID) throws ClassNotFoundException, SQLException {
-        Inventory inventory = Inventory.getByID(inventoryID);
+        Inventory inventory = Inventory.getById(inventoryID);
 
         if (inventory == null)
             return;
 
-        if (inventory.getPlayerID() != 0)
-            new Transaction(1, null, 1, inventory.getItemID(), inventory.getPlayerID(), 1, "").create();
+        if (inventory.getPlayerId() != 0)
+            new Transaction(1, null, 1, inventory.getItemId(), inventory.getPlayerId(), 1, "").create();
     }
 
     public void deposit(int inventoryID) throws ClassNotFoundException, SQLException {
-        Inventory inventory = Inventory.getByID(inventoryID);
+        Inventory inventory = Inventory.getById(inventoryID);
 
         if (inventory == null)
             return;
 
-        new Transaction(1, null, 2, inventory.getItemID(), inventory.getPlayerID(), 1, "").create();
+        new Transaction(1, null, 2, inventory.getItemId(), inventory.getPlayerId(), 1, "").create();
     }
 
     public static Transaction getByID(int transactionID) throws ClassNotFoundException, SQLException {
