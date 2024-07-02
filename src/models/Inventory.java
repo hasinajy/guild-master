@@ -176,6 +176,10 @@ public class Inventory {
         }
     }
 
+    public static void delete(int inventoryId) throws ClassNotFoundException, SQLException {
+        new Inventory(inventoryId).delete();
+    }
+
     public void create() throws ClassNotFoundException, SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
