@@ -1,6 +1,7 @@
 package controllers.handlers.transaction;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -9,20 +10,26 @@ import jakarta.servlet.ServletException;
 
 import models.Transaction;
 import models.TransactionFull;
+import utils.ExceptionHandler;
+import utils.RequestChecker;
 
 public class TransactionRD extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            if (req.getParameter("mode") != null && req.getParameter("mode").equals("d")) {
-                String transactionID = req.getParameter("transaction_id");
-                new Transaction(Integer.parseInt(transactionID)).delete();
+            if (RequestChecker.isDeleteMode(req)) {
+                int transactionId = Integer.parseInt(req.getParameter("transaction-id"));
+                Transaction.delete(transactionId);
             }
 
-            req.setAttribute("transaction_list", TransactionFull.getAll());
-            req.getRequestDispatcher("WEB-INF/jsp/transactions.jsp").forward(req, resp);
-        } catch (Exception err) {
-            err.printStackTrace(resp.getWriter());
+            this.setAttributes(req);
+            req.getRequestDispatcher("Transactions").forward(req, resp);
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e, resp, true);
         }
+    }
+
+    private void setAttributes(HttpServletRequest req) throws ClassNotFoundException, SQLException {
+        req.setAttribute("transaction-list", TransactionFull.getAll());
     }
 }
