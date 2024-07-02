@@ -1,34 +1,30 @@
 package controllers.handlers.rarity;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
-import jakarta.servlet.http.Part;
-
 import models.Rarity;
-import utils.FileProcessing;
+import utils.ExceptionHandler;
+import utils.ImageProcessor;
+import utils.RequestChecker;
+import utils.UrlUtils;
 
 @MultipartConfig
 public class RarityCU extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            if (req.getParameter("mode") != null && req.getParameter("mode").equals("u")) {
-                String rarityID = req.getParameter("rarity_id");
-                Rarity updatedRarity = Rarity.getByID(Integer.parseInt(rarityID));
-                req.setAttribute("updated_rarity", updatedRarity);
+            if (RequestChecker.isUpdateMode(req)) {
+                int rarityId = Integer.parseInt(req.getParameter("rarity-id"));
+                req.setAttribute("updated-rarity", Rarity.getById(rarityId));
             }
 
-            req.getRequestDispatcher("WEB-INF/jsp/insertion-form/rarity-form.jsp").forward(req, resp);
-        } catch (Exception err) {
-            err.printStackTrace(resp.getWriter());
+            req.getRequestDispatcher("RarityForm").forward(req, resp);
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e, resp, true);
         }
     }
 
@@ -36,53 +32,23 @@ public class RarityCU extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             String url = "RarityCU";
-            String name = req.getParameter("rarity_name");
-            String imgPath = "rarity/";
-
-            // Img processing
-            Part imgPart = req.getPart("rarity_img");
-
-            if (imgPart != null && imgPart.getSize() > 0) {
-                String ogName = imgPart.getSubmittedFileName();
-                String extension = FileProcessing.extractExtension(ogName);
-                String newName = FileProcessing.generateUniqueFileName(extension);
-                imgPath += newName;
-                String savePath = getServletContext().getRealPath("/uploads/rarity");
-
-                try (InputStream inputStream = imgPart.getInputStream()) {
-                    File imgFile = new File(savePath + File.separator + newName);
-                    imgFile.createNewFile();
-
-                    FileOutputStream fileOutputStream = new FileOutputStream(imgFile);
-                    byte[] bytes = new byte[1024];
-                    int read;
-
-                    while ((read = inputStream.read(bytes)) != -1) {
-                        fileOutputStream.write(bytes, 0, read);
-                    }
-
-                    fileOutputStream.close();
-                } catch (IOException e) {
-                }
-            }
+            String name = req.getParameter("rarity-name");
+            String imgPath = ImageProcessor.processImage(this, req, "rarity");
 
             Rarity rarity = new Rarity(0, name, imgPath);
 
-            if (req.getParameter("mode") != null && req.getParameter("mode").equals("u")) {
-                int rarityID = Integer.parseInt(req.getParameter("rarity_id"));
+            if (RequestChecker.isUpdateMode(req)) {
+                int rarityId = Integer.parseInt(req.getParameter("rarity-id"));
 
-                url += "?mode=u";
-                url += "&rarity_id=" + rarityID;
-
-                rarity.setRarityID(rarityID);
-                rarity.update();
+                url = UrlUtils.prepareUpdateURL(url, "rarity", rarityId);
+                rarity.update(rarityId);
             } else {
                 rarity.create();
             }
 
             resp.sendRedirect(url);
-        } catch (Exception err) {
-            err.printStackTrace(resp.getWriter());
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e, resp, false);
         }
     }
 }
