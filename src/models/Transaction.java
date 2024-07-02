@@ -11,12 +11,12 @@ import java.util.List;
 import database.Postgres;
 
 public class Transaction {
-    private int transactionID;
+    private int transactionId;
     private Date date;
-    private int transactionTypeID;
-    private int itemID;
-    private int playerID;
-    private int staffID;
+    private int transactionTypeId;
+    private int itemId;
+    private int playerId;
+    private int staffId;
     private String note;
 
     private static final String BASE_QUERY = "SELECT * FROM transaction WHERE 1=1";
@@ -25,28 +25,28 @@ public class Transaction {
     public Transaction() {
     }
 
-    public Transaction(int transactionID) {
-        this.transactionID = transactionID;
+    public Transaction(int transactionId) {
+        this.transactionId = transactionId;
     }
 
-    public Transaction(int transactionID, Date date, int transactionTypeID, int itemID, int playerID, int staffID,
+    public Transaction(int transactionId, Date date, int transactionTypeId, int itemId, int playerId, int staffId,
             String note) {
-        this.transactionID = transactionID;
+        this.transactionId = transactionId;
         this.date = date;
-        this.transactionTypeID = transactionTypeID;
-        this.itemID = itemID;
-        this.playerID = playerID;
-        this.staffID = staffID;
+        this.transactionTypeId = transactionTypeId;
+        this.itemId = itemId;
+        this.playerId = playerId;
+        this.staffId = staffId;
         this.note = note;
     }
 
     // Getters & Setters
-    public int getTransactionID() {
-        return transactionID;
+    public int getTransactionId() {
+        return transactionId;
     }
 
-    public void setTransactionID(int transactionID) {
-        this.transactionID = transactionID;
+    public void setTransactionId(int transactionId) {
+        this.transactionId = transactionId;
     }
 
     public Date getDate() {
@@ -57,36 +57,36 @@ public class Transaction {
         this.date = date;
     }
 
-    public int getTransactionTypeID() {
-        return transactionTypeID;
+    public int getTransactionTypeId() {
+        return transactionTypeId;
     }
 
-    public void setTransactionTypeID(int transactionTypeID) {
-        this.transactionTypeID = transactionTypeID;
+    public void setTransactionTypeId(int transactionTypeId) {
+        this.transactionTypeId = transactionTypeId;
     }
 
-    public int getItemID() {
-        return itemID;
+    public int getItemId() {
+        return itemId;
     }
 
-    public void setItemID(int itemID) {
-        this.itemID = itemID;
+    public void setItemId(int itemId) {
+        this.itemId = itemId;
     }
 
-    public int getPlayerID() {
-        return playerID;
+    public int getPlayerId() {
+        return playerId;
     }
 
-    public void setPlayerID(int playerID) {
-        this.playerID = playerID;
+    public void setPlayerId(int playerId) {
+        this.playerId = playerId;
     }
 
-    public int getStaffID() {
-        return staffID;
+    public int getStaffId() {
+        return staffId;
     }
 
-    public void setStaffID(int staffID) {
-        this.staffID = staffID;
+    public void setStaffId(int staffId) {
+        this.staffId = staffId;
     }
 
     public String getNote() {
@@ -98,17 +98,24 @@ public class Transaction {
     }
 
     // Class methods
-    public void withdraw(int inventoryID) throws ClassNotFoundException, SQLException {
+    public static void withdraw(int inventoryID) throws ClassNotFoundException, SQLException {
+        // TODO: Fix the conditionals for withdrawal
+
         Inventory inventory = Inventory.getById(inventoryID);
 
-        if (inventory == null)
+        if (inventory == null) {
             return;
+        }
 
-        if (inventory.getPlayerId() != 0)
-            new Transaction(1, null, 1, inventory.getItemId(), inventory.getPlayerId(), 1, "").create();
+        if (inventory.getPlayerId() != 0) {
+            Transaction transaction = new Transaction(0, null, 1, inventory.getItemId(), inventory.getPlayerId(), 1, "");
+            transaction.create();
+        }
     }
 
     public void deposit(int inventoryID) throws ClassNotFoundException, SQLException {
+        // TODO: Fix the conditionals for deposit
+
         Inventory inventory = Inventory.getById(inventoryID);
 
         if (inventory == null)
@@ -117,7 +124,7 @@ public class Transaction {
         new Transaction(1, null, 2, inventory.getItemId(), inventory.getPlayerId(), 1, "").create();
     }
 
-    public static Transaction getByID(int transactionID) throws ClassNotFoundException, SQLException {
+    public static Transaction getById(int transactionId) throws ClassNotFoundException, SQLException {
         Transaction transaction = null;
 
         Connection conn = null;
@@ -125,22 +132,22 @@ public class Transaction {
         ResultSet rs = null;
 
         try {
-            String query = "SELECT * FROM transaction WHERE transaction_id = ?";
+            String query = "SELECT date, transaction_type_id, item_id, player_id, staff_id, note FROM transaction WHERE transaction_id = ?";
 
             conn = Postgres.getInstance().getConnection();
             stmt = conn.prepareStatement(query);
-            stmt.setInt(1, transactionID);
+            stmt.setInt(1, transactionId);
             rs = stmt.executeQuery();
 
             while (rs.next()) {
                 Date date = rs.getDate("date");
-                int transactionTypeID = rs.getInt("transaction_type_id");
-                int itemID = rs.getInt("item_id");
-                int playerID = rs.getInt("player_id");
-                int staffID = rs.getInt("staff_id");
+                int transactionTypeId = rs.getInt("transaction_type_id");
+                int itemId = rs.getInt("item_id");
+                int playerId = rs.getInt("player_id");
+                int staffId = rs.getInt("staff_id");
                 String note = rs.getString("note");
 
-                transaction = new Transaction(transactionID, date, transactionTypeID, itemID, playerID, staffID, note);
+                transaction = new Transaction(transactionId, date, transactionTypeId, itemId, playerId, staffId, note);
             }
         } catch (Exception e) {
             if (conn != null) {
@@ -170,7 +177,7 @@ public class Transaction {
 
             conn = Postgres.getInstance().getConnection();
             stmt = conn.prepareStatement(query);
-            stmt.setInt(1, this.transactionID);
+            stmt.setInt(1, this.getTransactionId());
             stmt.executeUpdate();
         } catch (Exception e) {
             if (conn != null) {
@@ -203,19 +210,19 @@ public class Transaction {
 
             conn = Postgres.getInstance().getConnection();
             stmt = conn.prepareStatement(query);
-            stmt.setInt(1, this.transactionTypeID);
-            stmt.setInt(2, this.itemID);
-            stmt.setInt(3, this.playerID);
-            stmt.setInt(4, this.staffID);
-            stmt.setString(5, this.note);
+            stmt.setInt(1, this.getTransactionTypeId());
+            stmt.setInt(2, this.getItemId());
+            stmt.setInt(3, this.getPlayerId());
+            stmt.setInt(4, this.getStaffId());
+            stmt.setString(5, this.getNote());
 
             if (this.getDate() != null)
-                stmt.setDate(6, this.date);
+                stmt.setDate(6, this.getDate());
 
             stmt.executeUpdate();
 
-            if (this.getTransactionTypeID() == 2) {
-                new Inventory(0, itemID, playerID, 10, 1, 0, 0).create();
+            if (this.getTransactionTypeId() == 2) {
+                new Inventory(0, itemId, playerId, 10, 1, 0, 0).create();
             } else {
                 // TODO: Remove inventory row after withdrawal
             }
@@ -244,13 +251,13 @@ public class Transaction {
 
             conn = Postgres.getInstance().getConnection();
             stmt = conn.prepareStatement(query);
-            stmt.setString(1, this.date.toString());
-            stmt.setInt(2, this.transactionTypeID);
-            stmt.setInt(3, this.itemID);
-            stmt.setInt(4, this.playerID);
-            stmt.setInt(5, this.staffID);
-            stmt.setString(6, this.note);
-            stmt.setInt(7, this.transactionID);
+            stmt.setDate(1, this.getDate());
+            stmt.setInt(2, this.getTransactionTypeId());
+            stmt.setInt(3, this.getItemId());
+            stmt.setInt(4, this.getPlayerId());
+            stmt.setInt(5, this.getStaffId());
+            stmt.setString(6, this.getNote());
+            stmt.setInt(7, this.getTransactionId());
             stmt.executeUpdate();
         } catch (Exception e) {
             if (conn != null) {
@@ -311,12 +318,12 @@ public class Transaction {
 
             while (rs.next()) {
                 Transaction transaction = new Transaction();
-                transaction.setTransactionID(rs.getInt("transaction_id"));
+                transaction.setTransactionId(rs.getInt("transaction_id"));
                 transaction.setDate(rs.getDate("date"));
-                transaction.setTransactionTypeID(rs.getInt("transaction_type_id"));
-                transaction.setItemID(rs.getInt("item_id"));
-                transaction.setPlayerID(rs.getInt("player_id"));
-                transaction.setStaffID(rs.getInt("staff_id"));
+                transaction.setTransactionTypeId(rs.getInt("transaction_type_id"));
+                transaction.setItemId(rs.getInt("item_id"));
+                transaction.setPlayerId(rs.getInt("player_id"));
+                transaction.setStaffId(rs.getInt("staff_id"));
                 transaction.setNote(rs.getString("note"));
                 transactions.add(transaction);
             }
