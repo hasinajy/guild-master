@@ -37,7 +37,7 @@ public class InventoryCU extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            String url = "inventory-cu";
+            String url = "InventoryCU";
             int itemID = Integer.parseInt(req.getParameter("item-id"));
             int playerID = Integer.parseInt(req.getParameter("player-id"));
             float durability = Float.parseFloat(req.getParameter("durability"));
@@ -51,7 +51,9 @@ public class InventoryCU extends HttpServlet {
                 inventory.update(inventoryId);
             } else {
                 inventory.create();
-                new Transaction(0, null, 2, itemID, playerID, 1, "").create();
+
+                Transaction transaction = new Transaction(0, null, 2, itemID, playerID, 1, "");
+                transaction.create();
             }
 
             resp.sendRedirect(url);

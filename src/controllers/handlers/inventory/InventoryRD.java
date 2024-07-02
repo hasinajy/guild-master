@@ -30,7 +30,7 @@ public class InventoryRD extends HttpServlet {
             }
 
             this.setAttributes(req);
-            req.getRequestDispatcher("WEB-INF/jsp/inventory.jsp").forward(req, resp);
+            req.getRequestDispatcher("Inventories").forward(req, resp);
         } catch (Exception e) {
             ExceptionHandler.handleException(e, resp, true);
         }
