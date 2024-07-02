@@ -1,6 +1,7 @@
 package controllers.handlers.inventory;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,25 +13,25 @@ import models.PlayerFull;
 import models.Rarity;
 import models.Transaction;
 import models.Type;
+import utils.ExceptionHandler;
+import utils.RequestChecker;
+import utils.UrlUtils;
 import models.Inventory;
 
 public class InventoryCU extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            if (req.getParameter("mode") != null && req.getParameter("mode").equals("u")) {
-                String inventoryID = req.getParameter("inventory-id");
-                Inventory updatedInventory = Inventory.getByID(Integer.parseInt(inventoryID));
-                req.setAttribute("updated-inventory", updatedInventory);
+            int inventoryId = Integer.parseInt(req.getParameter("inventory-id"));
+
+            if (RequestChecker.isUpdateMode(req)) {
+                req.setAttribute("updated-inventory", Inventory.getById(inventoryId));
             }
 
-            req.setAttribute("item-list", Item.getAll());
-            req.setAttribute("player-list", PlayerFull.getAll());
-            req.setAttribute("type-list", Type.getAll());
-            req.setAttribute("rarity-list", Rarity.getAll());
-            req.getRequestDispatcher("WEB-INF/jsp/insertion-form/inventory-form.jsp").forward(req, resp);
-        } catch (Exception err) {
-            err.printStackTrace(resp.getWriter());
+            this.setAttributes(req);
+            req.getRequestDispatcher("InventoryForm").forward(req, resp);
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e, resp, true);
         }
     }
 
@@ -44,22 +45,26 @@ public class InventoryCU extends HttpServlet {
 
             Inventory inventory = new Inventory(0, itemID, playerID, durability, 1, 0, 0);
 
-            if (req.getParameter("mode") != null && req.getParameter("mode").equals("u")) {
-                int InventoryID = Integer.parseInt(req.getParameter("inventory-id"));
-                url += "?mode=u";
-                url += "&inventory-id=" + InventoryID;
+            if (RequestChecker.isUpdateMode(req)) {
+                int inventoryId = Integer.parseInt(req.getParameter("inventory-id"));
 
-                inventory.setInventoryID(InventoryID);
-                inventory.update();
+                url = UrlUtils.prepareUpdateURL(url, "inventory", inventoryId);
+                inventory.update(inventoryId);
             } else {
                 inventory.create();
                 new Transaction(0, null, 2, itemID, playerID, 1, "").create();
-                ;
             }
 
             resp.sendRedirect(url);
-        } catch (Exception err) {
-            err.printStackTrace(resp.getWriter());
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e, resp, false);
         }
+    }
+
+    private void setAttributes(HttpServletRequest req) throws ClassNotFoundException, SQLException {
+        req.setAttribute("item-list", Item.getAll());
+        req.setAttribute("player-list", PlayerFull.getAll());
+        req.setAttribute("type-list", Type.getAll());
+        req.setAttribute("rarity-list", Rarity.getAll());
     }
 }
