@@ -1,6 +1,7 @@
 package controllers.handlers.inventory;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,26 +11,32 @@ import jakarta.servlet.ServletException;
 import models.Inventory;
 import models.InventoryFull;
 import models.Transaction;
+import utils.ExceptionHandler;
+import utils.RequestChecker;
 
 public class InventoryRD extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            if (req.getParameter("mode") != null && req.getParameter("mode").equals("d")) {
-                String inventoryID = req.getParameter("inventory-id");
+            if (RequestChecker.isDeleteMode(req)) {
+                int inventoryId = Integer.parseInt(req.getParameter("inventory-id"));
 
-                if (req.getParameter("type") != null && req.getParameter("type").equals("w")) {
-                    new Transaction(0).withdraw(Integer.parseInt(inventoryID));
+                if (RequestChecker.isWithdrawMode(req)) {
+                    Transaction.withdraw(inventoryId);
                 }
 
-                new Inventory(Integer.parseInt(inventoryID)).delete();
+                Inventory.delete(inventoryId);
                 resp.sendRedirect("inventories");
             }
 
-            req.setAttribute("inventory-list", InventoryFull.getAll());
+            this.setAttributes(req);
             req.getRequestDispatcher("WEB-INF/jsp/inventory.jsp").forward(req, resp);
-        } catch (Exception err) {
-            err.printStackTrace(resp.getWriter());
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e, resp, true);
         }
+    }
+
+    private void setAttributes(HttpServletRequest req) throws ClassNotFoundException, SQLException {
+        req.setAttribute("inventory-list", InventoryFull.getAll());
     }
 }
