@@ -17,9 +17,8 @@ public class FactionCU extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            int factionId = Integer.parseInt(req.getParameter("faction-id"));
-
             if (RequestChecker.isUpdateMode(req)) {
+                int factionId = Integer.parseInt(req.getParameter("faction-id"));
                 req.setAttribute("updated-faction", Faction.getById(factionId));
             }
 

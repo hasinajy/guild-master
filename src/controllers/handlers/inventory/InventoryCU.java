@@ -22,9 +22,8 @@ public class InventoryCU extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            int inventoryId = Integer.parseInt(req.getParameter("inventory-id"));
-
             if (RequestChecker.isUpdateMode(req)) {
+                int inventoryId = Integer.parseInt(req.getParameter("inventory-id"));
                 req.setAttribute("updated-inventory", Inventory.getById(inventoryId));
             }
 

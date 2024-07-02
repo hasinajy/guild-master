@@ -21,9 +21,8 @@ public class ItemCU extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            int itemId = Integer.parseInt(req.getParameter("item-id"));
-
             if (RequestChecker.isUpdateMode(req)) {
+                int itemId = Integer.parseInt(req.getParameter("item-id"));
                 req.setAttribute("updated-item", Item.getByID(itemId));
             }
 
