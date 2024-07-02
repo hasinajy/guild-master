@@ -1,20 +1,19 @@
 package controllers.handlers.player;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
+import java.sql.SQLException;
 
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
-import jakarta.servlet.http.Part;
-
 import models.Faction;
 import models.Player;
-import utils.FileProcessing;
+import utils.ExceptionHandler;
+import utils.ImageProcessor;
+import utils.RequestChecker;
+import utils.UrlUtils;
 import models.Gender;
 
 @MultipartConfig
@@ -22,21 +21,15 @@ public class PlayerCU extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            if (req.getParameter("mode") != null && req.getParameter("mode").equals("u")) {
-                String playerID = req.getParameter("player_id");
-                Player updatedPlayer = Player.getByID(Integer.parseInt(playerID));
-                req.setAttribute("updated_player", updatedPlayer);
-
-                if (updatedPlayer == null) {
-                    resp.sendRedirect("Player");
-                }
+            if (RequestChecker.isUpdateMode(req)) {
+                int playerId = Integer.parseInt(req.getParameter("player-id"));
+                req.setAttribute("updated-player", Player.getByID(playerId));
             }
 
-            req.setAttribute("gender_list", Gender.getAll());
-            req.setAttribute("faction_list", Faction.getAll());
-            req.getRequestDispatcher("WEB-INF/jsp/insertion-form/player-form.jsp").forward(req, resp);
-        } catch (Exception err) {
-            err.printStackTrace(resp.getWriter());
+            this.setAttributes(req);
+            req.getRequestDispatcher("PlayerForm").forward(req, resp);
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e, resp, true);
         }
     }
 
@@ -45,55 +38,31 @@ public class PlayerCU extends HttpServlet {
         try {
             String url = "PlayerCU";
             String username = req.getParameter("username");
-            String characterName = req.getParameter("character_name");
-            int genderID = Integer.parseInt(req.getParameter("gender_id"));
+            String characterName = req.getParameter("character-name");
+            int genderId = Integer.parseInt(req.getParameter("gender-id"));
             int level = Integer.parseInt(req.getParameter("level"));
-            int factionID = Integer.parseInt(req.getParameter("faction_id"));
-            String imgPath = "player/";
+            int factionId = Integer.parseInt(req.getParameter("faction-id"));
+            String imgPath = ImageProcessor.processImage(null, req, "player");
 
-            // Img processing
-            Part imgPart = req.getPart("player_img");
+            Player player = new Player(0, username, characterName, genderId, level, factionId, "", imgPath);
 
-            if (imgPart != null && imgPart.getSize() > 0) {
-                String ogName = imgPart.getSubmittedFileName();
-                String extension = FileProcessing.extractExtension(ogName);
-                String newName = FileProcessing.generateUniqueFileName(extension);
-                imgPath += newName;
-                String savePath = getServletContext().getRealPath("/uploads/player");
+            if (RequestChecker.isUpdateMode(req)) {
+                int playerId = Integer.parseInt(req.getParameter("player-id"));
 
-                try (InputStream inputStream = imgPart.getInputStream()) {
-                    File imgFile = new File(savePath + File.separator + newName);
-                    imgFile.createNewFile();
-
-                    FileOutputStream fileOutputStream = new FileOutputStream(imgFile);
-                    byte[] bytes = new byte[1024];
-                    int read;
-
-                    while ((read = inputStream.read(bytes)) != -1) {
-                        fileOutputStream.write(bytes, 0, read);
-                    }
-
-                    fileOutputStream.close();
-                } catch (IOException e) {
-                }
-            }
-
-            Player player = new Player(0, username, characterName, genderID, level, factionID, "", imgPath);
-
-            if (req.getParameter("mode") != null && req.getParameter("mode").equals("u")) {
-                int playerID = Integer.parseInt(req.getParameter("player_id"));
-                url += "?mode=u";
-                url += "&player_id=" + playerID;
-
-                player.setPlayerID(playerID);
-                player.update();
+                url = UrlUtils.prepareUpdateURL(url, "player", playerId);
+                player.update(playerId);
             } else {
                 player.create();
             }
 
             resp.sendRedirect(url);
-        } catch (Exception err) {
-            err.printStackTrace(resp.getWriter());
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e, resp, false);
         }
+    }
+
+    private void setAttributes(HttpServletRequest req) throws ClassNotFoundException, SQLException {
+        req.setAttribute("gender-list", Gender.getAll());
+        req.setAttribute("faction-list", Faction.getAll());
     }
 }
