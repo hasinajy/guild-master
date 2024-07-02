@@ -1,34 +1,30 @@
 package controllers.handlers.type;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
-import jakarta.servlet.http.Part;
-
 import models.Type;
-import utils.FileProcessing;
+import utils.ExceptionHandler;
+import utils.ImageProcessor;
+import utils.RequestChecker;
+import utils.UrlUtils;
 
 @MultipartConfig
 public class TypeCU extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            if (req.getParameter("mode") != null && req.getParameter("mode").equals("u")) {
-                String typeID = req.getParameter("type_id");
-                Type updatedType = Type.getByID(Integer.parseInt(typeID));
-                req.setAttribute("updated_type", updatedType);
+            if (RequestChecker.isUpdateMode(req)) {
+                int typeId = Integer.parseInt(req.getParameter("type-id"));
+                req.setAttribute("updated-type", Type.getById(typeId));
             }
 
-            req.getRequestDispatcher("WEB-INF/jsp/insertion-form/type-form.jsp").forward(req, resp);
-        } catch (Exception err) {
-            err.printStackTrace(resp.getWriter());
+            req.getRequestDispatcher("TypeForm").forward(req, resp);
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e, resp, true);
         }
     }
 
@@ -36,53 +32,23 @@ public class TypeCU extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             String url = "TypeCU";
-            String name = req.getParameter("type_name");
-            String imgPath = "type/";
-
-            // Img processing
-            Part imgPart = req.getPart("type_img");
-
-            if (imgPart != null && imgPart.getSize() > 0) {
-                String ogName = imgPart.getSubmittedFileName();
-                String extension = FileProcessing.extractExtension(ogName);
-                String newName = FileProcessing.generateUniqueFileName(extension);
-                imgPath += newName;
-                String savePath = getServletContext().getRealPath("/uploads/type");
-
-                try (InputStream inputStream = imgPart.getInputStream()) {
-                    File imgFile = new File(savePath + File.separator + newName);
-                    imgFile.createNewFile();
-
-                    FileOutputStream fileOutputStream = new FileOutputStream(imgFile);
-                    byte[] bytes = new byte[1024];
-                    int read;
-
-                    while ((read = inputStream.read(bytes)) != -1) {
-                        fileOutputStream.write(bytes, 0, read);
-                    }
-
-                    fileOutputStream.close();
-                } catch (IOException e) {
-                }
-            }
+            String name = req.getParameter("type-name");
+            String imgPath = ImageProcessor.processImage(null, req, "type");
 
             Type type = new Type(0, name, imgPath);
 
-            if (req.getParameter("mode") != null && req.getParameter("mode").equals("u")) {
-                int typeID = Integer.parseInt(req.getParameter("type_id"));
+            if (RequestChecker.isUpdateMode(req)) {
+                int typeId = Integer.parseInt(req.getParameter("type-id"));
 
-                url += "?mode=u";
-                url += "&type_id=" + typeID;
-
-                type.setTypeID(typeID);
-                type.update();
+                url = UrlUtils.prepareUpdateURL(url, "type", typeId);
+                type.update(typeId);
             } else {
                 type.create();
             }
 
             resp.sendRedirect(url);
-        } catch (Exception err) {
-            err.printStackTrace(resp.getWriter());
+        } catch (Exception e) {
+            ExceptionHandler.handleException(e, resp, false);
         }
     }
 }
