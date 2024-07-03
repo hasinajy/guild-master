@@ -122,39 +122,20 @@ public class Faction {
 
     public static List<Faction> getAll() throws ClassNotFoundException, SQLException {
         List<Faction> data = new ArrayList<>();
-
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
+        PostgresResources pg = new PostgresResources();
 
         try {
             String query = "SELECT faction_id, name, img_path FROM faction";
 
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            rs = stmt.executeQuery();
+            pg.initResources(query);
+            pg.executeQuery(false);
 
-            while (rs.next()) {
-                int factionId = rs.getInt("faction_id");
-                String name = rs.getString("name");
-                String imgPath = rs.getString("img_path");
-
-                data.add(new Faction(factionId, name, imgPath));
-            }
+            data = Faction.getTableInstance(pg);
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (rs != null)
-                rs.close();
-
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
 
         return data;
