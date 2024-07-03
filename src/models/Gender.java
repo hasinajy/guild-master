@@ -41,20 +41,26 @@ public class Gender {
         this.name = name;
     }
 
-    // Class methods
-    public static ArrayList<Gender> getAll() throws ClassNotFoundException, SQLException {
-        ArrayList<Gender> data = new ArrayList<>();
+    /* ---------------------------- Database methods ---------------------------- */
+    // Utility methods
+    private static Gender getRowInstance(PostgresResources pg) throws SQLException {
+        Gender gender = new Gender();
 
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
+        gender.setGenderId(pg.getInt("gender_id"));
+        gender.setName(pg.getString("name"));
 
-        try {
-            String query = "SELECT * FROM gender";
+        return gender;
+    }
 
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            rs = stmt.executeQuery();
+    private static List<Gender> getTableInstance(PostgresResources pg) throws SQLException {
+        List<Gender> genderList = new ArrayList<>();
+
+        while (pg.next()) {
+            genderList.add(Gender.getRowInstance(pg));
+        }
+
+        return genderList;
+    }
 
             while (rs.next()) {
                 int genderID = rs.getInt("gender_id");
