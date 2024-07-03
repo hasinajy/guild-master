@@ -1,38 +1,36 @@
 package models;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
-import database.Postgres;
+import database.PostgresResources;
 
 public class Gender {
-    private int genderID;
+    private int genderId;
     private String name;
 
-    // Constructors
+    /* ------------------------------ Constructors ------------------------------ */
     public Gender() {
     }
 
-    public Gender(int genderID) {
-        this.genderID = genderID;
+    public Gender(int genderId) {
+        this.genderId = genderId;
         this.name = "Default Gender";
     }
 
-    public Gender(int genderID, String name) {
-        this.genderID = genderID;
+    public Gender(int genderId, String name) {
+        this.genderId = genderId;
         this.name = name;
     }
 
-    // Getters & Setters
-    public int getGenderID() {
-        return genderID;
+    /* --------------------------- Getters and setters -------------------------- */
+    public int getGenderId() {
+        return genderId;
     }
 
-    public void setGenderID(int genderID) {
-        this.genderID = genderID;
+    public void setGenderId(int genderId) {
+        this.genderId = genderId;
     }
 
     public String getName() {
