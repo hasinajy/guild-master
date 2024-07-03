@@ -1,13 +1,11 @@
 package models;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import database.Postgres;
+import database.PostgresResources;
+import utils.NameChecker;
 
 public class Faction {
     private int factionId;
@@ -55,8 +53,25 @@ public class Faction {
     }
 
     /* ---------------------------- Database methods ---------------------------- */
-    public static void deleteById(int factionId) throws ClassNotFoundException, SQLException {
-        new Faction(factionId).delete();
+    // Utility methods
+    private static Faction getRowInstance(PostgresResources pg) throws SQLException {
+        Faction faction = new Faction();
+
+        faction.setFactionId(pg.getInt("faction_id"));
+        faction.setName(pg.getString("name"));
+        faction.setImgPath(pg.getString("img_path"));
+
+        return faction;
+    }
+
+    private static List<Faction> getTableInstance(PostgresResources pg) throws SQLException {
+        List<Faction> factionList = new ArrayList<>();
+
+        while (pg.next()) {
+            factionList.add(Faction.getRowInstance(pg));
+        }
+
+        return factionList;
     }
 
     public static Faction getById(int factionId) throws ClassNotFoundException, SQLException {
