@@ -1,10 +1,18 @@
 package database;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Time;
+import java.sql.Timestamp;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PostgresResources {
     private Connection conn;
@@ -50,27 +58,35 @@ public class PostgresResources {
     }
 
     public void setStmtValues(Class<?>[] classList, Object[] values) throws IllegalArgumentException, SQLException {
+        setStmtValues(classList, values, null);
+    }
+
+    public void setStmtValues(Class<?>[] classList, Object[] values, int[] indexList)
+            throws IllegalArgumentException, SQLException {
         if (classList.length != values.length) {
             throw new IllegalArgumentException("Class list and values should have the same length");
         }
 
-        for (int i = 0; i < classList.length; i++) {
-            Class<?> clazz = classList[i];
-            Object value = values[i];
-            int stmtIndex = i + 1;
+        int stmtIndex;
 
-            if (clazz == int.class || clazz == Integer.class) {
-                this.getStmt().setInt(stmtIndex, (int) value);
-            } else if (clazz == float.class || clazz == Float.class) {
-                this.getStmt().setFloat(stmtIndex, (float) value);
-            } else if (clazz == double.class || clazz == Double.class) {
-                this.getStmt().setDouble(stmtIndex, (double) value);
-            } else if (clazz == String.class) {
-                this.getStmt().setString(stmtIndex, (String) value);
-            } else if (clazz == Date.class) {
-                this.getStmt().setDate(stmtIndex, (Date) value);
-            }
+        for (int i = 0; i < classList.length; i++) {
+            stmtIndex = (indexList == null) ? i + 1 : indexList[i];
+
+            this.setStmtValue(classList[i], stmtIndex, values[i]);
         }
+    }
+
+        }
+    }
+
+    public void setStmtValues(Class<?> clazz, Object[] values) throws IllegalArgumentException, SQLException {
+        List<Class<?>> classList = new ArrayList<>();
+
+        for (int i = 0; i < values.length; i++) {
+            classList.add(clazz);
+        }
+
+        this.setStmtValues(classList.toArray(new Class<?>[0]), values);
     }
 
     public void executeQuery(boolean isUpdate) throws UnsupportedOperationException, SQLException {
