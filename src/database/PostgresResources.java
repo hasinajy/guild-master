@@ -157,4 +157,8 @@ public class PostgresResources {
     public boolean next() throws SQLException {
         return this.getRs().next();
     }
+
+    public String getString(String columnName) throws SQLException {
+        return this.getRs().getString(columnName);
+    }
 }
