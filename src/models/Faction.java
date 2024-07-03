@@ -176,50 +176,25 @@ public class Faction {
         this.update();
     }
 
-            if (conn != null)
-                conn.close();
-        }
+    // Delete
+    public static void deleteById(int factionId) throws ClassNotFoundException, SQLException {
+        new Faction(factionId).delete();
     }
 
-    public void update() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
+    public void delete() throws ClassNotFoundException, SQLException {
+        PostgresResources pg = new PostgresResources();
 
         try {
-            conn = Postgres.getInstance().getConnection();
+            String query = "DELETE FROM faction WHERE faction_id = ?";
 
-            if (this.getImgPath().equals("faction/")) {
-                String query = "UPDATE faction SET name = ? WHERE faction_id = ?";
-
-                stmt = conn.prepareStatement(query);
-                stmt.setString(1, this.getName());
-                stmt.setInt(2, this.getFactionId());
-            } else {
-                String query = "UPDATE faction SET name = ?, img_path = ? WHERE faction_id = ?";
-
-                stmt = conn.prepareStatement(query);
-                stmt.setString(1, this.getName());
-                stmt.setString(2, this.getImgPath());
-                stmt.setInt(3, this.getFactionId());
-            }
-
-            stmt.executeUpdate();
+            pg.initResources(query);
+            pg.setStmtValues(int.class, new Object[] { this.getFactionId() });
+            pg.executeQuery(true);
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
-    }
-
-    public void update(int factionId) throws ClassNotFoundException, SQLException {
-        this.setFactionId(factionId);
-        this.update();
     }
 }
