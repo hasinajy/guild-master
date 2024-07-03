@@ -95,39 +95,26 @@ public class Faction {
     // Read
     public static Faction getById(int factionId) throws ClassNotFoundException, SQLException {
         Faction faction = null;
-
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
+        PostgresResources pg = new PostgresResources();
 
         try {
             String query = "SELECT name, img_path FROM faction WHERE faction_id = ?";
 
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setInt(1, factionId);
-            rs = stmt.executeQuery();
+            pg.initResources(query);
+            pg.setStmtValues(new Class<?>[] { int.class }, new Object[] { factionId });
+            pg.executeQuery(false);
 
-            while (rs.next()) {
-                String name = rs.getString("name");
-                String imgPath = rs.getString("img_path");
+            while (pg.next()) {
+                String name = pg.getString("name");
+                String imgPath = pg.getString("img_path");
 
                 faction = new Faction(factionId, name, imgPath);
             }
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (rs != null)
-                rs.close();
-
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
 
         return faction;
