@@ -62,26 +62,23 @@ public class Gender {
         return genderList;
     }
 
-            while (rs.next()) {
-                int genderID = rs.getInt("gender_id");
-                String name = rs.getString("name");
+    // Read
+    public static List<Gender> getAll() throws ClassNotFoundException, SQLException {
+        List<Gender> data = new ArrayList<>();
+        PostgresResources pg = new PostgresResources();
 
-                data.add(new Gender(genderID, name));
-            }
+        try {
+            String query = "SELECT gender_id, name FROM gender";
+
+            pg.initResources(query);
+            pg.executeQuery(false);
+
+           data = Gender.getTableInstance(pg);
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (rs != null)
-                rs.close();
-
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
 
         return data;
