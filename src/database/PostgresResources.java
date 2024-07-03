@@ -76,6 +76,35 @@ public class PostgresResources {
         }
     }
 
+    private void setStmtValue(Class<?> clazz, int index, Object value) throws SQLException {
+        if (clazz == int.class || clazz == Integer.class) {
+            this.getStmt().setInt(index, (int) value);
+        } else if (clazz == float.class || clazz == Float.class) {
+            this.getStmt().setFloat(index, (float) value);
+        } else if (clazz == double.class || clazz == Double.class) {
+            this.getStmt().setDouble(index, (double) value);
+        } else if (clazz == long.class || clazz == Long.class) {
+            this.getStmt().setLong(index, (long) value);
+        } else if (clazz == boolean.class || clazz == Boolean.class) {
+            this.getStmt().setBoolean(index, (boolean) value);
+        } else if (clazz == String.class) {
+            this.getStmt().setString(index, (String) value);
+        } else if (clazz == Date.class) {
+            this.getStmt().setDate(index, (Date) value);
+        } else if (clazz == Timestamp.class) {
+            this.getStmt().setTimestamp(index, (Timestamp) value);
+        } else if (clazz == Time.class) {
+            this.getStmt().setTime(index, (Time) value);
+        } else if (clazz == BigDecimal.class) {
+            this.getStmt().setBigDecimal(index, (BigDecimal) value);
+        } else if (clazz == LocalDate.class) {
+            this.getStmt().setDate(index, Date.valueOf((LocalDate) value));
+        } else if (clazz == LocalTime.class) {
+            this.getStmt().setTime(index, Time.valueOf((LocalTime) value));
+        } else if (clazz == LocalDateTime.class) {
+            this.getStmt().setTimestamp(index, Timestamp.valueOf((LocalDateTime) value));
+        } else {
+            throw new SQLException("Unsupported data type: " + clazz.getName());
         }
     }
 
