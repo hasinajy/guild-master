@@ -153,4 +153,8 @@ public class PostgresResources {
             this.getConn().close();
         }
     }
+
+    public boolean next() throws SQLException {
+        return this.getRs().next();
+    }
 }
