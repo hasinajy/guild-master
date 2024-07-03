@@ -74,6 +74,25 @@ public class Faction {
         return factionList;
     }
 
+    // Create
+    public void create() throws ClassNotFoundException, SQLException {
+        PostgresResources pg = new PostgresResources();
+
+        try {
+            String query = "INSERT INTO faction(name, img_path) VALUES (?, ?)";
+
+            pg.initResources(query);
+            pg.setStmtValues(String.class, new Object[] { this.getName(), this.getImgPath() });
+            pg.executeQuery(true);
+        } catch (Exception e) {
+            pg.rollback();
+            throw e;
+        } finally {
+            pg.closeResources();
+        }
+    }
+
+    // Read
     public static Faction getById(int factionId) throws ClassNotFoundException, SQLException {
         Faction faction = null;
 
