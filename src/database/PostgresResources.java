@@ -161,4 +161,8 @@ public class PostgresResources {
     public String getString(String columnName) throws SQLException {
         return this.getRs().getString(columnName);
     }
+
+    public int getInt(String columnName) throws SQLException {
+        return this.getRs().getInt(columnName);
+    }
 }
