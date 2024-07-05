@@ -6,33 +6,40 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import database.Postgres;
+import database.PostgresResources;
 
 public class Inventory {
+    // Primary attributes
     private int inventoryId;
     private int itemId;
     private int playerId;
     private double durability;
     private int quantity;
-    private int typeID;
+
+    // Join attributes
+    private int typeId;
     private int rarityId;
 
-    // Constructors
+    // Queries
+    private static final String CREATE_QUERY = "INSERT INTO inventory(item_id, player_id, durability, quantity) VALUES (?, ?, ?, ?)";
+
+    /* ------------------------------ Constructors ------------------------------ */
     public Inventory(int inventoryId) {
         this.inventoryId = inventoryId;
     }
 
-    public Inventory(int inventoryId, int itemId, int playerId, double durability, int quantity, int typeID,
+    public Inventory(int inventoryId, int itemId, int playerId, double durability, int quantity, int typeId,
             int rarityId) {
         this.setInventoryId(inventoryId);
         this.setItemId(itemId);
         this.setPlayerId(playerId);
         this.setDurability(durability);
         this.setQuantity(quantity);
-        this.setTypeId(typeID);
+        this.setTypeId(typeId);
         this.setRarityId(rarityId);
     }
 
-    // Getters & Setters
+    /* --------------------------- Getters and setters -------------------------- */
     public int getInventoryId() {
         return this.inventoryId;
     }
@@ -74,11 +81,11 @@ public class Inventory {
     }
 
     public int getTypeId() {
-        return this.typeID;
+        return this.typeId;
     }
 
-    public void setTypeId(int typeID) {
-        this.typeID = typeID;
+    public void setTypeId(int typeId) {
+        this.typeId = typeId;
     }
 
     public int getRarityId() {
