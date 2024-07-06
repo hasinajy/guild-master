@@ -40,7 +40,7 @@ public class InventoryCU extends HttpServlet {
             String url = "InventoryCU";
             int itemID = Integer.parseInt(req.getParameter("item-id"));
             int playerID = Integer.parseInt(req.getParameter("player-id"));
-            float durability = Float.parseFloat(req.getParameter("durability"));
+            int durability = Integer.parseInt(req.getParameter("durability"));
 
             Inventory inventory = new Inventory(0, itemID, playerID, durability, 1, 0, 0);
 
