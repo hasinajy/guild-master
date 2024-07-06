@@ -2,7 +2,6 @@ package models;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import database.Postgres;
@@ -96,13 +95,27 @@ public class Inventory {
         this.rarityId = rarityId;
     }
 
-    // User methods
+    /* ---------------------------- Database methods ---------------------------- */
+    // Create
+    public void create() throws ClassNotFoundException, SQLException {
+        PostgresResources pg = new PostgresResources();
+
+        try {
+            pg.initResources(this.getCreateQuery());
+            pg.setStmtValues(this.getCreateClassList(), this.getCreateValues());
+            pg.executeQuery(true);
+        } catch (Exception e) {
+            pg.rollback();
+            throw e;
+        } finally {
+            pg.closeResources();
+        }
+    }
+
+    // Read
     public static Inventory getById(int inventoryId) throws ClassNotFoundException, SQLException {
         Inventory inventory = null;
-
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
+        PostgresResources pg = new PostgresResources();
 
         try {
             String query = "SELECT\r\n" + //
@@ -121,109 +134,42 @@ public class Inventory {
                     "WHERE\r\n" + //
                     "    inventory_id = ?;";
 
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setInt(1, inventoryId);
-            rs = stmt.executeQuery();
+            pg.initResources(query);
+            pg.setStmtValues(int.class, new Object[] { inventoryId });
+            pg.executeQuery(false);
 
-            while (rs.next()) {
-                int itemId = rs.getInt("item_id");
-                int playerId = rs.getInt("player_id");
-                double durability = Math.round(10 * (double) rs.getFloat("durability"));
-                int quantity = rs.getInt("quantity");
-                int typeID = rs.getInt("type_id");
-                int rarityId = rs.getInt("rarity_id");
+            while (pg.next()) {
+                int itemId = pg.getInt("item_id");
+                int playerId = pg.getInt("player_id");
+                double durability = Math.round(10 * (double) pg.getFloat("durability"));
+                int quantity = pg.getInt("quantity");
+                int typeId = pg.getInt("type_id");
+                int rarityId = pg.getInt("rarity_id");
 
-                if (rs.getString("is_deleted").equals("t"))
+                if (pg.getString("is_deleted").equals("t"))
                     playerId = 0;
 
-                inventory = new Inventory(inventoryId, itemId, playerId, durability, quantity, typeID, rarityId);
+                inventory = new Inventory(inventoryId, itemId, playerId, durability, quantity, typeId, rarityId);
             }
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (rs != null)
-                rs.close();
-
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
 
         return inventory;
     }
 
-    public void delete() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-
-        try {
-            String query = "DELETE FROM inventory WHERE inventory_id = ?";
-
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setInt(1, this.getInventoryId());
-            stmt.executeUpdate();
-        } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
-            throw e;
-        } finally {
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
-        }
-    }
-
-    public static void delete(int inventoryId) throws ClassNotFoundException, SQLException {
-        new Inventory(inventoryId).delete();
-    }
-
-    public void create() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-
-        try {
-            String query = "INSERT INTO inventory(item_id, player_id, durability, quantity)"
-                    + " VALUES (?, ?, ?, ?)";
-
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setInt(1, this.getItemId());
-            stmt.setInt(2, this.getPlayerId());
-            stmt.setFloat(3, (float) this.getDurability());
-            stmt.setInt(4, this.getQuantity());
-            stmt.executeUpdate();
-        } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
-            throw e;
-        } finally {
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
-        }
-    }
-
+    // Update
     public void update() throws ClassNotFoundException, SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
 
+        PostgresResources pg = new PostgresResources();
+
         try {
-            String query = "UPDATE inventory SET"
-                    + " item_id = ?, player_id = ?, durability = ?, quantity = ?"
-                    + " WHERE inventory_id = ?";
+            String query = "UPDATE inventory SET item_id = ?, player_id = ?, durability = ?, quantity = ? WHERE inventory_id = ?";
 
             conn = Postgres.getInstance().getConnection();
             stmt = conn.prepareStatement(query);
@@ -250,5 +196,41 @@ public class Inventory {
     public void update(int inventoryId) throws ClassNotFoundException, SQLException {
         this.setInventoryId(inventoryId);
         this.update();
+    }
+
+    // Delete
+    public void delete() throws ClassNotFoundException, SQLException {
+        PostgresResources pg = new PostgresResources();
+
+        try {
+            String query = "DELETE FROM inventory WHERE inventory_id = ?";
+
+            pg.initResources(query);
+            pg.setStmtValues(int.class, new Object[] { this.getInventoryId() });
+            pg.executeQuery(true);
+        } catch (Exception e) {
+            pg.rollback();
+            throw e;
+        } finally {
+            pg.closeResources();
+        }
+    }
+
+    public static void delete(int inventoryId) throws ClassNotFoundException, SQLException {
+        new Inventory(inventoryId).delete();
+    }
+
+    /* ----------------------------- Utility methods ---------------------------- */
+    // Create
+    private String getCreateQuery() {
+        return Inventory.CREATE_QUERY;
+    }
+
+    private Class<?>[] getCreateClassList() {
+        return new Class<?>[] { int.class, int.class, double.class, int.class };
+    }
+
+    private Object[] getCreateValues() {
+        return new Object[] { this.getItemId(), this.getPlayerId(), this.getDurability(), this.getQuantity() };
     }
 }
