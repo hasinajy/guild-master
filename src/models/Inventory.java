@@ -21,6 +21,7 @@ public class Inventory {
 
     // Queries
     private static final String CREATE_QUERY = "INSERT INTO inventory(item_id, player_id, durability, quantity) VALUES (?, ?, ?, ?)";
+    private static final String UPDATE_QUERY = "UPDATE inventory SET item_id = ?, player_id = ?, durability = ?, quantity = ? WHERE inventory_id = ?";
 
     /* ------------------------------ Constructors ------------------------------ */
     public Inventory(int inventoryId) {
@@ -163,33 +164,17 @@ public class Inventory {
 
     // Update
     public void update() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-
         PostgresResources pg = new PostgresResources();
 
         try {
-            String query = "UPDATE inventory SET item_id = ?, player_id = ?, durability = ?, quantity = ? WHERE inventory_id = ?";
-
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setInt(1, this.getItemId());
-            stmt.setInt(2, this.getPlayerId());
-            stmt.setFloat(3, (float) this.getDurability());
-            stmt.setInt(4, this.getQuantity());
-            stmt.setInt(5, this.getInventoryId());
-            stmt.executeUpdate();
+            pg.initResources(this.getUpdateQuery());
+            pg.setStmtValues(this.getUpdateClassList(), this.getUpdateValues());
+            pg.executeQuery(true);
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
     }
 
@@ -227,10 +212,45 @@ public class Inventory {
     }
 
     private Class<?>[] getCreateClassList() {
-        return new Class<?>[] { int.class, int.class, double.class, int.class };
+        return new Class<?>[] {
+                int.class,
+                int.class,
+                double.class,
+                int.class
+        };
     }
 
     private Object[] getCreateValues() {
-        return new Object[] { this.getItemId(), this.getPlayerId(), this.getDurability(), this.getQuantity() };
+        return new Object[] {
+                this.getItemId(),
+                this.getPlayerId(),
+                this.getDurability(),
+                this.getQuantity()
+        };
+    }
+
+    // Update
+    private String getUpdateQuery() {
+        return Inventory.UPDATE_QUERY;
+    }
+
+    private Class<?>[] getUpdateClassList() {
+        return new Class<?>[] {
+                int.class,
+                int.class,
+                double.class,
+                int.class,
+                int.class
+        };
+    }
+
+    private Object[] getUpdateValues() {
+        return new Object[] {
+                this.getItemId(),
+                this.getPlayerId(),
+                this.getDurability(),
+                this.getQuantity(),
+                this.getInventoryId()
+        };
     }
 }
