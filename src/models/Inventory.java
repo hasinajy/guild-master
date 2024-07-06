@@ -1,10 +1,7 @@
 package models;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-import database.Postgres;
 import database.PostgresResources;
 
 public class Inventory {
@@ -22,6 +19,7 @@ public class Inventory {
     // Queries
     private static final String CREATE_QUERY = "INSERT INTO inventory(item_id, player_id, durability, quantity) VALUES (?, ?, ?, ?)";
     private static final String UPDATE_QUERY = "UPDATE inventory SET item_id = ?, player_id = ?, durability = ?, quantity = ? WHERE inventory_id = ?";
+    private static final String DELETE_QUERY = "DELETE FROM inventory WHERE inventory_id = ?";
 
     /* ------------------------------ Constructors ------------------------------ */
     public Inventory(int inventoryId) {
@@ -188,10 +186,8 @@ public class Inventory {
         PostgresResources pg = new PostgresResources();
 
         try {
-            String query = "DELETE FROM inventory WHERE inventory_id = ?";
-
-            pg.initResources(query);
-            pg.setStmtValues(int.class, new Object[] { this.getInventoryId() });
+            pg.initResources(this.getDeleteQuery());
+            pg.setStmtValues(this.getDeleteClassList(), this.getDeleteValues());
             pg.executeQuery(true);
         } catch (Exception e) {
             pg.rollback();
@@ -252,5 +248,18 @@ public class Inventory {
                 this.getQuantity(),
                 this.getInventoryId()
         };
+    }
+
+    // Delete
+    private String getDeleteQuery() {
+        return Inventory.DELETE_QUERY;
+    }
+
+    private Class<?>[] getDeleteClassList() {
+        return new Class[] { int.class };
+    }
+
+    private Object[] getDeleteValues() {
+        return new Object[] { this.getInventoryId() };
     }
 }
