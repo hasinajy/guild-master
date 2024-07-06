@@ -9,7 +9,7 @@ public class Inventory {
     private int inventoryId;
     private int itemId;
     private int playerId;
-    private double durability;
+    private int durability;
     private int quantity;
 
     // Join attributes
@@ -18,15 +18,19 @@ public class Inventory {
 
     // Queries
     private static final String CREATE_QUERY = "INSERT INTO inventory(item_id, player_id, durability, quantity) VALUES (?, ?, ?, ?)";
+    private static final String READ_QUERY = "SELECT inventory_id, item_id, player_id, durability, quantity, type_id, rarity_id, is_deleted FROM v_inventory";
     private static final String UPDATE_QUERY = "UPDATE inventory SET item_id = ?, player_id = ?, durability = ?, quantity = ? WHERE inventory_id = ?";
     private static final String DELETE_QUERY = "DELETE FROM inventory WHERE inventory_id = ?";
 
     /* ------------------------------ Constructors ------------------------------ */
+    public Inventory() {
+    }
+
     public Inventory(int inventoryId) {
         this.inventoryId = inventoryId;
     }
 
-    public Inventory(int inventoryId, int itemId, int playerId, double durability, int quantity, int typeId,
+    public Inventory(int inventoryId, int itemId, int playerId, int durability, int quantity, int typeId,
             int rarityId) {
         this.setInventoryId(inventoryId);
         this.setItemId(itemId);
@@ -62,11 +66,11 @@ public class Inventory {
         this.playerId = playerId;
     }
 
-    public double getDurability() {
+    public int getDurability() {
         return this.durability;
     }
 
-    public void setDurability(double durability) {
+    public void setDurability(int durability) {
         this.durability = durability;
     }
 
@@ -117,39 +121,11 @@ public class Inventory {
         PostgresResources pg = new PostgresResources();
 
         try {
-            String query = "SELECT\r\n" + //
-                    "    inventory_id,\r\n" + //
-                    "    item.item_id AS item_id,\r\n" + //
-                    "    inventory.player_id AS player_id,\r\n" + //
-                    "    durability,\r\n" + //
-                    "    quantity,\r\n" + //
-                    "    item.type_id AS type_id,\r\n" + //
-                    "    item.rarity_id AS rarity_id,\r\n" + //
-                    "    player.is_deleted AS is_deleted\r\n" + //
-                    "FROM\r\n" + //
-                    "    inventory\r\n" + //
-                    "    JOIN item ON inventory.item_id = item.item_id\r\n" + //
-                    "    JOIN player ON inventory.player_id = player.player_id\r\n" + //
-                    "WHERE\r\n" + //
-                    "    inventory_id = ?;";
-
-            pg.initResources(query);
-            pg.setStmtValues(int.class, new Object[] { inventoryId });
+            pg.initResources(Inventory.getReadQuery(true));
+            pg.setStmtValues(Inventory.getReadClassList(true), Inventory.getReadValues(inventoryId));
             pg.executeQuery(false);
 
-            while (pg.next()) {
-                int itemId = pg.getInt("item_id");
-                int playerId = pg.getInt("player_id");
-                double durability = Math.round(10 * (double) pg.getFloat("durability"));
-                int quantity = pg.getInt("quantity");
-                int typeId = pg.getInt("type_id");
-                int rarityId = pg.getInt("rarity_id");
-
-                if (pg.getString("is_deleted").equals("t"))
-                    playerId = 0;
-
-                inventory = new Inventory(inventoryId, itemId, playerId, durability, quantity, typeId, rarityId);
-            }
+            inventory = Inventory.getRowInstance(pg, inventoryId);
         } catch (Exception e) {
             pg.rollback();
             throw e;
@@ -202,6 +178,33 @@ public class Inventory {
     }
 
     /* ----------------------------- Utility methods ---------------------------- */
+    // Object instantiation
+    private static Inventory getRowInstance(PostgresResources pg, int inventoryId) throws SQLException {
+        Inventory inventory = Inventory.getRowInstance(pg);
+        inventory.setInventoryId(inventoryId);
+
+        return inventory;
+    }
+
+    private static Inventory getRowInstance(PostgresResources pg) throws SQLException {
+        Inventory inventory = new Inventory();
+
+        while (pg.next()) {
+            inventory.setItemId(pg.getInt("item_id"));
+            inventory.setPlayerId(pg.getInt("player_id"));
+            inventory.setDurability(pg.getInt("durability"));
+            inventory.setQuantity(pg.getInt("quantity"));
+            inventory.setTypeId(pg.getInt("type_id"));
+            inventory.setRarityId(pg.getInt("rarity_id"));
+
+            if (pg.getString("is_deleted").equals("t")) {
+                inventory.setPlayerId(0);
+            }
+        }
+
+        return inventory;
+    }
+
     // Create
     private String getCreateQuery() {
         return Inventory.CREATE_QUERY;
@@ -223,6 +226,29 @@ public class Inventory {
                 this.getDurability(),
                 this.getQuantity()
         };
+    }
+
+    // Read
+    private static String getReadQuery(boolean hasWhere) {
+        StringBuilder sb = new StringBuilder(Inventory.READ_QUERY);
+
+        if (hasWhere) {
+            sb.append(" WHERE inventory_id = ?");
+        }
+
+        return sb.toString();
+    }
+
+    private static Class<?>[] getReadClassList(boolean hasWhere) {
+        if (hasWhere) {
+            return new Class[] { int.class };
+        }
+
+        return new Class<?>[0];
+    }
+
+    private static Object[] getReadValues(int inventoryId) {
+        return new Object[] { inventoryId };
     }
 
     // Update
