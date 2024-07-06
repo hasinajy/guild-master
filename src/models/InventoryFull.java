@@ -10,50 +10,32 @@ import java.util.List;
 import database.Postgres;
 
 public class InventoryFull {
+    // Primary attributes
     private int inventoryId;
-    private int itemId;
-    private String itemName;
-    private String playerCharacterName;
-    private double durability;
+    private int durability;
     private int quantity;
-    private int typeId;
-    private String typeName;
-    private int rarityId;
-    private String rarityName;
-    private String imgPath;
 
+    // Join attributes
+    private Item item;
+    private Player player;
+
+    // Durability constraints
     public static final int MIN_DURABILITY = 0;
     public static final int MAX_DURABILITY = 100;
 
-    // Constructors
-    public InventoryFull(int inventoryId, String itemName, String playerCharacterName, double durability, int quantity,
-            String typeName, String rarityName, String imgPath) {
-        this.inventoryId = inventoryId;
-        this.itemName = itemName;
-        this.playerCharacterName = playerCharacterName;
-        this.durability = durability;
-        this.quantity = quantity;
-        this.typeName = typeName;
-        this.rarityName = rarityName;
-        this.setImgPath(imgPath);
+    /* ------------------------------ Constructors ------------------------------ */
+    public InventoryFull() {
     }
 
-    public InventoryFull(int inventoryId, int itemId, String itemName, String playerCharacterName, double durability,
-            int quantity, int typeId, String typeName, int rarityId, String rarityName, String imgPath) {
-        this.inventoryId = inventoryId;
-        this.itemId = itemId;
-        this.itemName = itemName;
-        this.playerCharacterName = playerCharacterName;
-        this.durability = durability;
-        this.quantity = quantity;
-        this.typeId = typeId;
-        this.typeName = typeName;
-        this.rarityId = rarityId;
-        this.rarityName = rarityName;
-        this.imgPath = imgPath;
+    public InventoryFull(int inventoryId, Item item, Player player, int durability, int quantity) {
+        this.setInventoryId(inventoryId);
+        this.setItem(item);
+        this.setPlayer(player);
+        this.setDurability(durability);
+        this.setQuantity(quantity);
     }
 
-    // Getters & Setters
+    /* --------------------------- Getters and setters -------------------------- */
     public int getInventoryId() {
         return inventoryId;
     }
@@ -62,35 +44,11 @@ public class InventoryFull {
         this.inventoryId = inventoryId;
     }
 
-    public int getItemId() {
-        return itemId;
-    }
-
-    public void setItemId(int itemId) {
-        this.itemId = itemId;
-    }
-
-    public String getItemName() {
-        return itemName;
-    }
-
-    public void setItemName(String itemName) {
-        this.itemName = itemName;
-    }
-
-    public String getPlayerCharacterName() {
-        return playerCharacterName;
-    }
-
-    public void setPlayerCharacterName(String playerCharacterName) {
-        this.playerCharacterName = playerCharacterName;
-    }
-
-    public double getDurability() {
+    public int getDurability() {
         return durability;
     }
 
-    public void setDurability(double durability) {
+    public void setDurability(int durability) {
         this.durability = durability;
     }
 
@@ -102,10 +60,6 @@ public class InventoryFull {
         this.quantity = quantity;
     }
 
-    public String getTypeName() {
-        return typeName;
-    }
-
     public int getTypeId() {
         return typeId;
     }
@@ -114,35 +68,23 @@ public class InventoryFull {
         this.typeId = typeId;
     }
 
-    public void setTypeName(String typeName) {
-        this.typeName = typeName;
+    public Item getItem() {
+        return item;
     }
 
-    public int getRarityId() {
-        return rarityId;
+    public void setItem(Item item) {
+        this.item = item;
     }
 
-    public void setRarityId(int rarityId) {
-        this.rarityId = rarityId;
+    public Player getPlayer() {
+        return player;
     }
 
-    public String getRarityName() {
-        return rarityName;
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 
-    public void setRarityName(String rarityName) {
-        this.rarityName = rarityName;
-    }
-
-    public String getImgPath() {
-        return this.imgPath;
-    }
-
-    public void setImgPath(String imgPath) {
-        this.imgPath = imgPath;
-    }
-
-    // User methods
+    /* ---------------------------- Database methods ---------------------------- */
     public static InventoryFull getById(int factionID) throws ClassNotFoundException, SQLException {
         InventoryFull inventory = null;
 
