@@ -10,56 +10,35 @@ import java.util.List;
 import database.Postgres;
 
 public class Item {
-    private int itemID;
+    private int itemId;
     private String name;
-    private int typeID;
-    private String sType;
-    private int rarityID;
-    private String sRarity;
+    private Type type;
+    private Rarity rarity;
     private String imgPath;
 
-    // Constructors
+    /* ------------------------------ Constructors ------------------------------ */
     public Item() {
     }
 
-    public Item(int itemID) {
-        this.itemID = itemID;
-        this.name = "Default Item";
+    public Item(int itemId) {
+        this.setItemId(itemId);
     }
 
-    public Item(int itemID, String name, int typeID) {
-        this.itemID = itemID;
-        this.name = name;
-        this.typeID = typeID;
-    }
-
-    public Item(int itemID, String name, int typeID, String imgPath) {
-        this(itemID, name, typeID);
-        this.setImgPath(imgPath);
-    }
-
-    public Item(int itemID, String name, int typeID, int rarityID, String imgPath) {
-        this.setItemID(itemID);
+    public Item(int itemId, String name, Type type, Rarity rarity, String imgPath) {
+        this.setItemId(itemId);
         this.setName(name);
-        this.setTypeID(typeID);
-        this.setRarityID(rarityID);
+        this.setType(type);
+        this.setRarity(rarity);
         this.setImgPath(imgPath);
     }
 
-    public Item(int itemID, String name, int typeID, String sType, int rarityID, String sRarity, String imgPath) {
-        this(itemID, name, typeID, imgPath);
-        this.setType(sType);
-        this.setRarityID(rarityID);
-        this.setRarity(sRarity);
+    /* --------------------------- Getters and setters -------------------------- */
+    public int getItemId() {
+        return itemId;
     }
 
-    // Getters & Setters
-    public int getItemID() {
-        return itemID;
-    }
-
-    public void setItemID(int itemID) {
-        this.itemID = itemID;
+    public void setItemId(int itemId) {
+        this.itemId = itemId;
     }
 
     public String getName() {
@@ -70,36 +49,20 @@ public class Item {
         this.name = name;
     }
 
-    public int getTypeID() {
-        return typeID;
+    public Type getType() {
+        return type;
     }
 
-    public void setTypeID(int typeID) {
-        this.typeID = typeID;
+    public void setType(Type type) {
+        this.type = type;
     }
 
-    public String getType() {
-        return sType;
+    public Rarity getRarity() {
+        return rarity;
     }
 
-    public void setType(String sType) {
-        this.sType = sType;
-    }
-
-    public int getRarityID() {
-        return rarityID;
-    }
-
-    public void setRarityID(int rarityID) {
-        this.rarityID = rarityID;
-    }
-
-    public String getRarity() {
-        return sRarity;
-    }
-
-    public void setRarity(String sRarity) {
-        this.sRarity = sRarity;
+    public void setRarity(Rarity rarity) {
+        this.rarity = rarity;
     }
 
     public String getImgPath() {
@@ -111,7 +74,7 @@ public class Item {
     }
 
     // User methods
-    public static Item getByID(int itemID) throws ClassNotFoundException, SQLException {
+    public static Item getByID(int itemId) throws ClassNotFoundException, SQLException {
         Item item = null;
 
         Connection conn = null;
@@ -139,18 +102,18 @@ public class Item {
 
             conn = Postgres.getInstance().getConnection();
             stmt = conn.prepareStatement(query);
-            stmt.setInt(1, itemID);
+            stmt.setInt(1, itemId);
             rs = stmt.executeQuery();
 
             while (rs.next()) {
                 String name = rs.getString("item_name");
-                int typeID = rs.getInt("type_id");
+                int typeId = rs.getInt("type_id");
                 String type = rs.getString("type_name");
-                int rarityID = rs.getInt("rarity_id");
+                int rarityId = rs.getInt("rarity_id");
                 String rarity = rs.getString("rarity_name");
                 String imgPath = rs.getString("img_path");
 
-                item = new Item(itemID, name, typeID, type, rarityID, rarity, imgPath);
+                item = new Item(itemId, name, typeId, type, rarityId, rarity, imgPath);
             }
         } catch (Exception e) {
             if (conn != null) {
@@ -171,8 +134,8 @@ public class Item {
         return item;
     }
 
-    public static void deleteByID(int itemID) throws ClassNotFoundException, SQLException {
-        new Item(itemID).delete();
+    public static void deleteByID(int itemId) throws ClassNotFoundException, SQLException {
+        new Item(itemId).delete();
     }
 
     public static ArrayList<Item> getAll() throws ClassNotFoundException, SQLException {
@@ -206,15 +169,15 @@ public class Item {
             rs = stmt.executeQuery();
 
             while (rs.next()) {
-                int itemID = rs.getInt("item_id");
+                int itemId = rs.getInt("item_id");
                 String name = rs.getString("item_name");
-                int typeID = rs.getInt("type_id");
+                int typeId = rs.getInt("type_id");
                 String type = rs.getString("type_name");
-                int rarityID = rs.getInt("rarity_id");
+                int rarityId = rs.getInt("rarity_id");
                 String rarity = rs.getString("rarity_name");
                 String imgPath = rs.getString("img_path");
 
-                data.add(new Item(itemID, name, typeID, type, rarityID, rarity, imgPath));
+                data.add(new Item(itemId, name, typeId, type, rarityId, rarity, imgPath));
             }
         } catch (Exception e) {
             if (conn != null) {
@@ -244,7 +207,7 @@ public class Item {
 
             conn = Postgres.getInstance().getConnection();
             stmt = conn.prepareStatement(query);
-            stmt.setInt(1, this.itemID);
+            stmt.setInt(1, this.itemId);
             stmt.executeUpdate();
         } catch (Exception e) {
             if (conn != null) {
@@ -270,8 +233,8 @@ public class Item {
             conn = Postgres.getInstance().getConnection();
             stmt = conn.prepareStatement(query);
             stmt.setString(1, this.name);
-            stmt.setInt(2, this.typeID);
-            stmt.setInt(3, this.rarityID);
+            stmt.setInt(2, this.typeId);
+            stmt.setInt(3, this.rarityId);
             stmt.setString(4, this.imgPath);
             stmt.executeUpdate();
         } catch (Exception e) {
@@ -298,10 +261,10 @@ public class Item {
             conn = Postgres.getInstance().getConnection();
             stmt = conn.prepareStatement(query);
             stmt.setString(1, this.name);
-            stmt.setInt(2, this.typeID);
-            stmt.setInt(3, this.rarityID);
+            stmt.setInt(2, this.typeId);
+            stmt.setInt(3, this.rarityId);
             stmt.setString(4, this.imgPath);
-            stmt.setInt(5, this.itemID);
+            stmt.setInt(5, this.itemId);
             stmt.executeUpdate();
         } catch (Exception e) {
             if (conn != null) {
@@ -315,6 +278,11 @@ public class Item {
             if (conn != null)
                 conn.close();
         }
+    }
+
+    public void update(int itemId) throws ClassNotFoundException, SQLException {
+        this.setItemId(itemId);
+        this.update();
     }
 
     public static List<Item> searchItem(String sName) throws ClassNotFoundException, SQLException {
@@ -361,15 +329,15 @@ public class Item {
             rs = stmt.executeQuery();
 
             while (rs.next()) {
-                int itemID = rs.getInt("item_id");
+                int itemId = rs.getInt("item_id");
                 String name = rs.getString("item_name");
-                int typeID = rs.getInt("type_id");
+                int typeId = rs.getInt("type_id");
                 String type = rs.getString("type_name");
-                int rarityID = rs.getInt("rarity_id");
+                int rarityId = rs.getInt("rarity_id");
                 String rarity = rs.getString("rarity_name");
                 String imgPath = rs.getString("img_path");
 
-                data.add(new Item(itemID, name, typeID, type, rarityID, rarity, imgPath));
+                data.add(new Item(itemId, name, typeId, type, rarityId, rarity, imgPath));
             }
         } catch (Exception e) {
             if (conn != null) {
