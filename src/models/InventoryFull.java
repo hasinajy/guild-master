@@ -8,89 +8,51 @@ import java.util.ArrayList;
 import java.util.List;
 
 import database.Postgres;
+import database.PostgresResources;
 
 public class InventoryFull {
-    private int inventoryID;
-    private int itemID;
-    private String itemName;
-    private String playerCharacterName;
-    private double durability;
+    // Primary attributes
+    private int inventoryId;
+    private int durability;
     private int quantity;
-    private int typeID;
-    private String typeName;
-    private int rarityID;
-    private String rarityName;
-    private String imgPath;
 
+    // Join attributes
+    private Item item;
+    private Player player;
+
+    // Queries
+    private static final String READ_QUERY = "SELECT * FROM v_inventory_full";
+
+    // Durability constraints
     public static final int MIN_DURABILITY = 0;
     public static final int MAX_DURABILITY = 100;
 
-    // Constructors
-    public InventoryFull(int inventoryID, String itemName, String playerCharacterName, double durability, int quantity,
-            String typeName, String rarityName, String imgPath) {
-        this.inventoryID = inventoryID;
-        this.itemName = itemName;
-        this.playerCharacterName = playerCharacterName;
-        this.durability = durability;
-        this.quantity = quantity;
-        this.typeName = typeName;
-        this.rarityName = rarityName;
-        this.setImgPath(imgPath);
+    /* ------------------------------ Constructors ------------------------------ */
+    public InventoryFull() {
     }
 
-    public InventoryFull(int inventoryID, int itemID, String itemName, String playerCharacterName, double durability,
-            int quantity, int typeID, String typeName, int rarityID, String rarityName, String imgPath) {
-        this.inventoryID = inventoryID;
-        this.itemID = itemID;
-        this.itemName = itemName;
-        this.playerCharacterName = playerCharacterName;
-        this.durability = durability;
-        this.quantity = quantity;
-        this.typeID = typeID;
-        this.typeName = typeName;
-        this.rarityID = rarityID;
-        this.rarityName = rarityName;
-        this.imgPath = imgPath;
+    public InventoryFull(int inventoryId, Item item, Player player, int durability, int quantity) {
+        this.setInventoryId(inventoryId);
+        this.setItem(item);
+        this.setPlayer(player);
+        this.setDurability(durability);
+        this.setQuantity(quantity);
     }
 
-    // Getters & Setters
-    public int getInventoryID() {
-        return inventoryID;
+    /* --------------------------- Getters and setters -------------------------- */
+    public int getInventoryId() {
+        return inventoryId;
     }
 
-    public void setInventoryID(int inventoryID) {
-        this.inventoryID = inventoryID;
+    public void setInventoryId(int inventoryId) {
+        this.inventoryId = inventoryId;
     }
 
-    public int getItemID() {
-        return itemID;
-    }
-
-    public void setItemID(int itemID) {
-        this.itemID = itemID;
-    }
-
-    public String getItemName() {
-        return itemName;
-    }
-
-    public void setItemName(String itemName) {
-        this.itemName = itemName;
-    }
-
-    public String getPlayerCharacterName() {
-        return playerCharacterName;
-    }
-
-    public void setPlayerCharacterName(String playerCharacterName) {
-        this.playerCharacterName = playerCharacterName;
-    }
-
-    public double getDurability() {
+    public int getDurability() {
         return durability;
     }
 
-    public void setDurability(double durability) {
+    public void setDurability(int durability) {
         this.durability = durability;
     }
 
@@ -102,163 +64,45 @@ public class InventoryFull {
         this.quantity = quantity;
     }
 
-    public String getTypeName() {
-        return typeName;
+    public Item getItem() {
+        return item;
     }
 
-    public int getTypeID() {
-        return typeID;
+    public void setItem(Item item) {
+        this.item = item;
     }
 
-    public void setTypeID(int typeID) {
-        this.typeID = typeID;
+    public Player getPlayer() {
+        return player;
     }
 
-    public void setTypeName(String typeName) {
-        this.typeName = typeName;
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 
-    public int getRarityID() {
-        return rarityID;
-    }
-
-    public void setRarityID(int rarityID) {
-        this.rarityID = rarityID;
-    }
-
-    public String getRarityName() {
-        return rarityName;
-    }
-
-    public void setRarityName(String rarityName) {
-        this.rarityName = rarityName;
-    }
-
-    public String getImgPath() {
-        return this.imgPath;
-    }
-
-    public void setImgPath(String imgPath) {
-        this.imgPath = imgPath;
-    }
-
-    // User methods
-    public static InventoryFull getByID(int factionID) throws ClassNotFoundException, SQLException {
-        InventoryFull inventory = null;
+    /* ---------------------------- Database methods ---------------------------- */
+    public static List<InventoryFull> getAll() throws ClassNotFoundException, SQLException {
+        List<InventoryFull> data = new ArrayList<>();
 
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
 
-        try {
-            String query = "SELECT\r\n" + //
-                    "    inventory.inventory_id AS inventory_id,\r\n" + //
-                    "    item.item_id AS item_id,\r\n" + //
-                    "    item.name AS item_name,\r\n" + //
-                    "    player.character_name AS character_name,\r\n" + //
-                    "    durability,\r\n" + //
-                    "    quantity,\r\n" + //
-                    "    type.type_id AS type_id,\r\n" + //
-                    "    type.name AS type_name,\r\n" + //
-                    "    rarity.rarity_id AS rarity_id,\r\n" + //
-                    "    rarity.name AS rarity_name,\r\n" + //
-                    "    item.img_path AS img_path,\r\n" + //
-                    "    player.is_deleted AS player_deleted\r\n" + //
-                    "FROM\r\n" + //
-                    "    inventory\r\n" + //
-                    "    JOIN item ON inventory.item_id = item.item_id\r\n" + //
-                    "    LEFT JOIN type ON item.type_id = type.type_id\r\n" + //
-                    "    LEFT JOIN rarity ON item.rarity_id = rarity.rarity_id\r\n" + //
-                    "    JOIN player ON inventory.player_id = player.player_id\r\n" + //
-                    "WHERE\r\n" + //
-                    "    item.is_deleted = false\r\n" + //
-                    "ORDER BY inventory_id ASC;";
-
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setInt(1, factionID);
-            rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                int inventoryID = rs.getInt("inventory_id");
-                String itemName = rs.getString("item_name");
-                String characterName = rs.getString("character_name");
-                double durability = 10 * (double) rs.getFloat("durability");
-                int quantity = rs.getInt("quantity");
-                String typeName = rs.getString("type_name");
-                String rarityName = rs.getString("rarity_name");
-                String imgPath = rs.getString("img_path");
-
-                if (rs.getString("player_deleted").equals("t"))
-                    characterName = null;
-
-                inventory = new InventoryFull(inventoryID, itemName, characterName, durability, quantity, typeName,
-                        rarityName, imgPath);
-            }
-        } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
-            throw e;
-        } finally {
-            if (rs != null)
-                rs.close();
-
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
-        }
-
-        return inventory;
-    }
-
-    public static ArrayList<InventoryFull> getAll() throws ClassNotFoundException, SQLException {
-        ArrayList<InventoryFull> data = new ArrayList<>();
-
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
+        PostgresResources pg = new PostgresResources();
 
         try {
-            String query = "SELECT\r\n" + //
-                    "    inventory.inventory_id AS inventory_id,\r\n" + //
-                    "    item.item_id AS item_id,\r\n" + //
-                    "    item.name AS item_name,\r\n" + //
-                    "    player.character_name AS character_name,\r\n" + //
-                    "    durability,\r\n" + //
-                    "    quantity,\r\n" + //
-                    "    type.type_id AS type_id,\r\n" + //
-                    "    type.name AS type_name,\r\n" + //
-                    "    rarity.rarity_id AS rarity_id,\r\n" + //
-                    "    rarity.name AS rarity_name,\r\n" + //
-                    "    item.img_path AS img_path,\r\n" + //
-                    "    player.is_deleted AS player_deleted\r\n" + //
-                    "FROM\r\n" + //
-                    "    inventory\r\n" + //
-                    "    JOIN item ON inventory.item_id = item.item_id\r\n" + //
-                    "    LEFT JOIN type ON item.type_id = type.type_id\r\n" + //
-                    "    LEFT JOIN rarity ON item.rarity_id = rarity.rarity_id\r\n" + //
-                    "    JOIN player ON inventory.player_id = player.player_id\r\n" + //
-                    "WHERE\r\n" + //
-                    "    item.is_deleted = false\r\n" + //
-                    "ORDER BY inventory_id ASC;";
-
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            rs = stmt.executeQuery();
+            pg.initResources(InventoryFull.getReadQuery());
 
             while (rs.next()) {
-                int inventoryID = rs.getInt("inventory_id");
-                int itemID = rs.getInt("item_id");
+                int inventoryId = rs.getInt("inventory_id");
+                int itemId = rs.getInt("item_id");
                 String itemName = rs.getString("item_name");
                 String characterName = rs.getString("character_name");
                 double durability = Math.round(10 * (double) rs.getFloat("durability"));
                 int quantity = rs.getInt("quantity");
-                int typeID = rs.getInt("type_id");
+                int typeId = rs.getInt("type_id");
                 String typeName = rs.getString("type_name");
-                int rarityID = rs.getInt("rarity_id");
+                int rarityId = rs.getInt("rarity_id");
                 String rarityName = rs.getString("rarity_name");
                 String imgPath = rs.getString("img_path");
 
@@ -266,8 +110,8 @@ public class InventoryFull {
                     characterName = null;
 
                 data.add(
-                        new InventoryFull(inventoryID, itemID, itemName, characterName, durability, quantity, typeID,
-                                typeName, rarityID, rarityName, imgPath));
+                        new InventoryFull(inventoryId, itemId, itemName, characterName, durability, quantity, typeId,
+                                typeName, rarityId, rarityName, imgPath));
             }
         } catch (Exception e) {
             if (conn != null) {
@@ -361,23 +205,23 @@ public class InventoryFull {
             rs = stmt.executeQuery();
 
             while (rs.next()) {
-                int inventoryID = rs.getInt("inventory_id");
-                int itemID = rs.getInt("item_id");
+                int inventoryId = rs.getInt("inventory_id");
+                int itemId = rs.getInt("item_id");
                 String itemName = rs.getString("item_name");
                 String characterName = rs.getString("character_name");
                 double durability = Math.round(10 * (double) rs.getFloat("durability"));
                 int quantity = rs.getInt("quantity");
-                int typeID = rs.getInt("type_id");
+                int typeId = rs.getInt("type_id");
                 String typeName = rs.getString("type_name");
-                int rarityID = rs.getInt("rarity_id");
+                int rarityId = rs.getInt("rarity_id");
                 String rarityName = rs.getString("rarity_name");
                 String imgPath = rs.getString("img_path");
 
                 if (rs.getString("player_deleted").equals("t"))
                     characterName = null;
 
-                data.add(new InventoryFull(inventoryID, itemID, itemName, characterName, durability, quantity, typeID,
-                        typeName, rarityID, rarityName, imgPath));
+                data.add(new InventoryFull(inventoryId, itemId, itemName, characterName, durability, quantity, typeId,
+                        typeName, rarityId, rarityName, imgPath));
             }
         } catch (Exception e) {
             if (conn != null) {
@@ -398,58 +242,16 @@ public class InventoryFull {
         return data;
     }
 
-    private static String buildQuery(String sItemName, String sCharName, int minD, int maxD, int sTypeID,
-            int sRarityID, int minQtt, int maxQtt) {
-        String query = "SELECT\r\n" + //
-                "    inventory_id,\r\n" + //
-                "    item.name AS item_name,\r\n" + //
-                "    player.character_name AS character_name,\r\n" + //
-                "    durability,\r\n" + //
-                "    quantity,\r\n" + //
-                "    type.name AS type_name,\r\n" + //
-                "    rarity.name AS rarity_name\r\n" + //
-                "FROM\r\n" + //
-                "    inventory\r\n" + //
-                "    JOIN item ON inventory.item_id = item.item_id\r\n" + //
-                "    JOIN type ON item.type_id = type.type_id\r\n" + //
-                "    JOIN player ON inventory.player_id = player.player_id\r\n" + //
-                "    JOIN rarity ON inventory.rarity_id = rarity.rarity_id\r\n" + //
-                "WHERE\r\n" + //
-                "    1 = 1";
-        StringBuilder queryBuilder = new StringBuilder(query);
+    /* ----------------------------- Utility methods ---------------------------- */
+    // Instantiation methods
+    private static InventoryFull getRowInstance(PostgresResources pg) throws SQLException {
+        InventoryFull inventoryFull = new InventoryFull();
+        // TODO: Instantiate rows
+        return inventoryFull;
+    }
 
-        if (sCharName != null) {
-            queryBuilder.append(" AND character_name LIKE '%").append(sItemName).append("%'");
-        }
-
-        if (sItemName != null) {
-            queryBuilder.append(" AND item_name LIKE '%").append(sItemName).append("%'");
-        }
-
-        if (minD != -1 && maxD != -1) {
-            queryBuilder.append(" AND durability BETWEEN ").append(minD).append(" AND ").append(maxD);
-        } else if (minD != -1) {
-            queryBuilder.append(" AND durability >= ").append(minD);
-        } else if (maxD != -1) {
-            queryBuilder.append(" AND durability <= ").append(maxD);
-        }
-
-        if (sTypeID != -1) {
-            queryBuilder.append(" AND type_id = ").append(sTypeID);
-        }
-
-        if (sRarityID != -1) {
-            queryBuilder.append(" AND rarity_id = ").append(sRarityID);
-        }
-
-        if (minQtt != -1 && maxQtt != -1) {
-            queryBuilder.append(" AND quantity BETWEEN ").append(minQtt).append(" AND ").append(maxQtt);
-        } else if (minQtt != -1) {
-            queryBuilder.append(" AND quantity >= ").append(minQtt);
-        } else if (maxQtt != -1) {
-            queryBuilder.append(" AND quantity <= ").append(maxQtt);
-        }
-
-        return queryBuilder.toString();
+    // Read
+    private static String getReadQuery() {
+        return InventoryFull.READ_QUERY;
     }
 }
