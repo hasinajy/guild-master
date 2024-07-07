@@ -73,8 +73,38 @@ public class Item {
         this.imgPath = imgPath;
     }
 
-    // User methods
-    public static Item getByID(int itemId) throws ClassNotFoundException, SQLException {
+    /* ---------------------------- Database methods ---------------------------- */
+    // Create
+    public void create() throws ClassNotFoundException, SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            String query = "INSERT INTO item(name, type_id, rarity_id, img_path) VALUES (?, ?, ?, ?)";
+
+            conn = Postgres.getInstance().getConnection();
+            stmt = conn.prepareStatement(query);
+            stmt.setString(1, this.name);
+            stmt.setInt(2, this.typeId);
+            stmt.setInt(3, this.rarityId);
+            stmt.setString(4, this.imgPath);
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            if (conn != null) {
+                conn.rollback();
+            }
+            throw e;
+        } finally {
+            if (stmt != null)
+                stmt.close();
+
+            if (conn != null)
+                conn.close();
+        }
+    }
+
+    // Read
+    public static Item getById(int itemId) throws ClassNotFoundException, SQLException {
         Item item = null;
 
         Connection conn = null;
@@ -132,10 +162,6 @@ public class Item {
         }
 
         return item;
-    }
-
-    public static void deleteByID(int itemId) throws ClassNotFoundException, SQLException {
-        new Item(itemId).delete();
     }
 
     public static ArrayList<Item> getAll() throws ClassNotFoundException, SQLException {
@@ -196,93 +222,6 @@ public class Item {
         }
 
         return data;
-    }
-
-    public void delete() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-
-        try {
-            String query = "UPDATE item SET is_deleted = true WHERE item_id = ?";
-
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setInt(1, this.itemId);
-            stmt.executeUpdate();
-        } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
-            throw e;
-        } finally {
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
-        }
-    }
-
-    public void create() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-
-        try {
-            String query = "INSERT INTO item(name, type_id, rarity_id, img_path) VALUES (?, ?, ?, ?)";
-
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setString(1, this.name);
-            stmt.setInt(2, this.typeId);
-            stmt.setInt(3, this.rarityId);
-            stmt.setString(4, this.imgPath);
-            stmt.executeUpdate();
-        } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
-            throw e;
-        } finally {
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
-        }
-    }
-
-    public void update() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-
-        try {
-            String query = "UPDATE item SET name = ?, type_id = ?, rarity_id = ?, img_path = ? WHERE item_id = ?";
-
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setString(1, this.name);
-            stmt.setInt(2, this.typeId);
-            stmt.setInt(3, this.rarityId);
-            stmt.setString(4, this.imgPath);
-            stmt.setInt(5, this.itemId);
-            stmt.executeUpdate();
-        } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
-            throw e;
-        } finally {
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
-        }
-    }
-
-    public void update(int itemId) throws ClassNotFoundException, SQLException {
-        this.setItemId(itemId);
-        this.update();
     }
 
     public static List<Item> searchItem(String sName) throws ClassNotFoundException, SQLException {
@@ -356,5 +295,70 @@ public class Item {
         }
 
         return data;
+    }
+
+    // Update
+    public void update() throws ClassNotFoundException, SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            String query = "UPDATE item SET name = ?, type_id = ?, rarity_id = ?, img_path = ? WHERE item_id = ?";
+
+            conn = Postgres.getInstance().getConnection();
+            stmt = conn.prepareStatement(query);
+            stmt.setString(1, this.name);
+            stmt.setInt(2, this.typeId);
+            stmt.setInt(3, this.rarityId);
+            stmt.setString(4, this.imgPath);
+            stmt.setInt(5, this.itemId);
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            if (conn != null) {
+                conn.rollback();
+            }
+            throw e;
+        } finally {
+            if (stmt != null)
+                stmt.close();
+
+            if (conn != null)
+                conn.close();
+        }
+    }
+
+    public void update(int itemId) throws ClassNotFoundException, SQLException {
+        this.setItemId(itemId);
+        this.update();
+    }
+
+    // Delete
+    public static void deleteById(int itemId) throws ClassNotFoundException, SQLException {
+        new Item(itemId).delete();
+    }
+
+    public void delete() throws ClassNotFoundException, SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            String query = "UPDATE item SET is_deleted = true WHERE item_id = ?";
+
+            conn = Postgres.getInstance().getConnection();
+            stmt = conn.prepareStatement(query);
+            stmt.setInt(1, this.itemId);
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            if (conn != null) {
+                conn.rollback();
+            }
+            throw e;
+        } finally {
+            if (stmt != null)
+                stmt.close();
+
+            if (conn != null)
+                conn.close();
+        }
     }
 }
