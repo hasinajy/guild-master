@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import database.Postgres;
+import database.PostgresResources;
 
 public class InventoryFull {
     // Primary attributes
@@ -18,6 +19,9 @@ public class InventoryFull {
     // Join attributes
     private Item item;
     private Player player;
+
+    // Queries
+    private static final String READ_QUERY = "SELECT * FROM v_inventory_full";
 
     // Durability constraints
     public static final int MIN_DURABILITY = 0;
@@ -60,14 +64,6 @@ public class InventoryFull {
         this.quantity = quantity;
     }
 
-    public int getTypeId() {
-        return typeId;
-    }
-
-    public void setTypeId(int typeId) {
-        this.typeId = typeId;
-    }
-
     public Item getItem() {
         return item;
     }
@@ -85,111 +81,17 @@ public class InventoryFull {
     }
 
     /* ---------------------------- Database methods ---------------------------- */
-    public static InventoryFull getById(int factionID) throws ClassNotFoundException, SQLException {
-        InventoryFull inventory = null;
+    public static List<InventoryFull> getAll() throws ClassNotFoundException, SQLException {
+        List<InventoryFull> data = new ArrayList<>();
 
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
 
-        try {
-            String query = "SELECT\r\n" + //
-                    "    inventory.inventory_id AS inventory_id,\r\n" + //
-                    "    item.item_id AS item_id,\r\n" + //
-                    "    item.name AS item_name,\r\n" + //
-                    "    player.character_name AS character_name,\r\n" + //
-                    "    durability,\r\n" + //
-                    "    quantity,\r\n" + //
-                    "    type.type_id AS type_id,\r\n" + //
-                    "    type.name AS type_name,\r\n" + //
-                    "    rarity.rarity_id AS rarity_id,\r\n" + //
-                    "    rarity.name AS rarity_name,\r\n" + //
-                    "    item.img_path AS img_path,\r\n" + //
-                    "    player.is_deleted AS player_deleted\r\n" + //
-                    "FROM\r\n" + //
-                    "    inventory\r\n" + //
-                    "    JOIN item ON inventory.item_id = item.item_id\r\n" + //
-                    "    LEFT JOIN type ON item.type_id = type.type_id\r\n" + //
-                    "    LEFT JOIN rarity ON item.rarity_id = rarity.rarity_id\r\n" + //
-                    "    JOIN player ON inventory.player_id = player.player_id\r\n" + //
-                    "WHERE\r\n" + //
-                    "    item.is_deleted = false\r\n" + //
-                    "ORDER BY inventory_id ASC;";
-
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setInt(1, factionID);
-            rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                int inventoryId = rs.getInt("inventory_id");
-                String itemName = rs.getString("item_name");
-                String characterName = rs.getString("character_name");
-                double durability = 10 * (double) rs.getFloat("durability");
-                int quantity = rs.getInt("quantity");
-                String typeName = rs.getString("type_name");
-                String rarityName = rs.getString("rarity_name");
-                String imgPath = rs.getString("img_path");
-
-                if (rs.getString("player_deleted").equals("t"))
-                    characterName = null;
-
-                inventory = new InventoryFull(inventoryId, itemName, characterName, durability, quantity, typeName,
-                        rarityName, imgPath);
-            }
-        } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
-            throw e;
-        } finally {
-            if (rs != null)
-                rs.close();
-
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
-        }
-
-        return inventory;
-    }
-
-    public static ArrayList<InventoryFull> getAll() throws ClassNotFoundException, SQLException {
-        ArrayList<InventoryFull> data = new ArrayList<>();
-
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
+        PostgresResources pg = new PostgresResources();
 
         try {
-            String query = "SELECT\r\n" + //
-                    "    inventory.inventory_id AS inventory_id,\r\n" + //
-                    "    item.item_id AS item_id,\r\n" + //
-                    "    item.name AS item_name,\r\n" + //
-                    "    player.character_name AS character_name,\r\n" + //
-                    "    durability,\r\n" + //
-                    "    quantity,\r\n" + //
-                    "    type.type_id AS type_id,\r\n" + //
-                    "    type.name AS type_name,\r\n" + //
-                    "    rarity.rarity_id AS rarity_id,\r\n" + //
-                    "    rarity.name AS rarity_name,\r\n" + //
-                    "    item.img_path AS img_path,\r\n" + //
-                    "    player.is_deleted AS player_deleted\r\n" + //
-                    "FROM\r\n" + //
-                    "    inventory\r\n" + //
-                    "    JOIN item ON inventory.item_id = item.item_id\r\n" + //
-                    "    LEFT JOIN type ON item.type_id = type.type_id\r\n" + //
-                    "    LEFT JOIN rarity ON item.rarity_id = rarity.rarity_id\r\n" + //
-                    "    JOIN player ON inventory.player_id = player.player_id\r\n" + //
-                    "WHERE\r\n" + //
-                    "    item.is_deleted = false\r\n" + //
-                    "ORDER BY inventory_id ASC;";
-
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            rs = stmt.executeQuery();
+            pg.initResources(InventoryFull.getReadQuery());
 
             while (rs.next()) {
                 int inventoryId = rs.getInt("inventory_id");
@@ -338,5 +240,18 @@ public class InventoryFull {
         }
 
         return data;
+    }
+
+    /* ----------------------------- Utility methods ---------------------------- */
+    // Instantiation methods
+    private static InventoryFull getRowInstance(PostgresResources pg) throws SQLException {
+        InventoryFull inventoryFull = new InventoryFull();
+        // TODO: Instantiate rows
+        return inventoryFull;
+    }
+
+    // Read
+    private static String getReadQuery() {
+        return InventoryFull.READ_QUERY;
     }
 }
