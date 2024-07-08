@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import database.Postgres;
+import database.PostgresResources;
 
 public class Item {
     private int itemId;
@@ -76,30 +77,31 @@ public class Item {
     /* ---------------------------- Database methods ---------------------------- */
     // Create
     public void create() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
+        PostgresResources pg = new PostgresResources();
 
         try {
             String query = "INSERT INTO item(name, type_id, rarity_id, img_path) VALUES (?, ?, ?, ?)";
+            Class<?>[] classList = new Class[] {
+                    String.class,
+                    int.class,
+                    int.class,
+                    String.class
+            };
+            Object[] values = new Object[] {
+                    this.getName(),
+                    this.getType().getTypeId(),
+                    this.getRarity().getRarityId(),
+                    this.getImgPath()
+            };
 
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setString(1, this.name);
-            stmt.setInt(2, this.typeId);
-            stmt.setInt(3, this.rarityId);
-            stmt.setString(4, this.imgPath);
-            stmt.executeUpdate();
+            pg.initResources(query);
+            pg.setStmtValues(classList, values);
+            pg.executeQuery(true);
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
     }
 
