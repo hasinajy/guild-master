@@ -17,6 +17,9 @@ public class Item {
     private Rarity rarity;
     private String imgPath;
 
+    // Queries
+    private static final String CREATE_QUERY = "INSERT INTO item(name, type_id, rarity_id, img_path) VALUES (?, ?, ?, ?)";
+
     /* ------------------------------ Constructors ------------------------------ */
     public Item() {
     }
@@ -80,22 +83,8 @@ public class Item {
         PostgresResources pg = new PostgresResources();
 
         try {
-            String query = "INSERT INTO item(name, type_id, rarity_id, img_path) VALUES (?, ?, ?, ?)";
-            Class<?>[] classList = new Class[] {
-                    String.class,
-                    int.class,
-                    int.class,
-                    String.class
-            };
-            Object[] values = new Object[] {
-                    this.getName(),
-                    this.getType().getTypeId(),
-                    this.getRarity().getRarityId(),
-                    this.getImgPath()
-            };
-
-            pg.initResources(query);
-            pg.setStmtValues(classList, values);
+            pg.initResources(this.getCreateQuery());
+            pg.setStmtValues(this.getCreateClassList(), this.getCreateValues());
             pg.executeQuery(true);
         } catch (Exception e) {
             pg.rollback();
@@ -362,5 +351,29 @@ public class Item {
             if (conn != null)
                 conn.close();
         }
+    }
+
+    /* ----------------------------- Utility methods ---------------------------- */
+    // Create
+    private String getCreateQuery() {
+        return Item.CREATE_QUERY;
+    }
+
+    private Class<?>[] getCreateClassList() {
+        return new Class[] {
+                String.class,
+                int.class,
+                int.class,
+                String.class
+        };
+    }
+
+    private Object[] getCreateValues() {
+        return new Object[] {
+                this.getName(),
+                this.getType().getTypeId(),
+                this.getRarity().getRarityId(),
+                this.getImgPath()
+        };
     }
 }
