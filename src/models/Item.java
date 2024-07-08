@@ -20,6 +20,7 @@ public class Item {
     // Queries
     private static final String CREATE_QUERY = "INSERT INTO item(name, type_id, rarity_id, img_path) VALUES (?, ?, ?, ?)";
     private static final String READ_QUERY = "SELECT * FROM v_item";
+    private static final String UPDATE_QUERY = "UPDATE item SET name = ?, type_id = ?, rarity_id = ?, img_path = ? WHERE item_id = ?";
 
     /* ------------------------------ Constructors ------------------------------ */
     public Item() {
@@ -170,31 +171,18 @@ public class Item {
 
     // Update
     public void update() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
+        PostgresResources pg = new PostgresResources();
 
         try {
-            String query = "UPDATE item SET name = ?, type_id = ?, rarity_id = ?, img_path = ? WHERE item_id = ?";
-
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setString(1, this.name);
-            stmt.setInt(2, this.typeId);
-            stmt.setInt(3, this.rarityId);
-            stmt.setString(4, this.imgPath);
-            stmt.setInt(5, this.itemId);
-            stmt.executeUpdate();
+            // TODO: Dynamic query based on img_path
+            pg.initResources(Item.getUpdateQuery());
+            pg.setStmtValues(this.getUpdateClassList(), this.getUpdateValues());
+            pg.executeQuery(true);
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
     }
 
@@ -303,5 +291,30 @@ public class Item {
         }
 
         return sb.toString();
+    }
+
+    // Update
+    private static String getUpdateQuery() {
+        return Item.UPDATE_QUERY;
+    }
+
+    private Class<?>[] getUpdateClassList() {
+        return new Class<?>[] {
+                String.class,
+                int.class,
+                int.class,
+                String.class,
+                int.class
+        };
+    }
+
+    private Object[] getUpdateValues() {
+        return new Object[] {
+                this.getName(),
+                this.getType().getTypeId(),
+                this.getRarity().getRarityId(),
+                this.getImgPath(),
+                this.getItemId()
+        };
     }
 }
