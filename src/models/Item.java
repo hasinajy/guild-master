@@ -118,59 +118,18 @@ public class Item {
 
     public static List<Item> getAll() throws ClassNotFoundException, SQLException {
         List<Item> data = new ArrayList<>();
-
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
+        PostgresResources pg = new PostgresResources();
 
         try {
-            String query = "SELECT " +
-                    "item.item_id AS item_id, " +
-                    "item.name AS item_name, " +
-                    "item.type_id AS type_id, " +
-                    "type.name AS type_name, " +
-                    "item.rarity_id AS rarity_id, " +
-                    "rarity.name AS rarity_name, " +
-                    "item.img_path AS img_path, " +
-                    "item.is_deleted AS is_deleted " +
-                    "FROM " +
-                    "item " +
-                    "LEFT JOIN type ON item.type_id = type.type_id " +
-                    "LEFT JOIN rarity ON item.rarity_id = rarity.rarity_id " +
-                    "WHERE " +
-                    "is_deleted = false " +
-                    "ORDER BY " +
-                    "item_name";
+            pg.initResources(Item.getReadQuery(false));
+            pg.executeQuery(false);
 
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                int itemId = rs.getInt("item_id");
-                String name = rs.getString("item_name");
-                int typeId = rs.getInt("type_id");
-                String type = rs.getString("type_name");
-                int rarityId = rs.getInt("rarity_id");
-                String rarity = rs.getString("rarity_name");
-                String imgPath = rs.getString("img_path");
-
-                data.add(new Item(itemId, name, typeId, type, rarityId, rarity, imgPath));
-            }
+            data = Item.getTableInstance(pg);
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (rs != null)
-                rs.close();
-
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
 
         return data;
@@ -316,20 +275,26 @@ public class Item {
 
     /* ----------------------------- Utility methods ---------------------------- */
     // Instantiation methods
+    private static Item createItemFromResultSet(PostgresResources pg) throws SQLException {
+        Item item = new Item();
+        item.setItemId(pg.getInt("item.item_id"));
+        item.setName(pg.getString("item.name"));
+        item.setImgPath(pg.getString("item.img_path"));
+
+        Type type = Type.getRowInstance(pg);
+        Rarity rarity = Rarity.getRowInstance(pg);
+
+        item.setType(type);
+        item.setRarity(rarity);
+
+        return item;
+    }
+
     private static Item getRowInstance(PostgresResources pg) throws SQLException {
         Item item = null;
 
-        while (pg.next()) {
-            item = new Item();
-            item.setItemId(pg.getInt("item.item_id"));
-            item.setName(pg.getString("item.name"));
-            item.setImgPath(pg.getString("item.img_path"));
-
-            Type type = Type.getRowInstance(pg);
-            Rarity rarity = Rarity.getRowInstance(pg);
-
-            item.setType(type);
-            item.setRarity(rarity);
+        if (pg.next()) {
+            item = createItemFromResultSet(pg);
         }
 
         return item;
@@ -339,17 +304,8 @@ public class Item {
         List<Item> itemList = new ArrayList<>();
 
         while (pg.next()) {
-            Item item = new Item();
-
-            item.setItemId(pg.getInt("item.item_id"));
-            item.setName(pg.getString("item.name"));
-            item.setImgPath(pg.getString("item.img_path"));
-
-            Type type = Type.getRowInstance(pg);
-            Rarity rarity = Rarity.getRowInstance(pg);
-
-            item.setType(type);
-            item.setRarity(rarity);
+            Item item = createItemFromResultSet(pg);
+            itemList.add(item);
         }
 
         return itemList;
