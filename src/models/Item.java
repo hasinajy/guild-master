@@ -135,74 +135,34 @@ public class Item {
         return data;
     }
 
-    public static List<Item> searchItem(String sName) throws ClassNotFoundException, SQLException {
+    public static List<Item> searchItem(String name) throws ClassNotFoundException, SQLException {
         List<Item> data = new ArrayList<>();
-
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
+        PostgresResources pg = new PostgresResources();
 
         try {
-            final String BASE_QUERY = "SELECT " +
-                    "item.item_id AS item_id, " +
-                    "item.name AS item_name, " +
-                    "item.type_id AS type_id, " +
-                    "type.name AS type_name, " +
-                    "item.rarity_id AS rarity_id, " +
-                    "rarity.name AS rarity_name, " +
-                    "item.img_path AS img_path, " +
-                    "item.is_deleted AS is_deleted " +
-                    "FROM " +
-                    "item " +
-                    "LEFT JOIN type ON item.type_id = type.type_id " +
-                    "LEFT JOIN rarity ON item.rarity_id = rarity.rarity_id " +
-                    "WHERE " +
-                    "is_deleted = false";
-
-            StringBuilder query = new StringBuilder(BASE_QUERY);
+            StringBuilder query = new StringBuilder(Item.getReadQuery(false));
             List<Object> parameters = new ArrayList<>();
 
-            if (sName != null && !sName.isEmpty()) {
+            if (name != null && !name.isEmpty()) {
                 query.append(" AND item.name ILIKE ?");
-                parameters.add("%" + sName + "%");
+                parameters.add("%" + name + "%");
             }
 
-            query.append(" ORDER BY item_name");
-
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query.toString());
-
+            Class<?>[] paramTypes = new Class<?>[parameters.size()];
             for (int i = 0; i < parameters.size(); i++) {
-                stmt.setObject(i + 1, parameters.get(i));
+                paramTypes[i] = parameters.get(i).getClass();
             }
 
-            rs = stmt.executeQuery();
+            pg.initResources(query.toString());
+            pg.setStmtValues(paramTypes, parameters.toArray());
+            pg.executeQuery(false);
 
-            while (rs.next()) {
-                int itemId = rs.getInt("item_id");
-                String name = rs.getString("item_name");
-                int typeId = rs.getInt("type_id");
-                String type = rs.getString("type_name");
-                int rarityId = rs.getInt("rarity_id");
-                String rarity = rs.getString("rarity_name");
-                String imgPath = rs.getString("img_path");
-
-                data.add(new Item(itemId, name, typeId, type, rarityId, rarity, imgPath));
-            }
+            data = Item.getTableInstance(pg);
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (rs != null)
-                rs.close();
-
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
 
         return data;
