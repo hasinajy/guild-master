@@ -19,6 +19,7 @@ public class Item {
 
     // Queries
     private static final String CREATE_QUERY = "INSERT INTO item(name, type_id, rarity_id, img_path) VALUES (?, ?, ?, ?)";
+    private static final String READ_QUERY = "SELECT * FROM v_item";
 
     /* ------------------------------ Constructors ------------------------------ */
     public Item() {
@@ -97,59 +98,19 @@ public class Item {
     // Read
     public static Item getById(int itemId) throws ClassNotFoundException, SQLException {
         Item item = null;
-
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
+        PostgresResources pg = new PostgresResources();
 
         try {
-            String query = "SELECT " +
-                    "item.item_id AS item_id, " +
-                    "item.name AS item_name, " +
-                    "item.type_id AS type_id, " +
-                    "type.name AS type_name, " +
-                    "item.rarity_id AS rarity_id, " +
-                    "rarity.name AS rarity_name, " +
-                    "item.img_path AS img_path, " +
-                    "item.is_deleted AS is_deleted " +
-                    "FROM " +
-                    "item " +
-                    "LEFT JOIN type ON item.type_id = type.type_id " +
-                    "LEFT JOIN rarity ON item.rarity_id = rarity.rarity_id " +
-                    "WHERE " +
-                    "(is_deleted = false AND item_id = ?) " +
-                    "ORDER BY " +
-                    "item_name";
+            pg.initResources(Item.getReadQuery(true));
+            pg.setStmtValues(int.class, new Object[] { itemId });
+            pg.executeQuery(false);
 
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setInt(1, itemId);
-            rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                String name = rs.getString("item_name");
-                int typeId = rs.getInt("type_id");
-                String type = rs.getString("type_name");
-                int rarityId = rs.getInt("rarity_id");
-                String rarity = rs.getString("rarity_name");
-                String imgPath = rs.getString("img_path");
-
-                item = new Item(itemId, name, typeId, type, rarityId, rarity, imgPath);
-            }
+            item = Item.getRowInstance(pg);
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (rs != null)
-                rs.close();
-
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
 
         return item;
@@ -354,6 +315,46 @@ public class Item {
     }
 
     /* ----------------------------- Utility methods ---------------------------- */
+    // Instantiation methods
+    private static Item getRowInstance(PostgresResources pg) throws SQLException {
+        Item item = null;
+
+        while (pg.next()) {
+            item = new Item();
+            item.setItemId(pg.getInt("item.item_id"));
+            item.setName(pg.getString("item.name"));
+            item.setImgPath(pg.getString("item.img_path"));
+
+            Type type = Type.getRowInstance(pg);
+            Rarity rarity = Rarity.getRowInstance(pg);
+
+            item.setType(type);
+            item.setRarity(rarity);
+        }
+
+        return item;
+    }
+
+    private static List<Item> getTableInstance(PostgresResources pg) throws SQLException {
+        List<Item> itemList = new ArrayList<>();
+
+        while (pg.next()) {
+            Item item = new Item();
+
+            item.setItemId(pg.getInt("item.item_id"));
+            item.setName(pg.getString("item.name"));
+            item.setImgPath(pg.getString("item.img_path"));
+
+            Type type = Type.getRowInstance(pg);
+            Rarity rarity = Rarity.getRowInstance(pg);
+
+            item.setType(type);
+            item.setRarity(rarity);
+        }
+
+        return itemList;
+    }
+
     // Create
     private String getCreateQuery() {
         return Item.CREATE_QUERY;
@@ -375,5 +376,16 @@ public class Item {
                 this.getRarity().getRarityId(),
                 this.getImgPath()
         };
+    }
+
+    // Read
+    private static String getReadQuery(boolean hasWhere) {
+        StringBuilder sb = new StringBuilder(Item.READ_QUERY);
+
+        if (hasWhere) {
+            sb.append(" WHERE item_id = ?");
+        }
+
+        return sb.toString();
     }
 }
