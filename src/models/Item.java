@@ -164,8 +164,8 @@ public class Item {
         return item;
     }
 
-    public static ArrayList<Item> getAll() throws ClassNotFoundException, SQLException {
-        ArrayList<Item> data = new ArrayList<>();
+    public static List<Item> getAll() throws ClassNotFoundException, SQLException {
+        List<Item> data = new ArrayList<>();
 
         Connection conn = null;
         PreparedStatement stmt = null;
