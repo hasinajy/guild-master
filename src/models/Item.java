@@ -1,13 +1,9 @@
 package models;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import database.Postgres;
 import database.PostgresResources;
 
 public class Item {
@@ -21,6 +17,7 @@ public class Item {
     private static final String CREATE_QUERY = "INSERT INTO item(name, type_id, rarity_id, img_path) VALUES (?, ?, ?, ?)";
     private static final String READ_QUERY = "SELECT * FROM v_item";
     private static final String UPDATE_QUERY = "UPDATE item SET name = ?, type_id = ?, rarity_id = ?, img_path = ? WHERE item_id = ?";
+    private static final String DELETE_QUERY = "UPDATE item SET is_deleted = true WHERE item_id = ?";
 
     /* ------------------------------ Constructors ------------------------------ */
     public Item() {
@@ -197,27 +194,17 @@ public class Item {
     }
 
     public void delete() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
+        PostgresResources pg = new PostgresResources();
 
         try {
-            String query = "UPDATE item SET is_deleted = true WHERE item_id = ?";
-
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setInt(1, this.itemId);
-            stmt.executeUpdate();
+            pg.initResources(Item.getDeleteQuery());
+            pg.setStmtValues(int.class, new Object[] { this.getItemId() });
+            pg.executeQuery(true);
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
     }
 
@@ -316,5 +303,10 @@ public class Item {
                 this.getImgPath(),
                 this.getItemId()
         };
+    }
+
+    // Delete
+    private static String getDeleteQuery() {
+        return Item.DELETE_QUERY;
     }
 }
