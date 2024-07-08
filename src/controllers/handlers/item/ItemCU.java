@@ -23,7 +23,7 @@ public class ItemCU extends HttpServlet {
         try {
             if (RequestChecker.isUpdateMode(req)) {
                 int itemId = Integer.parseInt(req.getParameter("item-id"));
-                req.setAttribute("updated-item", Item.getByID(itemId));
+                req.setAttribute("updated-item", Item.getById(itemId));
             }
 
             this.setAttributes(req);
@@ -38,15 +38,19 @@ public class ItemCU extends HttpServlet {
         try {
             String url = "ItemCU";
             String name = req.getParameter("item-name");
-            int typeId = Integer.parseInt(req.getParameter("type-id"));
-            int rarityId = Integer.parseInt(req.getParameter("rarity-id"));
             String imgPath = ImageProcessor.processImage(this, req, "item");
 
-            Item item = new Item(0, name, typeId, rarityId, imgPath);
+            Type type = new Type();
+            type.setTypeId(Integer.parseInt(req.getParameter("type-id")));
+
+            Rarity rarity = new Rarity();
+            rarity.setRarityId(Integer.parseInt(req.getParameter("rarity-id")));
+
+            Item item = new Item(0, name, type, rarity, imgPath);
 
             if (RequestChecker.isUpdateMode(req)) {
                 int itemId = Integer.parseInt(req.getParameter("item-id"));
-                
+
                 url = UrlUtils.prepareUpdateURL(url, "item", itemId);
                 item.update(itemId);
             } else {

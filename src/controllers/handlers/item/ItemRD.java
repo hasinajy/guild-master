@@ -18,7 +18,7 @@ public class ItemRD extends HttpServlet {
         try {
             if (RequestChecker.isDeleteMode(req)) {
                 int itemId = Integer.parseInt(req.getParameter("item-id"));
-                Item.deleteByID(itemId);
+                Item.deleteById(itemId);
             }
 
             this.setAttributes(req);
