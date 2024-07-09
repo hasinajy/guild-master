@@ -17,7 +17,7 @@ public class Type {
 
     // Queries
     private static final String CREATE_QUERY = "INSERT INTO type(name, img_path) VALUES (?, ?)";
-    private static final String UPDATE_QUERY = "SELECT * FROM type WHERE type_id = ?";
+    private static final String READ_QUERY = "SELECT * FROM type";
 
     /* ------------------------------ Constructors ------------------------------ */
     public Type() {
@@ -82,7 +82,7 @@ public class Type {
         PostgresResources pg = new PostgresResources();
 
         try {
-            pg.initResources(Type.getUpdateQuery());
+            pg.initResources(Type.getReadQuery(true));
             pg.setStmtValues(int.class, new Object[] { typeId });
             pg.executeQuery(false);
 
@@ -99,39 +99,18 @@ public class Type {
 
     public static List<Type> getAll() throws ClassNotFoundException, SQLException {
         List<Type> data = new ArrayList<>();
-
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
+        PostgresResources pg = new PostgresResources();
 
         try {
-            String query = "SELECT * FROM type";
+            pg.initResources(Type.getReadQuery(false));
+            pg.executeQuery(false);
 
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                int typeId = rs.getInt("type_id");
-                String name = rs.getString("name");
-                String imgPath = rs.getString("img_path");
-
-                data.add(new Type(typeId, name, imgPath));
-            }
+            data = Type.getTableInstance(pg);
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (rs != null)
-                rs.close();
-
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
 
         return data;
@@ -236,6 +215,17 @@ public class Type {
         return type;
     }
 
+    protected static List<Type> getTableInstance(PostgresResources pg) throws SQLException {
+        List<Type> typeList = new ArrayList<>();
+
+        while (pg.next()) {
+            Type type = Type.createTypeFromResultSet(pg);
+            typeList.add(type);
+        }
+
+        return typeList;
+    }
+
     // Create
     private static String getCreateQuery() {
         return Type.CREATE_QUERY;
@@ -256,7 +246,13 @@ public class Type {
     }
 
     // Update
-    private static String getUpdateQuery() {
-        return Type.UPDATE_QUERY;
+    private static String getReadQuery(boolean hasWhere) {
+        StringBuilder sb = new StringBuilder(Type.READ_QUERY);
+
+        if (hasWhere) {
+            sb.append(" WHERE type_id = ?");
+        }
+
+        return sb.toString();
     }
 }
