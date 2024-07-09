@@ -9,6 +9,7 @@ import java.util.List;
 
 import database.Postgres;
 import database.PostgresResources;
+import utils.NameChecker;
 
 public class Type {
     private int typeId;
@@ -118,39 +119,33 @@ public class Type {
 
     // Update
     public void update() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
+        PostgresResources pg = new PostgresResources();
 
         try {
-            conn = Postgres.getInstance().getConnection();
+            // TODO: Extract methods for the classList and values
+            
+            String query = null;
+            Class<?>[] classList = null;
+            Object[] values = null;
 
-            if (this.getImgPath().equals("type/")) {
-                String query = "UPDATE type SET name = ? WHERE type_id = ?";
-
-                stmt = conn.prepareStatement(query);
-                stmt.setString(1, this.getName());
-                stmt.setInt(2, this.getTypeId());
+            if (NameChecker.isNewImgPath(this.getImgPath(), "type")) {
+                query = "UPDATE type SET name = ?, img_path = ? WHERE type_id = ?";
+                classList = new Class[] { String.class, String.class, int.class };
+                values = new Object[] { this.getName(), this.getImgPath(), this.getTypeId() };
             } else {
-                String query = "UPDATE type SET name = ?, img_path = ? WHERE type_id = ?";
-
-                stmt = conn.prepareStatement(query);
-                stmt.setString(1, this.getName());
-                stmt.setString(2, this.getImgPath());
-                stmt.setInt(3, this.getTypeId());
+                query = "UPDATE type SET name = ? WHERE type_id = ?";
+                classList = new Class[] { String.class, int.class };
+                values = new Object[] { this.getName(), this.getTypeId() };
             }
 
-            stmt.executeUpdate();
+            pg.initResources(query);
+            pg.setStmtValues(classList, values);
+            pg.executeQuery(true);
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
     }
 
