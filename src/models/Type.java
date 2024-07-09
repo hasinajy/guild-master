@@ -15,6 +15,9 @@ public class Type {
     private String name;
     private String imgPath;
 
+    // Queries
+    private static final String CREATE_QUERY = "INSERT INTO type(name, img_path) VALUES (?, ?)";
+
     /* ------------------------------ Constructors ------------------------------ */
     public Type() {
     }
@@ -58,28 +61,17 @@ public class Type {
     /* ---------------------------- Database methods ---------------------------- */
     // Create
     public void create() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
+        PostgresResources pg = new PostgresResources();
 
         try {
-            String query = "INSERT INTO type(name, img_path) VALUES (?, ?)";
-
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setString(1, this.getName());
-            stmt.setString(2, this.getImgPath());
-            stmt.executeUpdate();
+            pg.initResources(Type.getCreateQuery());
+            pg.setStmtValues(Type.getCreateClassList(), this.getCreateValues());
+            pg.executeQuery(true);
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
     }
 
@@ -251,5 +243,24 @@ public class Type {
         type.setImgPath(pg.getString("type.img_path"));
 
         return type;
+    }
+
+    // Create
+    private static String getCreateQuery() {
+        return Type.CREATE_QUERY;
+    }
+
+    private static Class<?>[] getCreateClassList() {
+        return new Class[] {
+                String.class,
+                String.class
+        };
+    }
+
+    private Object[] getCreateValues() {
+        return new Object[] {
+                this.getName(),
+                this.getImgPath()
+        };
     }
 }
