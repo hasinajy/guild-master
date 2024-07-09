@@ -5,36 +5,38 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
 import database.Postgres;
+import database.PostgresResources;
 
 public class Type {
-    private int typeID;
+    private int typeId;
     private String name;
     private String imgPath;
 
-    // Constructors
+    /* ------------------------------ Constructors ------------------------------ */
     public Type() {
     }
 
-    public Type(int typeID) {
-        this.typeID = typeID;
+    public Type(int typeId) {
+        this.typeId = typeId;
         this.name = "Default Type";
     }
 
-    public Type(int typeID, String name, String imgPath) {
-        this.typeID = typeID;
+    public Type(int typeId, String name, String imgPath) {
+        this.typeId = typeId;
         this.name = name;
         this.setImgPath(imgPath);
     }
 
-    // Getters & Setters
-    public int getTypeID() {
-        return typeID;
+    /* --------------------------- Getters and setters -------------------------- */
+    public int getTypeId() {
+        return typeId;
     }
 
-    public void setTypeID(int typeID) {
-        this.typeID = typeID;
+    public void setTypeId(int typeId) {
+        this.typeId = typeId;
     }
 
     public String getName() {
@@ -53,116 +55,8 @@ public class Type {
         this.imgPath = imgPath;
     }
 
-    // User methods
-    public static Type getByID(int typeID) throws ClassNotFoundException, SQLException {
-        Type type = null;
-
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-
-        try {
-            String query = "SELECT * FROM type WHERE type_id = ?";
-
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setInt(1, typeID);
-            rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                String name = rs.getString("name");
-                String imgPath = rs.getString("img_path");
-
-                type = new Type(typeID, name, imgPath);
-            }
-        } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
-            throw e;
-        } finally {
-            if (rs != null)
-                rs.close();
-
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
-        }
-
-        return type;
-    }
-
-    public static void deleteByID(int typeID) throws ClassNotFoundException, SQLException {
-        new Type(typeID).delete();
-    }
-
-    public static ArrayList<Type> getAll() throws ClassNotFoundException, SQLException {
-        ArrayList<Type> data = new ArrayList<>();
-
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-
-        try {
-            String query = "SELECT * FROM type";
-
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                int typeID = rs.getInt("type_id");
-                String name = rs.getString("name");
-                String imgPath = rs.getString("img_path");
-
-                data.add(new Type(typeID, name, imgPath));
-            }
-        } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
-            throw e;
-        } finally {
-            if (rs != null)
-                rs.close();
-
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
-        }
-
-        return data;
-    }
-
-    public void delete() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-
-        try {
-            String query = "DELETE FROM type WHERE type_id = ?";
-
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setInt(1, this.typeID);
-            stmt.executeUpdate();
-        } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
-            throw e;
-        } finally {
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
-        }
-    }
-
+    /* ---------------------------- Database methods ---------------------------- */
+    // Create
     public void create() throws ClassNotFoundException, SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -189,6 +83,88 @@ public class Type {
         }
     }
 
+    // Read
+    public static Type getById(int typeId) throws ClassNotFoundException, SQLException {
+        Type type = null;
+
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            String query = "SELECT * FROM type WHERE type_id = ?";
+
+            conn = Postgres.getInstance().getConnection();
+            stmt = conn.prepareStatement(query);
+            stmt.setInt(1, typeId);
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                String name = rs.getString("name");
+                String imgPath = rs.getString("img_path");
+
+                type = new Type(typeId, name, imgPath);
+            }
+        } catch (Exception e) {
+            if (conn != null) {
+                conn.rollback();
+            }
+            throw e;
+        } finally {
+            if (rs != null)
+                rs.close();
+
+            if (stmt != null)
+                stmt.close();
+
+            if (conn != null)
+                conn.close();
+        }
+
+        return type;
+    }
+
+    public static List<Type> getAll() throws ClassNotFoundException, SQLException {
+        List<Type> data = new ArrayList<>();
+
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            String query = "SELECT * FROM type";
+
+            conn = Postgres.getInstance().getConnection();
+            stmt = conn.prepareStatement(query);
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                int typeId = rs.getInt("type_id");
+                String name = rs.getString("name");
+                String imgPath = rs.getString("img_path");
+
+                data.add(new Type(typeId, name, imgPath));
+            }
+        } catch (Exception e) {
+            if (conn != null) {
+                conn.rollback();
+            }
+            throw e;
+        } finally {
+            if (rs != null)
+                rs.close();
+
+            if (stmt != null)
+                stmt.close();
+
+            if (conn != null)
+                conn.close();
+        }
+
+        return data;
+    }
+
+    // Update
     public void update() throws ClassNotFoundException, SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -196,20 +172,19 @@ public class Type {
         try {
             conn = Postgres.getInstance().getConnection();
 
-            
             if (this.getImgPath().equals("type/")) {
                 String query = "UPDATE type SET name = ? WHERE type_id = ?";
 
                 stmt = conn.prepareStatement(query);
                 stmt.setString(1, this.getName());
-                stmt.setInt(2, this.getTypeID());
+                stmt.setInt(2, this.getTypeId());
             } else {
                 String query = "UPDATE type SET name = ?, img_path = ? WHERE type_id = ?";
 
                 stmt = conn.prepareStatement(query);
                 stmt.setString(1, this.getName());
                 stmt.setString(2, this.getImgPath());
-                stmt.setInt(3, this.getTypeID());
+                stmt.setInt(3, this.getTypeId());
             }
 
             stmt.executeUpdate();
@@ -225,5 +200,56 @@ public class Type {
             if (conn != null)
                 conn.close();
         }
+    }
+
+    public void update(int typeId) throws ClassNotFoundException, SQLException {
+        this.setTypeId(typeId);
+        this.update();
+    }
+
+    // Delete
+    public static void deleteById(int typeId) throws ClassNotFoundException, SQLException {
+        new Type(typeId).delete();
+    }
+
+    public void delete() throws ClassNotFoundException, SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            String query = "DELETE FROM type WHERE type_id = ?";
+
+            conn = Postgres.getInstance().getConnection();
+            stmt = conn.prepareStatement(query);
+            stmt.setInt(1, this.typeId);
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            if (conn != null) {
+                conn.rollback();
+            }
+            throw e;
+        } finally {
+            if (stmt != null)
+                stmt.close();
+
+            if (conn != null)
+                conn.close();
+        }
+    }
+
+    public static void delete(int typeId) throws ClassNotFoundException, SQLException {
+        new Type(typeId).delete();
+    }
+
+    /* ----------------------------- Utility methods ---------------------------- */
+    // Instantiation methods
+    protected static Type getRowInstance(PostgresResources pg) throws SQLException {
+        Type type = new Type();
+
+        type.setTypeId(pg.getInt("type.type_id"));
+        type.setName(pg.getString("type.name"));
+        type.setImgPath(pg.getString("type.img_path"));
+
+        return type;
     }
 }
