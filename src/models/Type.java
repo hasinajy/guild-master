@@ -17,6 +17,7 @@ public class Type {
 
     // Queries
     private static final String CREATE_QUERY = "INSERT INTO type(name, img_path) VALUES (?, ?)";
+    private static final String UPDATE_QUERY = "SELECT * FROM type WHERE type_id = ?";
 
     /* ------------------------------ Constructors ------------------------------ */
     public Type() {
@@ -78,39 +79,19 @@ public class Type {
     // Read
     public static Type getById(int typeId) throws ClassNotFoundException, SQLException {
         Type type = null;
-
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
+        PostgresResources pg = new PostgresResources();
 
         try {
-            String query = "SELECT * FROM type WHERE type_id = ?";
+            pg.initResources(Type.getUpdateQuery());
+            pg.setStmtValues(int.class, new Object[] { typeId });
+            pg.executeQuery(false);
 
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setInt(1, typeId);
-            rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                String name = rs.getString("name");
-                String imgPath = rs.getString("img_path");
-
-                type = new Type(typeId, name, imgPath);
-            }
+            type = Type.createTypeFromResultSet(pg);
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (rs != null)
-                rs.close();
-
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
 
         return type;
@@ -235,12 +216,22 @@ public class Type {
 
     /* ----------------------------- Utility methods ---------------------------- */
     // Instantiation methods
-    protected static Type getRowInstance(PostgresResources pg) throws SQLException {
+    protected static Type createTypeFromResultSet(PostgresResources pg) throws SQLException {
         Type type = new Type();
 
         type.setTypeId(pg.getInt("type.type_id"));
         type.setName(pg.getString("type.name"));
         type.setImgPath(pg.getString("type.img_path"));
+
+        return type;
+    }
+
+    protected static Type getRowInstance(PostgresResources pg) throws SQLException {
+        Type type = null;
+
+        if (pg.next()) {
+            type = Type.createTypeFromResultSet(pg);
+        }
 
         return type;
     }
@@ -262,5 +253,10 @@ public class Type {
                 this.getName(),
                 this.getImgPath()
         };
+    }
+
+    // Update
+    private static String getUpdateQuery() {
+        return Type.UPDATE_QUERY;
     }
 }
