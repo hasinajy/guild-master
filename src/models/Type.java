@@ -1,13 +1,9 @@
 package models;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import database.Postgres;
 import database.PostgresResources;
 import utils.NameChecker;
 
@@ -19,6 +15,7 @@ public class Type {
     // Queries
     private static final String CREATE_QUERY = "INSERT INTO type(name, img_path) VALUES (?, ?)";
     private static final String READ_QUERY = "SELECT * FROM type";
+    private static final String DELETE_QUERY = "DELETE FROM type WHERE type_id = ?";
 
     /* ------------------------------ Constructors ------------------------------ */
     public Type() {
@@ -123,7 +120,7 @@ public class Type {
 
         try {
             // TODO: Extract methods for the classList and values
-            
+
             String query = null;
             Class<?>[] classList = null;
             Object[] values = null;
@@ -160,27 +157,17 @@ public class Type {
     }
 
     public void delete() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
+        PostgresResources pg = new PostgresResources();
 
         try {
-            String query = "DELETE FROM type WHERE type_id = ?";
-
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setInt(1, this.typeId);
-            stmt.executeUpdate();
+            pg.initResources(Type.getDeleteQuery());
+            pg.setStmtValues(int.class, new Object[] { this.getTypeId() });
+            pg.executeQuery(true);
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
     }
 
@@ -240,7 +227,7 @@ public class Type {
         };
     }
 
-    // Update
+    // Read
     private static String getReadQuery(boolean hasWhere) {
         StringBuilder sb = new StringBuilder(Type.READ_QUERY);
 
@@ -249,5 +236,10 @@ public class Type {
         }
 
         return sb.toString();
+    }
+
+    // Delete
+    private static String getDeleteQuery() {
+        return Type.DELETE_QUERY;
     }
 }
