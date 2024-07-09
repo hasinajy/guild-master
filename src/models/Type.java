@@ -20,13 +20,13 @@ public class Type {
     }
 
     public Type(int typeId) {
-        this.typeId = typeId;
-        this.name = "Default Type";
+        this.setTypeId(typeId);
+        this.setName("Default Type");
     }
 
     public Type(int typeId, String name, String imgPath) {
-        this.typeId = typeId;
-        this.name = name;
+        this.setTypeId(typeId);
+        this.setName(name);
         this.setImgPath(imgPath);
     }
 
