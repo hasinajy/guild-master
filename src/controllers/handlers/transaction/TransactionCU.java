@@ -62,7 +62,7 @@ public class TransactionCU extends HttpServlet {
             player.setPlayerID(playerId);
 
             Staff staff = new Staff();
-            staff.setStaffID(staffId);
+            staff.setStaffId(staffId);
 
             transaction.setTransactionType(transactionType);
             transaction.setDate(sqlDate);

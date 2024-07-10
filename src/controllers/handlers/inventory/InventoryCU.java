@@ -71,7 +71,7 @@ public class InventoryCU extends HttpServlet {
                 player.setPlayerID(playerId);
 
                 Staff staff = new Staff();
-                staff.setStaffID(1);
+                staff.setStaffId(1);
 
                 transaction.setTransactionType(transactionType);
                 transaction.setDate(DateUtils.getCurrentDate());
