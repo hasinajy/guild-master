@@ -7,32 +7,27 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class Staff {
-    private int staffID;
+    private int staffId;
     private String username;
     private String characterName;
 
-    // Constructors
+    /* ------------------------------ Constructors ------------------------------ */
     public Staff() {
     }
 
-    public Staff(int staffID) {
-        this.staffID = staffID;
-        this.username = "Default Staff";
+    public Staff(int staffId, String username, String characterName) {
+        this.setStaffId(staffId);
+        this.setUsername(username);
+        this.setCharacterName(characterName);
     }
 
-    public Staff(int staffID, String username, String characterName) {
-        this.staffID = staffID;
-        this.username = username;
-        this.characterName = characterName;
+    /* --------------------------- Getters and setters -------------------------- */
+    public int getStaffId() {
+        return staffId;
     }
 
-    // Getters & Setters
-    public int getStaffID() {
-        return staffID;
-    }
-
-    public void setStaffID(int staffID) {
-        this.staffID = staffID;
+    public void setStaffId(int staffId) {
+        this.staffId = staffId;
     }
 
     public String getUsername() {
@@ -51,7 +46,7 @@ public class Staff {
         this.characterName = characterName;
     }
 
-    // User methods
+    /* ---------------------------- Database methods ---------------------------- */
     public ArrayList<Faction> getAll() {
         ArrayList<Faction> data = new ArrayList<>();
 
