@@ -13,32 +13,29 @@ import database.PostgresResources;
 
 public class Transaction {
     private int transactionId;
+    private TransactionType transactionType;
     private Date date;
-    private int transactionTypeId;
-    private int itemId;
-    private int playerId;
-    private int staffId;
+    private Item item;
+    private Player player;
+    private Staff staff;
     private String note;
 
+    // Queries
     private static final String BASE_QUERY = "SELECT * FROM transaction WHERE 1=1";
 
     /* ------------------------------ Constructors ------------------------------ */
     public Transaction() {
     }
 
-    public Transaction(int transactionId) {
-        this.transactionId = transactionId;
-    }
-
-    public Transaction(int transactionId, Date date, int transactionTypeId, int itemId, int playerId, int staffId,
-            String note) {
-        this.transactionId = transactionId;
-        this.date = date;
-        this.transactionTypeId = transactionTypeId;
-        this.itemId = itemId;
-        this.playerId = playerId;
-        this.staffId = staffId;
-        this.note = note;
+    public Transaction(int transactionId, TransactionType transactionType, Date date, Item item, Player player,
+            Staff staff, String note) {
+        this.setTransactionId(transactionId);
+        this.setTransactionType(transactionType);
+        this.setDate(date);
+        this.setItem(item);
+        this.setPlayer(player);
+        this.setStaff(staff);
+        this.setNote(note);
     }
 
     /* --------------------------- Getters and setters -------------------------- */
@@ -58,36 +55,36 @@ public class Transaction {
         this.date = date;
     }
 
-    public int getTransactionTypeId() {
-        return transactionTypeId;
+    public TransactionType getTransactionType() {
+        return transactionType;
     }
 
-    public void setTransactionTypeId(int transactionTypeId) {
-        this.transactionTypeId = transactionTypeId;
+    public void setTransactionType(TransactionType transactionType) {
+        this.transactionType = transactionType;
     }
 
-    public int getItemId() {
-        return itemId;
+    public Item getItem() {
+        return item;
     }
 
-    public void setItemId(int itemId) {
-        this.itemId = itemId;
+    public void setItem(Item item) {
+        this.item = item;
     }
 
-    public int getPlayerId() {
-        return playerId;
+    public Player getPlayer() {
+        return player;
     }
 
-    public void setPlayerId(int playerId) {
-        this.playerId = playerId;
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 
-    public int getStaffId() {
-        return staffId;
+    public Staff getStaff() {
+        return staff;
     }
 
-    public void setStaffId(int staffId) {
-        this.staffId = staffId;
+    public void setStaff(Staff staff) {
+        this.staff = staff;
     }
 
     public String getNote() {
