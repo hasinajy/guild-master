@@ -24,6 +24,7 @@ public class Transaction {
     private static final String CREATE_QUERY = "INSERT INTO transaction(transaction_type_id, date, item_id, player_id, staff_id, note) VALUES (?, ?, ?, ?, ?, ?)";
     private static final String READ_QUERY = "SELECT * FROM transaction";
     private static final String UPDATE_QUERY = "UPDATE transaction SET date = ?, transaction_type_id = ?, item_id = ?, player_id = ?, staff_id = ?, note = ? WHERE transaction_id = ?";
+    private static final String DELETE_QUERY = "DELETE FROM transaction WHERE transaction_id = ?";
     private static final String BASE_QUERY = "SELECT * FROM transaction WHERE 1=1";
 
     /* ------------------------------ Constructors ------------------------------ */
@@ -272,32 +273,24 @@ public class Transaction {
 
     // Delete
     public void delete() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
+        PostgresResources pg = new PostgresResources();
 
         try {
-            String query = "DELETE FROM transaction WHERE transaction_id = ?";
-
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setInt(1, this.getTransactionId());
-            stmt.executeUpdate();
+            pg.initResources(Transaction.getDeleteQuery());
+            pg.setStmtValues(int.class, new Object[] { this.getTransactionId() });
+            pg.executeQuery(true);
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
     }
 
     public static void delete(int transactionId) throws ClassNotFoundException, SQLException {
-        new Transaction(transactionId).delete();
+        Transaction transaction = new Transaction();
+        transaction.setTransactionId(transactionId);
+        transaction.delete();
     }
 
     /* ----------------------------- Utility methods ---------------------------- */
@@ -402,5 +395,10 @@ public class Transaction {
                 this.getNote(),
                 this.getTransactionType()
         };
+    }
+
+    // Delete
+    private static String getDeleteQuery() {
+        return Transaction.DELETE_QUERY;
     }
 }
