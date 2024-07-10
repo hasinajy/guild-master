@@ -22,6 +22,7 @@ public class Transaction {
 
     // Queries
     private static final String CREATE_QUERY = "INSERT INTO transaction(transaction_type_id, date, item_id, player_id, staff_id, note) VALUES (?, ?, ?, ?, ?, ?)";
+    private static final String READ_QUERY = "SELECT * FROM transaction";
     private static final String BASE_QUERY = "SELECT * FROM transaction WHERE 1=1";
 
     /* ------------------------------ Constructors ------------------------------ */
@@ -155,43 +156,19 @@ public class Transaction {
     // Read
     public static Transaction getById(int transactionId) throws ClassNotFoundException, SQLException {
         Transaction transaction = null;
-
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
+        PostgresResources pg = new PostgresResources();
 
         try {
-            String query = "SELECT date, transaction_type_id, item_id, player_id, staff_id, note FROM transaction WHERE transaction_id = ?";
+            pg.initResources(Transaction.getReadQuery(true));
+            pg.setStmtValues(int.class, new Object[] { transactionId });
+            pg.executeQuery(false);
 
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setInt(1, transactionId);
-            rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                Date date = rs.getDate("date");
-                int transactionTypeId = rs.getInt("transaction_type_id");
-                int itemId = rs.getInt("item_id");
-                int playerId = rs.getInt("player_id");
-                int staffId = rs.getInt("staff_id");
-                String note = rs.getString("note");
-
-                transaction = new Transaction(transactionId, date, transactionTypeId, itemId, playerId, staffId, note);
-            }
+            transaction = Transaction.getRowInstance(pg);
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (rs != null)
-                rs.close();
-
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
 
         return transaction;
@@ -341,6 +318,42 @@ public class Transaction {
     }
 
     /* ----------------------------- Utility methods ---------------------------- */
+    // Instantiation methods
+    private static Transaction createTransactionFromResultSet(PostgresResources pg) throws SQLException {
+        Transaction transaction = new Transaction();
+
+        TransactionType transactionType = new TransactionType();
+        transactionType.setTransactionTypeId(pg.getInt("transaction.transaction_type_id"));
+        
+        Item item = new Item();
+        item.setItemId(pg.getInt("transaction.item_id"));
+
+        Player player = new Player();
+        player.setPlayerID(pg.getInt("transaction.player_id"));
+
+        Staff staff = new Staff();
+        staff.setStaffID(pg.getInt("transaction.staff_id"));
+
+        transaction.setTransactionType(transactionType);
+        transaction.setDate(pg.getDate("transaction.date"));
+        transaction.setItem(item);
+        transaction.setPlayer(player);
+        transaction.setStaff(staff);
+        transaction.setNote(pg.getString("transaction.note"));
+
+        return transaction;
+    }
+
+    private static Transaction getRowInstance(PostgresResources pg) throws SQLException {
+        Transaction transaction = null;
+
+        if (pg.next()) {
+            transaction = Transaction.createTransactionFromResultSet(pg);
+        }
+
+        return transaction;
+    }
+
     // Create
     private static String getCreateQuery() {
         return Transaction.CREATE_QUERY;
@@ -366,5 +379,16 @@ public class Transaction {
                 this.getStaff().getStaffID(),
                 this.getNote()
         };
+    }
+
+    // Read
+    private static String getReadQuery(boolean hasWhere) {
+        StringBuilder sb = new StringBuilder(Transaction.READ_QUERY);
+
+        if (hasWhere) {
+            sb.append(" WHERE transaction_id = ?");
+        }
+
+        return sb.toString();
     }
 }
