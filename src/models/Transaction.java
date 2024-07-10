@@ -23,6 +23,7 @@ public class Transaction {
     // Queries
     private static final String CREATE_QUERY = "INSERT INTO transaction(transaction_type_id, date, item_id, player_id, staff_id, note) VALUES (?, ?, ?, ?, ?, ?)";
     private static final String READ_QUERY = "SELECT * FROM transaction";
+    private static final String UPDATE_QUERY = "UPDATE transaction SET date = ?, transaction_type_id = ?, item_id = ?, player_id = ?, staff_id = ?, note = ? WHERE transaction_id = ?";
     private static final String BASE_QUERY = "SELECT * FROM transaction WHERE 1=1";
 
     /* ------------------------------ Constructors ------------------------------ */
@@ -250,35 +251,17 @@ public class Transaction {
 
     // Update
     public void update() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
+        PostgresResources pg = new PostgresResources();
 
         try {
-            String query = "UPDATE transaction SET"
-                    + " date = ?, transaction_type_id = ?, item_id = ?, player_id = ?, staff_id = ?, note = ?"
-                    + " WHERE transaction_id = ?";
-
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setDate(1, this.getDate());
-            stmt.setInt(2, this.getTransactionTypeId());
-            stmt.setInt(3, this.getItemId());
-            stmt.setInt(4, this.getPlayerId());
-            stmt.setInt(5, this.getStaffId());
-            stmt.setString(6, this.getNote());
-            stmt.setInt(7, this.getTransactionId());
-            stmt.executeUpdate();
+            pg.initResources(Transaction.getUpdateQuery());
+            pg.setStmtValues(Transaction.getUpdateClassList(), this.getUpdateValues());
+            pg.executeQuery(true);
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
     }
 
@@ -324,7 +307,7 @@ public class Transaction {
 
         TransactionType transactionType = new TransactionType();
         transactionType.setTransactionTypeId(pg.getInt("transaction.transaction_type_id"));
-        
+
         Item item = new Item();
         item.setItemId(pg.getInt("transaction.item_id"));
 
@@ -390,5 +373,34 @@ public class Transaction {
         }
 
         return sb.toString();
+    }
+
+    // Update
+    private static String getUpdateQuery() {
+        return Transaction.UPDATE_QUERY;
+    }
+
+    private static Class<?>[] getUpdateClassList() {
+        return new Class[] {
+                Date.class,
+                int.class,
+                int.class,
+                int.class,
+                int.class,
+                String.class,
+                int.class
+        };
+    }
+
+    private Object[] getUpdateValues() {
+        return new Object[] {
+                this.getDate(),
+                this.getTransactionType().getTransactionTypeId(),
+                this.getItem().getItemId(),
+                this.getPlayer().getPlayerID(),
+                this.getStaff().getStaffID(),
+                this.getNote(),
+                this.getTransactionType()
+        };
     }
 }
