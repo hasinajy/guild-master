@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import database.Postgres;
+import database.PostgresResources;
 
 public class Transaction {
     private int transactionId;
@@ -134,6 +135,8 @@ public class Transaction {
         PreparedStatement stmt = null;
 
         try {
+            // TODO: Check if this.getDate() can be null and if it can be, always add a
+            // default date from the controller
             String query = "";
 
             if (this.getDate() == null) {
