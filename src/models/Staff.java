@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import database.Postgres;
 import database.PostgresResources;
 
 public class Staff {
@@ -82,29 +83,16 @@ public class Staff {
     }
 
     // Update
-    public void update() {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
+    public void update() throws SQLException {
+        PostgresResources pg = new PostgresResources();
 
         try {
-
+            // TODO: Implement the udpate method of the Staff model
         } catch (Exception e) {
-            // Database operation error messages here
+            pg.rollback();
+            throw e;
         } finally {
-            try {
-
-                if (conn != null)
-                    conn.close();
-
-                if (stmt != null)
-                    stmt.close();
-
-                if (rs != null)
-                    rs.close();
-            } catch (SQLException e) {
-                // Closing error messages here
-            }
+            pg.closeResources();
         }
     }
 
