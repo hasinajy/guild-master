@@ -1,17 +1,18 @@
 package models;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
-import database.Postgres;
+import database.PostgresResources;
 
 public class TransactionType {
     private int transactionTypeId;
     private char transactionTypeCode;
     private String name;
+
+    // Queries
+    private static final String READ_QUERY = "SELECT * FROM transaction_type";
 
     /* ------------------------------ Constructors ------------------------------ */
     public TransactionType() {
@@ -49,43 +50,50 @@ public class TransactionType {
     }
 
     /* ---------------------------- Database methods ---------------------------- */
-    public static ArrayList<TransactionType> getAll() throws ClassNotFoundException, SQLException {
-        ArrayList<TransactionType> data = new ArrayList<>();
-
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
+    public static List<TransactionType> getAll() throws ClassNotFoundException, SQLException {
+        List<TransactionType> data = new ArrayList<>();
+        PostgresResources pg = new PostgresResources();
 
         try {
-            String query = "SELECT * FROM transaction_type";
+            pg.initResources(TransactionType.getReadQuery());
+            pg.executeQuery(false);
 
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                int transactionTypeId = rs.getInt("transaction_type_id");
-                char transactionTypeCode = rs.getString("transaction_type_code").charAt(0);
-                String name = rs.getString("name");
-
-                data.add(new TransactionType(transactionTypeId, transactionTypeCode, name));
-            }
+            data = TransactionType.getTableInstance(pg);
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (rs != null)
-                rs.close();
-
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
 
         return data;
+    }
+
+    /* ----------------------------- Utility methods ---------------------------- */
+    // Instantiation methods
+    private static TransactionType createTransactionTypeFromResultSet(PostgresResources pg) throws SQLException {
+        TransactionType transactionType = new TransactionType();
+
+        transactionType.setTransactionTypeId(pg.getInt("transaction_type.transaction_type_id"));
+        transactionType.setTransactionTypeCode(pg.getString("transaction_type.transaction_type_code").charAt(0));
+        transactionType.setName(pg.getString("transaction_type.name"));
+
+        return transactionType;
+    }
+
+    private static List<TransactionType> getTableInstance(PostgresResources pg) throws SQLException {
+        List<TransactionType> transactionTypeList = new ArrayList<>();
+
+        while (pg.next()) {
+            TransactionType transactionType = TransactionType.createTransactionTypeFromResultSet(pg);
+            transactionTypeList.add(transactionType);
+        }
+
+        return transactionTypeList;
+    }
+
+    // Read
+    private static String getReadQuery() {
+        return TransactionType.READ_QUERY;
     }
 }
