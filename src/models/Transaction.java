@@ -21,6 +21,7 @@ public class Transaction {
     private String note;
 
     // Queries
+    private static final String CREATE_QUERY = "INSERT INTO transaction(transaction_type_id, date, item_id, player_id, staff_id, note) VALUES (?, ?, ?, ?, ?, ?)";
     private static final String BASE_QUERY = "SELECT * FROM transaction WHERE 1=1";
 
     /* ------------------------------ Constructors ------------------------------ */
@@ -128,51 +129,26 @@ public class Transaction {
     /* ---------------------------- Database methods ---------------------------- */
     // Create
     public void create() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
+        PostgresResources pg = new PostgresResources();
 
         try {
             // TODO: Check if this.getDate() can be null and if it can be, always add a
             // default date from the controller
-            String query = "";
 
-            if (this.getDate() == null) {
-                query = "INSERT INTO transaction(transaction_type_id, item_id, player_id, staff_id, note)"
-                        + " VALUES (?, ?, ?, ?, ?)";
-            } else {
-                query = "INSERT INTO transaction(transaction_type_id, item_id, player_id, staff_id, note, date)"
-                        + " VALUES (?, ?, ?, ?, ?, ?)";
-            }
+            pg.initResources(Transaction.getCreateQuery());
+            pg.setStmtValues(Transaction.getCreateClassList(), this.getCreateValues());
+            pg.executeQuery(true);
 
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setInt(1, this.getTransactionTypeId());
-            stmt.setInt(2, this.getItemId());
-            stmt.setInt(3, this.getPlayerId());
-            stmt.setInt(4, this.getStaffId());
-            stmt.setString(5, this.getNote());
-
-            if (this.getDate() != null)
-                stmt.setDate(6, this.getDate());
-
-            stmt.executeUpdate();
-
-            if (this.getTransactionTypeId() == 2) {
-                new Inventory(0, itemId, playerId, 10, 1, 0, 0).create();
+            if (this.getTransactionType().getTransactionTypeId() == 2) {
+                // TODO: Add inventory row after deposit
             } else {
                 // TODO: Remove inventory row after withdrawal
             }
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
     }
 
@@ -362,5 +338,33 @@ public class Transaction {
 
     public static void delete(int transactionId) throws ClassNotFoundException, SQLException {
         new Transaction(transactionId).delete();
+    }
+
+    /* ----------------------------- Utility methods ---------------------------- */
+    // Create
+    private static String getCreateQuery() {
+        return Transaction.CREATE_QUERY;
+    }
+
+    private static Class<?>[] getCreateClassList() {
+        return new Class[] {
+                int.class,
+                Date.class,
+                int.class,
+                int.class,
+                int.class,
+                String.class
+        };
+    }
+
+    private Object[] getCreateValues() {
+        return new Object[] {
+                this.getTransactionType().getTransactionTypeId(),
+                this.getDate(),
+                this.getItem().getItemId(),
+                this.getPlayer().getPlayerID(),
+                this.getStaff().getStaffID(),
+                this.getNote()
+        };
     }
 }
