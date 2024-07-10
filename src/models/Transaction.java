@@ -98,6 +98,17 @@ public class Transaction {
     }
 
     /* ---------------------------- Service methods ---------------------------- */
+    public void deposit(int inventoryID) throws ClassNotFoundException, SQLException {
+        // TODO: Fix the conditionals for deposit
+
+        Inventory inventory = Inventory.getById(inventoryID);
+
+        if (inventory == null)
+            return;
+
+        new Transaction(1, null, 2, inventory.getItemId(), inventory.getPlayerId(), 1, "").create();
+    }
+
     public static void withdraw(int inventoryID) throws ClassNotFoundException, SQLException {
         // TODO: Fix the conditionals for withdrawal
 
@@ -114,92 +125,8 @@ public class Transaction {
         }
     }
 
-    public void deposit(int inventoryID) throws ClassNotFoundException, SQLException {
-        // TODO: Fix the conditionals for deposit
-
-        Inventory inventory = Inventory.getById(inventoryID);
-
-        if (inventory == null)
-            return;
-
-        new Transaction(1, null, 2, inventory.getItemId(), inventory.getPlayerId(), 1, "").create();
-    }
-
-
     /* ---------------------------- Database methods ---------------------------- */
-    public static Transaction getById(int transactionId) throws ClassNotFoundException, SQLException {
-        Transaction transaction = null;
-
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-
-        try {
-            String query = "SELECT date, transaction_type_id, item_id, player_id, staff_id, note FROM transaction WHERE transaction_id = ?";
-
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setInt(1, transactionId);
-            rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                Date date = rs.getDate("date");
-                int transactionTypeId = rs.getInt("transaction_type_id");
-                int itemId = rs.getInt("item_id");
-                int playerId = rs.getInt("player_id");
-                int staffId = rs.getInt("staff_id");
-                String note = rs.getString("note");
-
-                transaction = new Transaction(transactionId, date, transactionTypeId, itemId, playerId, staffId, note);
-            }
-        } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
-            throw e;
-        } finally {
-            if (rs != null)
-                rs.close();
-
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
-        }
-
-        return transaction;
-    }
-
-    public void delete() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-
-        try {
-            String query = "DELETE FROM transaction WHERE transaction_id = ?";
-
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setInt(1, this.getTransactionId());
-            stmt.executeUpdate();
-        } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
-            throw e;
-        } finally {
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
-        }
-    }
-
-    public static void delete(int transactionId) throws ClassNotFoundException, SQLException {
-        new Transaction(transactionId).delete();
-    }
-
+    // Create
     public void create() throws ClassNotFoundException, SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -247,42 +174,49 @@ public class Transaction {
         }
     }
 
-    public void update() throws ClassNotFoundException, SQLException {
+    // Read
+    public static Transaction getById(int transactionId) throws ClassNotFoundException, SQLException {
+        Transaction transaction = null;
+
         Connection conn = null;
         PreparedStatement stmt = null;
+        ResultSet rs = null;
 
         try {
-            String query = "UPDATE transaction SET"
-                    + " date = ?, transaction_type_id = ?, item_id = ?, player_id = ?, staff_id = ?, note = ?"
-                    + " WHERE transaction_id = ?";
+            String query = "SELECT date, transaction_type_id, item_id, player_id, staff_id, note FROM transaction WHERE transaction_id = ?";
 
             conn = Postgres.getInstance().getConnection();
             stmt = conn.prepareStatement(query);
-            stmt.setDate(1, this.getDate());
-            stmt.setInt(2, this.getTransactionTypeId());
-            stmt.setInt(3, this.getItemId());
-            stmt.setInt(4, this.getPlayerId());
-            stmt.setInt(5, this.getStaffId());
-            stmt.setString(6, this.getNote());
-            stmt.setInt(7, this.getTransactionId());
-            stmt.executeUpdate();
+            stmt.setInt(1, transactionId);
+            rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Date date = rs.getDate("date");
+                int transactionTypeId = rs.getInt("transaction_type_id");
+                int itemId = rs.getInt("item_id");
+                int playerId = rs.getInt("player_id");
+                int staffId = rs.getInt("staff_id");
+                String note = rs.getString("note");
+
+                transaction = new Transaction(transactionId, date, transactionTypeId, itemId, playerId, staffId, note);
+            }
         } catch (Exception e) {
             if (conn != null) {
                 conn.rollback();
             }
             throw e;
         } finally {
+            if (rs != null)
+                rs.close();
+
             if (stmt != null)
                 stmt.close();
 
             if (conn != null)
                 conn.close();
         }
-    }
 
-    public void update(int transactionId) throws ClassNotFoundException, SQLException {
-        this.setTransactionId(transactionId);
-        this.update();
+        return transaction;
     }
 
     public static List<Transaction> searchTransactions(TransactionSearchCriteria criteria)
@@ -357,5 +291,74 @@ public class Transaction {
         }
 
         return transactions;
+    }
+
+    // Update
+    public void update() throws ClassNotFoundException, SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            String query = "UPDATE transaction SET"
+                    + " date = ?, transaction_type_id = ?, item_id = ?, player_id = ?, staff_id = ?, note = ?"
+                    + " WHERE transaction_id = ?";
+
+            conn = Postgres.getInstance().getConnection();
+            stmt = conn.prepareStatement(query);
+            stmt.setDate(1, this.getDate());
+            stmt.setInt(2, this.getTransactionTypeId());
+            stmt.setInt(3, this.getItemId());
+            stmt.setInt(4, this.getPlayerId());
+            stmt.setInt(5, this.getStaffId());
+            stmt.setString(6, this.getNote());
+            stmt.setInt(7, this.getTransactionId());
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            if (conn != null) {
+                conn.rollback();
+            }
+            throw e;
+        } finally {
+            if (stmt != null)
+                stmt.close();
+
+            if (conn != null)
+                conn.close();
+        }
+    }
+
+    public void update(int transactionId) throws ClassNotFoundException, SQLException {
+        this.setTransactionId(transactionId);
+        this.update();
+    }
+
+    // Delete
+    public void delete() throws ClassNotFoundException, SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            String query = "DELETE FROM transaction WHERE transaction_id = ?";
+
+            conn = Postgres.getInstance().getConnection();
+            stmt = conn.prepareStatement(query);
+            stmt.setInt(1, this.getTransactionId());
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            if (conn != null) {
+                conn.rollback();
+            }
+            throw e;
+        } finally {
+            if (stmt != null)
+                stmt.close();
+
+            if (conn != null)
+                conn.close();
+        }
+    }
+
+    public static void delete(int transactionId) throws ClassNotFoundException, SQLException {
+        new Transaction(transactionId).delete();
     }
 }
