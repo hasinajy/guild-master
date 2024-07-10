@@ -1,14 +1,10 @@
 package models;
 
-import java.sql.Connection;
 import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import database.Postgres;
 import database.PostgresResources;
 import utils.DateUtils;
 
@@ -26,7 +22,7 @@ public class Transaction {
     private static final String READ_QUERY = "SELECT * FROM transaction";
     private static final String UPDATE_QUERY = "UPDATE transaction SET date = ?, transaction_type_id = ?, item_id = ?, player_id = ?, staff_id = ?, note = ? WHERE transaction_id = ?";
     private static final String DELETE_QUERY = "DELETE FROM transaction WHERE transaction_id = ?";
-    private static final String BASE_QUERY = "SELECT * FROM transaction WHERE 1=1";
+    private static final String SEARCH_QUERY = "SELECT * FROM v_transaction WHERE 1=1";
 
     /* ------------------------------ Constructors ------------------------------ */
     public Transaction() {
@@ -218,72 +214,32 @@ public class Transaction {
     public static List<Transaction> searchTransactions(TransactionSearchCriteria criteria)
             throws ClassNotFoundException, SQLException {
         List<Transaction> transactions = new ArrayList<>();
-        StringBuilder query = new StringBuilder(BASE_QUERY);
-
-        List<Object> parameters = new ArrayList<>();
-        if (criteria.getTransactionTypeId() != null) {
-            query.append(" AND transaction_type_id = ?");
-            parameters.add(criteria.getTransactionTypeId());
-        }
-        if (criteria.getStartDate() != null) {
-            query.append(" AND date >= ?");
-            parameters.add(criteria.getStartDate());
-        }
-        if (criteria.getEndDate() != null) {
-            query.append(" AND date <= ?");
-            parameters.add(criteria.getEndDate());
-        }
-        if (criteria.getItemId() != null) {
-            query.append(" AND item_id = ?");
-            parameters.add(criteria.getItemId());
-        }
-        if (criteria.getPlayerId() != null) {
-            query.append(" AND player_id = ?");
-            parameters.add(criteria.getPlayerId());
-        }
-
-        query.append(" ORDER BY transaction_type_id, date");
-
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
+        PostgresResources pg = new PostgresResources();
 
         try {
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query.toString());
+            QueryCondition queryCondition = new QueryCondition(Transaction.getSearchQuery());
 
-            for (int i = 0; i < parameters.size(); i++) {
-                stmt.setObject(i + 1, parameters.get(i));
-            }
+            queryCondition.addCondition(" AND transaction.transaction_type_id = ?",
+                    int.class, criteria.getTransactionTypeId());
+            queryCondition.addCondition(" AND transaction.date >= ?",
+                    Date.class, criteria.getStartDate());
+            queryCondition.addCondition(" AND transaction.date <= ?",
+                    Date.class, criteria.getEndDate());
+            queryCondition.addCondition(" AND transaction.item_id = ?",
+                    int.class, criteria.getItemId());
+            queryCondition.addCondition(" AND transaction.player_id = ?",
+                    int.class, criteria.getPlayerId());
 
-            rs = stmt.executeQuery();
+            pg.initResources(queryCondition.getQuery());
+            pg.setStmtValues(queryCondition.getClassList(), queryCondition.getParameters());
+            pg.executeQuery(false);
 
-            while (rs.next()) {
-                Transaction transaction = new Transaction();
-                transaction.setTransactionId(rs.getInt("transaction_id"));
-                transaction.setDate(rs.getDate("date"));
-                transaction.setTransactionTypeId(rs.getInt("transaction_type_id"));
-                transaction.setItemId(rs.getInt("item_id"));
-                transaction.setPlayerId(rs.getInt("player_id"));
-                transaction.setStaffId(rs.getInt("staff_id"));
-                transaction.setNote(rs.getString("note"));
-                transactions.add(transaction);
-            }
+            transactions = Transaction.getSearchTableInstance(pg);
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
-
+            pg.rollback();
             throw e;
         } finally {
-            if (rs != null)
-                rs.close();
-
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
 
         return transactions;
@@ -359,6 +315,35 @@ public class Transaction {
         return transaction;
     }
 
+    private static Transaction createTransactionFromSearch(PostgresResources pg) throws SQLException {
+        Transaction transaction = new Transaction();
+
+        TransactionType transactionType = new TransactionType();
+        transactionType.setTransactionTypeId(pg.getInt("transaction.transaction_type_id"));
+        transactionType.setName("transaction_type.name");
+
+        Item item = new Item();
+        item.setItemId(pg.getInt("transaction.item_id"));
+        item.setName("item.name");
+
+        Player player = new Player();
+        player.setPlayerID(pg.getInt("transaction.player_id"));
+        player.setCharacterName("player.character_name");
+
+        Staff staff = new Staff();
+        staff.setStaffID(pg.getInt("transaction.staff_id"));
+        staff.setCharacterName("staff.character_name");
+
+        transaction.setTransactionType(transactionType);
+        transaction.setDate(pg.getDate("transaction.date"));
+        transaction.setItem(item);
+        transaction.setPlayer(player);
+        transaction.setStaff(staff);
+        transaction.setNote(pg.getString("transaction.note"));
+
+        return transaction;
+    }
+
     private static Transaction getRowInstance(PostgresResources pg) throws SQLException {
         Transaction transaction = null;
 
@@ -367,6 +352,17 @@ public class Transaction {
         }
 
         return transaction;
+    }
+
+    private static List<Transaction> getSearchTableInstance(PostgresResources pg) throws SQLException {
+        List<Transaction> transactionList = new ArrayList<>();
+
+        while (pg.next()) {
+            Transaction transaction = Transaction.createTransactionFromSearch(pg);
+            transactionList.add(transaction);
+        }
+
+        return transactionList;
     }
 
     // Create
@@ -439,5 +435,10 @@ public class Transaction {
     // Delete
     private static String getDeleteQuery() {
         return Transaction.DELETE_QUERY;
+    }
+
+    // Search
+    private static String getSearchQuery() {
+        return Transaction.SEARCH_QUERY;
     }
 }
