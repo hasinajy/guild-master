@@ -101,7 +101,7 @@ public class Transaction {
     }
 
     /* ---------------------------- Service methods ---------------------------- */
-    public void deposit(int inventoryId) throws ClassNotFoundException, SQLException {
+    public static void deposit(int inventoryId) throws ClassNotFoundException, SQLException {
         // TODO: Fix the conditionals for deposit
 
         Inventory inventory = Inventory.getById(inventoryId);
@@ -110,8 +110,28 @@ public class Transaction {
             return;
         }
 
-        Transaction transaction = new Transaction(1, null, 2, inventory.getItemId(), inventory.getPlayerId(), 1, "");
-        transaction.create();
+        if (inventory.getPlayerId() != 0) {
+            Transaction transaction = new Transaction();
+
+            TransactionType transactionType = new TransactionType();
+            transactionType.setTransactionTypeId(2);
+
+            Item item = new Item();
+            item.setItemId(inventory.getItemId());
+
+            Player player = new Player();
+            player.setPlayerID(inventory.getPlayerId());
+
+            Staff staff = new Staff();
+            staff.setStaffID(1);
+
+            transaction.setTransactionType(transactionType);
+            transaction.setDate(DateUtils.getCurrentDate());
+            transaction.setItem(item);
+            transaction.setPlayer(player);
+
+            transaction.create();
+        }
     }
 
     public static void withdraw(int inventoryId) throws ClassNotFoundException, SQLException {
@@ -143,7 +163,7 @@ public class Transaction {
             transaction.setDate(DateUtils.getCurrentDate());
             transaction.setItem(item);
             transaction.setPlayer(player);
-            
+
             transaction.create();
         }
     }
