@@ -10,7 +10,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import models.Item;
+import models.Player;
 import models.PlayerFull;
+import models.Staff;
 import models.Transaction;
 import models.TransactionType;
 import utils.ExceptionHandler;
@@ -38,17 +40,37 @@ public class TransactionCU extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             String url = "TransactionCU";
-            
+
             String transactionDate = req.getParameter("transaction-date");
             LocalDate localDate = LocalDate.parse(transactionDate, DateTimeFormatter.ISO_LOCAL_DATE);
             Date sqlDate = java.sql.Date.valueOf(localDate);
-            
+
             int transactionTypeId = Integer.parseInt(req.getParameter("transaction-type-id"));
             int itemId = Integer.parseInt(req.getParameter("item-id"));
             int playerId = Integer.parseInt(req.getParameter("player-id"));
             int staffId = 1;
 
-            Transaction transaction = new Transaction(0, sqlDate, transactionTypeId, itemId, playerId, staffId, "");
+            Transaction transaction = new Transaction();
+
+            TransactionType transactionType = new TransactionType();
+            transactionType.setTransactionTypeId(transactionTypeId);
+
+            Item item = new Item();
+            item.setItemId(itemId);
+
+            Player player = new Player();
+            player.setPlayerID(playerId);
+
+            Staff staff = new Staff();
+            staff.setStaffID(staffId);
+
+            transaction.setTransactionType(transactionType);
+            transaction.setDate(sqlDate);
+            transaction.setItem(item);
+            transaction.setPlayer(player);
+
+            // TODO: Add note from the client
+            transaction.setNote("");
 
             if (RequestChecker.isUpdateMode(req)) {
                 int transactionId = Integer.parseInt(req.getParameter("transaction-id"));

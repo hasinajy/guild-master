@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.ServletException;
 
 import models.Transaction;
-import models.TransactionFull;
 import utils.ExceptionHandler;
 import utils.RequestChecker;
 
@@ -30,6 +29,6 @@ public class TransactionRD extends HttpServlet {
     }
 
     private void setAttributes(HttpServletRequest req) throws ClassNotFoundException, SQLException {
-        req.setAttribute("transaction-list", TransactionFull.getAll());
+        req.setAttribute("transaction-list", Transaction.getAll());
     }
 }
