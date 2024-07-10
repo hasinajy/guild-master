@@ -22,7 +22,7 @@ public class Transaction {
     private static final String READ_QUERY = "SELECT * FROM transaction";
     private static final String UPDATE_QUERY = "UPDATE transaction SET date = ?, transaction_type_id = ?, item_id = ?, player_id = ?, staff_id = ?, note = ? WHERE transaction_id = ?";
     private static final String DELETE_QUERY = "DELETE FROM transaction WHERE transaction_id = ?";
-    private static final String SEARCH_QUERY = "SELECT * FROM v_transaction WHERE 1=1";
+    private static final String JOIN_QUERY = "SELECT * FROM v_transaction WHERE 1=1";
 
     /* ------------------------------ Constructors ------------------------------ */
     public Transaction() {
@@ -211,13 +211,32 @@ public class Transaction {
         return transaction;
     }
 
+    public static List<Transaction> getAll() throws ClassNotFoundException, SQLException {
+        List<Transaction> transactions = new ArrayList<>();
+        PostgresResources pg = new PostgresResources();
+
+        try {
+            pg.initResources(Transaction.getJoinQuery());
+            pg.executeQuery(false);
+
+            transactions = Transaction.getJoinTableInstance(pg);
+        } catch (Exception e) {
+            pg.rollback();
+            throw e;
+        } finally {
+            pg.closeResources();
+        }
+
+        return transactions;
+    }
+
     public static List<Transaction> searchTransactions(TransactionSearchCriteria criteria)
             throws ClassNotFoundException, SQLException {
         List<Transaction> transactions = new ArrayList<>();
         PostgresResources pg = new PostgresResources();
 
         try {
-            QueryCondition queryCondition = new QueryCondition(Transaction.getSearchQuery());
+            QueryCondition queryCondition = new QueryCondition(Transaction.getJoinQuery());
 
             queryCondition.addCondition(" AND transaction.transaction_type_id = ?",
                     int.class, criteria.getTransactionTypeId());
@@ -234,7 +253,7 @@ public class Transaction {
             pg.setStmtValues(queryCondition.getClassList(), queryCondition.getParameters());
             pg.executeQuery(false);
 
-            transactions = Transaction.getSearchTableInstance(pg);
+            transactions = Transaction.getJoinTableInstance(pg);
         } catch (Exception e) {
             pg.rollback();
             throw e;
@@ -315,7 +334,7 @@ public class Transaction {
         return transaction;
     }
 
-    private static Transaction createTransactionFromSearch(PostgresResources pg) throws SQLException {
+    private static Transaction createTransactionFromJoin(PostgresResources pg) throws SQLException {
         Transaction transaction = new Transaction();
 
         TransactionType transactionType = new TransactionType();
@@ -354,11 +373,11 @@ public class Transaction {
         return transaction;
     }
 
-    private static List<Transaction> getSearchTableInstance(PostgresResources pg) throws SQLException {
+    private static List<Transaction> getJoinTableInstance(PostgresResources pg) throws SQLException {
         List<Transaction> transactionList = new ArrayList<>();
 
         while (pg.next()) {
-            Transaction transaction = Transaction.createTransactionFromSearch(pg);
+            Transaction transaction = Transaction.createTransactionFromJoin(pg);
             transactionList.add(transaction);
         }
 
@@ -437,8 +456,8 @@ public class Transaction {
         return Transaction.DELETE_QUERY;
     }
 
-    // Search
-    private static String getSearchQuery() {
-        return Transaction.SEARCH_QUERY;
+    // Join
+    private static String getJoinQuery() {
+        return Transaction.JOIN_QUERY;
     }
 }
