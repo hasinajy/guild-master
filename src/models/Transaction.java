@@ -119,7 +119,7 @@ public class Transaction {
             player.setPlayerID(inventory.getPlayerId());
 
             Staff staff = new Staff();
-            staff.setStaffID(1);
+            staff.setStaffId(1);
 
             transaction.setTransactionType(transactionType);
             transaction.setDate(DateUtils.getCurrentDate());
@@ -153,7 +153,7 @@ public class Transaction {
             player.setPlayerID(inventory.getPlayerId());
 
             Staff staff = new Staff();
-            staff.setStaffID(1);
+            staff.setStaffId(1);
 
             transaction.setTransactionType(transactionType);
             transaction.setDate(DateUtils.getCurrentDate());
@@ -322,7 +322,7 @@ public class Transaction {
         player.setPlayerID(pg.getInt("transaction.player_id"));
 
         Staff staff = new Staff();
-        staff.setStaffID(pg.getInt("transaction.staff_id"));
+        staff.setStaffId(pg.getInt("transaction.staff_id"));
 
         transaction.setTransactionType(transactionType);
         transaction.setDate(pg.getDate("transaction.date"));
@@ -350,7 +350,7 @@ public class Transaction {
         player.setCharacterName("player.character_name");
 
         Staff staff = new Staff();
-        staff.setStaffID(pg.getInt("transaction.staff_id"));
+        staff.setStaffId(pg.getInt("transaction.staff_id"));
         staff.setCharacterName("staff.character_name");
 
         transaction.setTransactionType(transactionType);
@@ -406,7 +406,7 @@ public class Transaction {
                 this.getDate(),
                 this.getItem().getItemId(),
                 this.getPlayer().getPlayerID(),
-                this.getStaff().getStaffID(),
+                this.getStaff().getStaffId(),
                 this.getNote()
         };
     }
@@ -445,7 +445,7 @@ public class Transaction {
                 this.getTransactionType().getTransactionTypeId(),
                 this.getItem().getItemId(),
                 this.getPlayer().getPlayerID(),
-                this.getStaff().getStaffID(),
+                this.getStaff().getStaffId(),
                 this.getNote(),
                 this.getTransactionType()
         };
