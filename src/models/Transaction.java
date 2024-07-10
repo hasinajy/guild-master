@@ -10,6 +10,7 @@ import java.util.List;
 
 import database.Postgres;
 import database.PostgresResources;
+import utils.DateUtils;
 
 public class Transaction {
     private int transactionId;
@@ -122,9 +123,27 @@ public class Transaction {
             return;
         }
 
+        // Transaction can only occur if the player is still active
         if (inventory.getPlayerId() != 0) {
-            Transaction transaction = new Transaction(0, null, 1, inventory.getItemId(), inventory.getPlayerId(), 1,
-                    "");
+            Transaction transaction = new Transaction();
+
+            TransactionType transactionType = new TransactionType();
+            transactionType.setTransactionTypeId(1);
+
+            Item item = new Item();
+            item.setItemId(inventory.getItemId());
+
+            Player player = new Player();
+            player.setPlayerID(inventory.getPlayerId());
+
+            Staff staff = new Staff();
+            staff.setStaffID(1);
+
+            transaction.setTransactionType(transactionType);
+            transaction.setDate(DateUtils.getCurrentDate());
+            transaction.setItem(item);
+            transaction.setPlayer(player);
+            
             transaction.create();
         }
     }
