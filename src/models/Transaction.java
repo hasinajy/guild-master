@@ -1,46 +1,45 @@
 package models;
 
-import java.sql.Connection;
 import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import database.Postgres;
+import database.PostgresResources;
+import utils.DateUtils;
 
 public class Transaction {
     private int transactionId;
+    private TransactionType transactionType;
     private Date date;
-    private int transactionTypeId;
-    private int itemId;
-    private int playerId;
-    private int staffId;
+    private Item item;
+    private Player player;
+    private Staff staff;
     private String note;
 
-    private static final String BASE_QUERY = "SELECT * FROM transaction WHERE 1=1";
+    // Queries
+    private static final String CREATE_QUERY = "INSERT INTO transaction(transaction_type_id, date, item_id, player_id, staff_id, note) VALUES (?, ?, ?, ?, ?, ?)";
+    private static final String READ_QUERY = "SELECT * FROM transaction";
+    private static final String UPDATE_QUERY = "UPDATE transaction SET date = ?, transaction_type_id = ?, item_id = ?, player_id = ?, staff_id = ?, note = ? WHERE transaction_id = ?";
+    private static final String DELETE_QUERY = "DELETE FROM transaction WHERE transaction_id = ?";
+    private static final String JOIN_QUERY = "SELECT * FROM v_transaction WHERE 1=1";
 
-    // Constructors
+    /* ------------------------------ Constructors ------------------------------ */
     public Transaction() {
     }
 
-    public Transaction(int transactionId) {
-        this.transactionId = transactionId;
+    public Transaction(int transactionId, TransactionType transactionType, Date date, Item item, Player player,
+            Staff staff, String note) {
+        this.setTransactionId(transactionId);
+        this.setTransactionType(transactionType);
+        this.setDate(date);
+        this.setItem(item);
+        this.setPlayer(player);
+        this.setStaff(staff);
+        this.setNote(note);
     }
 
-    public Transaction(int transactionId, Date date, int transactionTypeId, int itemId, int playerId, int staffId,
-            String note) {
-        this.transactionId = transactionId;
-        this.date = date;
-        this.transactionTypeId = transactionTypeId;
-        this.itemId = itemId;
-        this.playerId = playerId;
-        this.staffId = staffId;
-        this.note = note;
-    }
-
-    // Getters & Setters
+    /* --------------------------- Getters and setters -------------------------- */
     public int getTransactionId() {
         return transactionId;
     }
@@ -57,36 +56,36 @@ public class Transaction {
         this.date = date;
     }
 
-    public int getTransactionTypeId() {
-        return transactionTypeId;
+    public TransactionType getTransactionType() {
+        return transactionType;
     }
 
-    public void setTransactionTypeId(int transactionTypeId) {
-        this.transactionTypeId = transactionTypeId;
+    public void setTransactionType(TransactionType transactionType) {
+        this.transactionType = transactionType;
     }
 
-    public int getItemId() {
-        return itemId;
+    public Item getItem() {
+        return item;
     }
 
-    public void setItemId(int itemId) {
-        this.itemId = itemId;
+    public void setItem(Item item) {
+        this.item = item;
     }
 
-    public int getPlayerId() {
-        return playerId;
+    public Player getPlayer() {
+        return player;
     }
 
-    public void setPlayerId(int playerId) {
-        this.playerId = playerId;
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 
-    public int getStaffId() {
-        return staffId;
+    public Staff getStaff() {
+        return staff;
     }
 
-    public void setStaffId(int staffId) {
-        this.staffId = staffId;
+    public void setStaff(Staff staff) {
+        this.staff = staff;
     }
 
     public String getNote() {
@@ -97,253 +96,368 @@ public class Transaction {
         this.note = note;
     }
 
-    // Class methods
-    public static void withdraw(int inventoryID) throws ClassNotFoundException, SQLException {
-        // TODO: Fix the conditionals for withdrawal
+    /* ---------------------------- Service methods ---------------------------- */
+    public static void deposit(int inventoryId) throws ClassNotFoundException, SQLException {
+        // TODO: Fix the conditionals for deposit
 
-        Inventory inventory = Inventory.getById(inventoryID);
+        Inventory inventory = Inventory.getById(inventoryId);
 
         if (inventory == null) {
             return;
         }
 
         if (inventory.getPlayerId() != 0) {
-            Transaction transaction = new Transaction(0, null, 1, inventory.getItemId(), inventory.getPlayerId(), 1, "");
+            Transaction transaction = new Transaction();
+
+            TransactionType transactionType = new TransactionType();
+            transactionType.setTransactionTypeId(2);
+
+            Item item = new Item();
+            item.setItemId(inventory.getItemId());
+
+            Player player = new Player();
+            player.setPlayerID(inventory.getPlayerId());
+
+            Staff staff = new Staff();
+            staff.setStaffID(1);
+
+            transaction.setTransactionType(transactionType);
+            transaction.setDate(DateUtils.getCurrentDate());
+            transaction.setItem(item);
+            transaction.setPlayer(player);
+
             transaction.create();
         }
     }
 
-    public void deposit(int inventoryID) throws ClassNotFoundException, SQLException {
-        // TODO: Fix the conditionals for deposit
+    public static void withdraw(int inventoryId) throws ClassNotFoundException, SQLException {
+        // TODO: Fix the conditionals for withdrawal
 
-        Inventory inventory = Inventory.getById(inventoryID);
+        Inventory inventory = Inventory.getById(inventoryId);
 
-        if (inventory == null)
+        if (inventory == null) {
             return;
+        }
 
-        new Transaction(1, null, 2, inventory.getItemId(), inventory.getPlayerId(), 1, "").create();
+        // Transaction can only occur if the player is still active
+        if (inventory.getPlayerId() != 0) {
+            Transaction transaction = new Transaction();
+
+            TransactionType transactionType = new TransactionType();
+            transactionType.setTransactionTypeId(1);
+
+            Item item = new Item();
+            item.setItemId(inventory.getItemId());
+
+            Player player = new Player();
+            player.setPlayerID(inventory.getPlayerId());
+
+            Staff staff = new Staff();
+            staff.setStaffID(1);
+
+            transaction.setTransactionType(transactionType);
+            transaction.setDate(DateUtils.getCurrentDate());
+            transaction.setItem(item);
+            transaction.setPlayer(player);
+
+            transaction.create();
+        }
     }
 
-    public static Transaction getById(int transactionId) throws ClassNotFoundException, SQLException {
-        Transaction transaction = null;
-
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
+    /* ---------------------------- Database methods ---------------------------- */
+    // Create
+    public void create() throws ClassNotFoundException, SQLException {
+        PostgresResources pg = new PostgresResources();
 
         try {
-            String query = "SELECT date, transaction_type_id, item_id, player_id, staff_id, note FROM transaction WHERE transaction_id = ?";
+            // TODO: Check if this.getDate() can be null and if it can be, always add a
+            // default date from the controller
 
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setInt(1, transactionId);
-            rs = stmt.executeQuery();
+            pg.initResources(Transaction.getCreateQuery());
+            pg.setStmtValues(Transaction.getCreateClassList(), this.getCreateValues());
+            pg.executeQuery(true);
 
-            while (rs.next()) {
-                Date date = rs.getDate("date");
-                int transactionTypeId = rs.getInt("transaction_type_id");
-                int itemId = rs.getInt("item_id");
-                int playerId = rs.getInt("player_id");
-                int staffId = rs.getInt("staff_id");
-                String note = rs.getString("note");
-
-                transaction = new Transaction(transactionId, date, transactionTypeId, itemId, playerId, staffId, note);
+            if (this.getTransactionType().getTransactionTypeId() == 2) {
+                // TODO: Add inventory row after deposit
+            } else {
+                // TODO: Remove inventory row after withdrawal
             }
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (rs != null)
-                rs.close();
+            pg.closeResources();
+        }
+    }
 
-            if (stmt != null)
-                stmt.close();
+    // Read
+    public static Transaction getById(int transactionId) throws ClassNotFoundException, SQLException {
+        Transaction transaction = null;
+        PostgresResources pg = new PostgresResources();
 
-            if (conn != null)
-                conn.close();
+        try {
+            pg.initResources(Transaction.getReadQuery(true));
+            pg.setStmtValues(int.class, new Object[] { transactionId });
+            pg.executeQuery(false);
+
+            transaction = Transaction.getRowInstance(pg);
+        } catch (Exception e) {
+            pg.rollback();
+            throw e;
+        } finally {
+            pg.closeResources();
         }
 
         return transaction;
     }
 
-    public void delete() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
+    public static List<Transaction> getAll() throws ClassNotFoundException, SQLException {
+        List<Transaction> transactions = new ArrayList<>();
+        PostgresResources pg = new PostgresResources();
 
         try {
-            String query = "DELETE FROM transaction WHERE transaction_id = ?";
+            pg.initResources(Transaction.getJoinQuery());
+            pg.executeQuery(false);
 
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setInt(1, this.getTransactionId());
-            stmt.executeUpdate();
+            transactions = Transaction.getJoinTableInstance(pg);
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
-    }
 
-    public void create() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-
-        try {
-            String query = "";
-
-            if (this.getDate() == null) {
-                query = "INSERT INTO transaction(transaction_type_id, item_id, player_id, staff_id, note)"
-                        + " VALUES (?, ?, ?, ?, ?)";
-            } else {
-                query = "INSERT INTO transaction(transaction_type_id, item_id, player_id, staff_id, note, date)"
-                        + " VALUES (?, ?, ?, ?, ?, ?)";
-            }
-
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setInt(1, this.getTransactionTypeId());
-            stmt.setInt(2, this.getItemId());
-            stmt.setInt(3, this.getPlayerId());
-            stmt.setInt(4, this.getStaffId());
-            stmt.setString(5, this.getNote());
-
-            if (this.getDate() != null)
-                stmt.setDate(6, this.getDate());
-
-            stmt.executeUpdate();
-
-            if (this.getTransactionTypeId() == 2) {
-                new Inventory(0, itemId, playerId, 10, 1, 0, 0).create();
-            } else {
-                // TODO: Remove inventory row after withdrawal
-            }
-        } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
-            throw e;
-        } finally {
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
-        }
-    }
-
-    public void update() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-
-        try {
-            String query = "UPDATE transaction SET"
-                    + " date = ?, transaction_type_id = ?, item_id = ?, player_id = ?, staff_id = ?, note = ?"
-                    + " WHERE transaction_id = ?";
-
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setDate(1, this.getDate());
-            stmt.setInt(2, this.getTransactionTypeId());
-            stmt.setInt(3, this.getItemId());
-            stmt.setInt(4, this.getPlayerId());
-            stmt.setInt(5, this.getStaffId());
-            stmt.setString(6, this.getNote());
-            stmt.setInt(7, this.getTransactionId());
-            stmt.executeUpdate();
-        } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
-            throw e;
-        } finally {
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
-        }
+        return transactions;
     }
 
     public static List<Transaction> searchTransactions(TransactionSearchCriteria criteria)
             throws ClassNotFoundException, SQLException {
         List<Transaction> transactions = new ArrayList<>();
-        StringBuilder query = new StringBuilder(BASE_QUERY);
-
-        List<Object> parameters = new ArrayList<>();
-        if (criteria.getTransactionTypeId() != null) {
-            query.append(" AND transaction_type_id = ?");
-            parameters.add(criteria.getTransactionTypeId());
-        }
-        if (criteria.getStartDate() != null) {
-            query.append(" AND date >= ?");
-            parameters.add(criteria.getStartDate());
-        }
-        if (criteria.getEndDate() != null) {
-            query.append(" AND date <= ?");
-            parameters.add(criteria.getEndDate());
-        }
-        if (criteria.getItemId() != null) {
-            query.append(" AND item_id = ?");
-            parameters.add(criteria.getItemId());
-        }
-        if (criteria.getPlayerId() != null) {
-            query.append(" AND player_id = ?");
-            parameters.add(criteria.getPlayerId());
-        }
-
-        query.append(" ORDER BY transaction_type_id, date");
-
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
+        PostgresResources pg = new PostgresResources();
 
         try {
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query.toString());
+            QueryCondition queryCondition = new QueryCondition(Transaction.getJoinQuery());
 
-            for (int i = 0; i < parameters.size(); i++) {
-                stmt.setObject(i + 1, parameters.get(i));
-            }
+            queryCondition.addCondition(" AND transaction.transaction_type_id = ?",
+                    int.class, criteria.getTransactionTypeId());
+            queryCondition.addCondition(" AND transaction.date >= ?",
+                    Date.class, criteria.getStartDate());
+            queryCondition.addCondition(" AND transaction.date <= ?",
+                    Date.class, criteria.getEndDate());
+            queryCondition.addCondition(" AND transaction.item_id = ?",
+                    int.class, criteria.getItemId());
+            queryCondition.addCondition(" AND transaction.player_id = ?",
+                    int.class, criteria.getPlayerId());
 
-            rs = stmt.executeQuery();
+            pg.initResources(queryCondition.getQuery());
+            pg.setStmtValues(queryCondition.getClassList(), queryCondition.getParameters());
+            pg.executeQuery(false);
 
-            while (rs.next()) {
-                Transaction transaction = new Transaction();
-                transaction.setTransactionId(rs.getInt("transaction_id"));
-                transaction.setDate(rs.getDate("date"));
-                transaction.setTransactionTypeId(rs.getInt("transaction_type_id"));
-                transaction.setItemId(rs.getInt("item_id"));
-                transaction.setPlayerId(rs.getInt("player_id"));
-                transaction.setStaffId(rs.getInt("staff_id"));
-                transaction.setNote(rs.getString("note"));
-                transactions.add(transaction);
-            }
+            transactions = Transaction.getJoinTableInstance(pg);
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
-
+            pg.rollback();
             throw e;
         } finally {
-            if (rs != null)
-                rs.close();
-
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
 
         return transactions;
+    }
+
+    // Update
+    public void update() throws ClassNotFoundException, SQLException {
+        PostgresResources pg = new PostgresResources();
+
+        try {
+            pg.initResources(Transaction.getUpdateQuery());
+            pg.setStmtValues(Transaction.getUpdateClassList(), this.getUpdateValues());
+            pg.executeQuery(true);
+        } catch (Exception e) {
+            pg.rollback();
+            throw e;
+        } finally {
+            pg.closeResources();
+        }
+    }
+
+    public void update(int transactionId) throws ClassNotFoundException, SQLException {
+        this.setTransactionId(transactionId);
+        this.update();
+    }
+
+    // Delete
+    public void delete() throws ClassNotFoundException, SQLException {
+        PostgresResources pg = new PostgresResources();
+
+        try {
+            pg.initResources(Transaction.getDeleteQuery());
+            pg.setStmtValues(int.class, new Object[] { this.getTransactionId() });
+            pg.executeQuery(true);
+        } catch (Exception e) {
+            pg.rollback();
+            throw e;
+        } finally {
+            pg.closeResources();
+        }
+    }
+
+    public static void delete(int transactionId) throws ClassNotFoundException, SQLException {
+        Transaction transaction = new Transaction();
+        transaction.setTransactionId(transactionId);
+        transaction.delete();
+    }
+
+    /* ----------------------------- Utility methods ---------------------------- */
+    // Instantiation methods
+    private static Transaction createTransactionFromResultSet(PostgresResources pg) throws SQLException {
+        Transaction transaction = new Transaction();
+
+        TransactionType transactionType = new TransactionType();
+        transactionType.setTransactionTypeId(pg.getInt("transaction.transaction_type_id"));
+
+        Item item = new Item();
+        item.setItemId(pg.getInt("transaction.item_id"));
+
+        Player player = new Player();
+        player.setPlayerID(pg.getInt("transaction.player_id"));
+
+        Staff staff = new Staff();
+        staff.setStaffID(pg.getInt("transaction.staff_id"));
+
+        transaction.setTransactionType(transactionType);
+        transaction.setDate(pg.getDate("transaction.date"));
+        transaction.setItem(item);
+        transaction.setPlayer(player);
+        transaction.setStaff(staff);
+        transaction.setNote(pg.getString("transaction.note"));
+
+        return transaction;
+    }
+
+    private static Transaction createTransactionFromJoin(PostgresResources pg) throws SQLException {
+        Transaction transaction = new Transaction();
+
+        TransactionType transactionType = new TransactionType();
+        transactionType.setTransactionTypeId(pg.getInt("transaction.transaction_type_id"));
+        transactionType.setName("transaction_type.name");
+
+        Item item = new Item();
+        item.setItemId(pg.getInt("transaction.item_id"));
+        item.setName("item.name");
+
+        Player player = new Player();
+        player.setPlayerID(pg.getInt("transaction.player_id"));
+        player.setCharacterName("player.character_name");
+
+        Staff staff = new Staff();
+        staff.setStaffID(pg.getInt("transaction.staff_id"));
+        staff.setCharacterName("staff.character_name");
+
+        transaction.setTransactionType(transactionType);
+        transaction.setDate(pg.getDate("transaction.date"));
+        transaction.setItem(item);
+        transaction.setPlayer(player);
+        transaction.setStaff(staff);
+        transaction.setNote(pg.getString("transaction.note"));
+
+        return transaction;
+    }
+
+    private static Transaction getRowInstance(PostgresResources pg) throws SQLException {
+        Transaction transaction = null;
+
+        if (pg.next()) {
+            transaction = Transaction.createTransactionFromResultSet(pg);
+        }
+
+        return transaction;
+    }
+
+    private static List<Transaction> getJoinTableInstance(PostgresResources pg) throws SQLException {
+        List<Transaction> transactionList = new ArrayList<>();
+
+        while (pg.next()) {
+            Transaction transaction = Transaction.createTransactionFromJoin(pg);
+            transactionList.add(transaction);
+        }
+
+        return transactionList;
+    }
+
+    // Create
+    private static String getCreateQuery() {
+        return Transaction.CREATE_QUERY;
+    }
+
+    private static Class<?>[] getCreateClassList() {
+        return new Class[] {
+                int.class,
+                Date.class,
+                int.class,
+                int.class,
+                int.class,
+                String.class
+        };
+    }
+
+    private Object[] getCreateValues() {
+        return new Object[] {
+                this.getTransactionType().getTransactionTypeId(),
+                this.getDate(),
+                this.getItem().getItemId(),
+                this.getPlayer().getPlayerID(),
+                this.getStaff().getStaffID(),
+                this.getNote()
+        };
+    }
+
+    // Read
+    private static String getReadQuery(boolean hasWhere) {
+        StringBuilder sb = new StringBuilder(Transaction.READ_QUERY);
+
+        if (hasWhere) {
+            sb.append(" WHERE transaction_id = ?");
+        }
+
+        return sb.toString();
+    }
+
+    // Update
+    private static String getUpdateQuery() {
+        return Transaction.UPDATE_QUERY;
+    }
+
+    private static Class<?>[] getUpdateClassList() {
+        return new Class[] {
+                Date.class,
+                int.class,
+                int.class,
+                int.class,
+                int.class,
+                String.class,
+                int.class
+        };
+    }
+
+    private Object[] getUpdateValues() {
+        return new Object[] {
+                this.getDate(),
+                this.getTransactionType().getTransactionTypeId(),
+                this.getItem().getItemId(),
+                this.getPlayer().getPlayerID(),
+                this.getStaff().getStaffID(),
+                this.getNote(),
+                this.getTransactionType()
+        };
+    }
+
+    // Delete
+    private static String getDeleteQuery() {
+        return Transaction.DELETE_QUERY;
+    }
+
+    // Join
+    private static String getJoinQuery() {
+        return Transaction.JOIN_QUERY;
     }
 }
