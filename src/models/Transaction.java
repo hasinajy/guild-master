@@ -98,21 +98,23 @@ public class Transaction {
     }
 
     /* ---------------------------- Service methods ---------------------------- */
-    public void deposit(int inventoryID) throws ClassNotFoundException, SQLException {
+    public void deposit(int inventoryId) throws ClassNotFoundException, SQLException {
         // TODO: Fix the conditionals for deposit
 
-        Inventory inventory = Inventory.getById(inventoryID);
+        Inventory inventory = Inventory.getById(inventoryId);
 
-        if (inventory == null)
+        if (inventory == null) {
             return;
+        }
 
-        new Transaction(1, null, 2, inventory.getItemId(), inventory.getPlayerId(), 1, "").create();
+        Transaction transaction = new Transaction(1, null, 2, inventory.getItemId(), inventory.getPlayerId(), 1, "");
+        transaction.create();
     }
 
-    public static void withdraw(int inventoryID) throws ClassNotFoundException, SQLException {
+    public static void withdraw(int inventoryId) throws ClassNotFoundException, SQLException {
         // TODO: Fix the conditionals for withdrawal
 
-        Inventory inventory = Inventory.getById(inventoryID);
+        Inventory inventory = Inventory.getById(inventoryId);
 
         if (inventory == null) {
             return;
