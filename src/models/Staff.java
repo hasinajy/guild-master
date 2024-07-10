@@ -51,29 +51,16 @@ public class Staff {
 
     /* ---------------------------- Database methods ---------------------------- */
     // Create
-    public void create() {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
+    public void create() throws SQLException {
+        PostgresResources pg = new PostgresResources();
 
         try {
-
+            // TODO: Implement the create method of the Staff model
         } catch (Exception e) {
-            // Database operation error messages here
+            pg.rollback();
+            throw e;
         } finally {
-            try {
-
-                if (conn != null)
-                    conn.close();
-
-                if (stmt != null)
-                    stmt.close();
-
-                if (rs != null)
-                    rs.close();
-            } catch (SQLException e) {
-                // Closing error messages here
-            }
+            pg.closeResources();
         }
     }
 
