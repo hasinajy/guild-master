@@ -9,10 +9,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.ServletException;
 
 import models.Item;
+import models.Player;
 import models.PlayerFull;
 import models.Rarity;
+import models.Staff;
 import models.Transaction;
+import models.TransactionType;
 import models.Type;
+import utils.DateUtils;
 import utils.ExceptionHandler;
 import utils.RequestChecker;
 import utils.UrlUtils;
@@ -38,21 +42,42 @@ public class InventoryCU extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             String url = "InventoryCU";
-            int itemID = Integer.parseInt(req.getParameter("item-id"));
-            int playerID = Integer.parseInt(req.getParameter("player-id"));
+            int itemId = Integer.parseInt(req.getParameter("item-id"));
+            int playerId = Integer.parseInt(req.getParameter("player-id"));
             int durability = Integer.parseInt(req.getParameter("durability"));
 
-            Inventory inventory = new Inventory(0, itemID, playerID, durability, 1, 0, 0);
+            Inventory inventory = new Inventory(0, itemId, playerId, durability, 1, 0, 0);
 
             if (RequestChecker.isUpdateMode(req)) {
                 int inventoryId = Integer.parseInt(req.getParameter("inventory-id"));
 
                 url = UrlUtils.prepareUpdateURL(url, "inventory", inventoryId);
                 inventory.update(inventoryId);
+
+                // TODO: Check if transaction needs to be updated
             } else {
                 inventory.create();
 
-                Transaction transaction = new Transaction(0, null, 2, itemID, playerID, 1, "");
+                // Create a new deposit transaction history when a new inventory is added
+                Transaction transaction = new Transaction();
+
+                TransactionType transactionType = new TransactionType();
+                transactionType.setTransactionTypeId(2);
+
+                Item item = new Item();
+                item.setItemId(itemId);
+
+                Player player = new Player();
+                player.setPlayerID(playerId);
+
+                Staff staff = new Staff();
+                staff.setStaffID(1);
+
+                transaction.setTransactionType(transactionType);
+                transaction.setDate(DateUtils.getCurrentDate());
+                transaction.setItem(item);
+                transaction.setPlayer(player);
+
                 transaction.create();
             }
 
