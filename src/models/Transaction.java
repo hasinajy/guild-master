@@ -21,7 +21,7 @@ public class Transaction {
 
     private static final String BASE_QUERY = "SELECT * FROM transaction WHERE 1=1";
 
-    // Constructors
+    /* ------------------------------ Constructors ------------------------------ */
     public Transaction() {
     }
 
@@ -40,7 +40,7 @@ public class Transaction {
         this.note = note;
     }
 
-    // Getters & Setters
+    /* --------------------------- Getters and setters -------------------------- */
     public int getTransactionId() {
         return transactionId;
     }
@@ -97,7 +97,7 @@ public class Transaction {
         this.note = note;
     }
 
-    // Class methods
+    /* ---------------------------- Service methods ---------------------------- */
     public static void withdraw(int inventoryID) throws ClassNotFoundException, SQLException {
         // TODO: Fix the conditionals for withdrawal
 
@@ -108,7 +108,8 @@ public class Transaction {
         }
 
         if (inventory.getPlayerId() != 0) {
-            Transaction transaction = new Transaction(0, null, 1, inventory.getItemId(), inventory.getPlayerId(), 1, "");
+            Transaction transaction = new Transaction(0, null, 1, inventory.getItemId(), inventory.getPlayerId(), 1,
+                    "");
             transaction.create();
         }
     }
@@ -124,6 +125,8 @@ public class Transaction {
         new Transaction(1, null, 2, inventory.getItemId(), inventory.getPlayerId(), 1, "").create();
     }
 
+
+    /* ---------------------------- Database methods ---------------------------- */
     public static Transaction getById(int transactionId) throws ClassNotFoundException, SQLException {
         Transaction transaction = null;
 
@@ -191,6 +194,10 @@ public class Transaction {
             if (conn != null)
                 conn.close();
         }
+    }
+
+    public static void delete(int transactionId) throws ClassNotFoundException, SQLException {
+        new Transaction(transactionId).delete();
     }
 
     public void create() throws ClassNotFoundException, SQLException {
@@ -271,6 +278,11 @@ public class Transaction {
             if (conn != null)
                 conn.close();
         }
+    }
+
+    public void update(int transactionId) throws ClassNotFoundException, SQLException {
+        this.setTransactionId(transactionId);
+        this.update();
     }
 
     public static List<Transaction> searchTransactions(TransactionSearchCriteria criteria)
