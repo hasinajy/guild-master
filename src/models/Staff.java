@@ -50,48 +50,7 @@ public class Staff {
     }
 
     /* ---------------------------- Database methods ---------------------------- */
-    public List<Faction> getAll() throws SQLException {
-        List<Faction> data = new ArrayList<>();
-        PostgresResources pg = new PostgresResources();
-
-        try {
-            // TODO: Implement the getAll method of the Staff model
-        } catch (Exception e) {
-            pg.rollback();
-            throw e;
-        } finally {
-            pg.closeResources();
-        }
-
-        return data;
-    }
-
-    public void delete() {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-
-        try {
-
-        } catch (Exception e) {
-            // Database operation error messages here
-        } finally {
-            try {
-
-                if (conn != null)
-                    conn.close();
-
-                if (stmt != null)
-                    stmt.close();
-
-                if (rs != null)
-                    rs.close();
-            } catch (SQLException e) {
-                // Closing error messages here
-            }
-        }
-    }
-
+    // Create
     public void create() {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -118,7 +77,52 @@ public class Staff {
         }
     }
 
+    // Read
+    public List<Faction> getAll() throws SQLException {
+        List<Faction> data = new ArrayList<>();
+        PostgresResources pg = new PostgresResources();
+
+        try {
+            // TODO: Implement the getAll method of the Staff model
+        } catch (Exception e) {
+            pg.rollback();
+            throw e;
+        } finally {
+            pg.closeResources();
+        }
+
+        return data;
+    }
+
+    // Update
     public void update() {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+
+        } catch (Exception e) {
+            // Database operation error messages here
+        } finally {
+            try {
+
+                if (conn != null)
+                    conn.close();
+
+                if (stmt != null)
+                    stmt.close();
+
+                if (rs != null)
+                    rs.close();
+            } catch (SQLException e) {
+                // Closing error messages here
+            }
+        }
+    }
+
+    // Delete
+    public void delete() {
         Connection conn = null;
         PreparedStatement stmt = null;
         ResultSet rs = null;
