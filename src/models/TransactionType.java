@@ -9,24 +9,27 @@ import java.util.ArrayList;
 import database.Postgres;
 
 public class TransactionType {
-    private int transactionTypeID;
+    private int transactionTypeId;
     private char transactionTypeCode;
     private String name;
 
-    // Constructors
-    public TransactionType(int transactionTypeID, char transactionTypeCode, String name) {
-        this.setTransactionTypeID(transactionTypeID);
+    /* ------------------------------ Constructors ------------------------------ */
+    public TransactionType() {
+    }
+
+    public TransactionType(int transactionTypeId, char transactionTypeCode, String name) {
+        this.setTransactionTypeId(transactionTypeId);
         this.setTransactionTypeCode(transactionTypeCode);
         this.setName(name);
     }
 
-    // Getters & Setters
-    public int getTransactionTypeID() {
-        return transactionTypeID;
+    /* --------------------------- Getters and setters -------------------------- */
+    public int getTransactionTypeId() {
+        return transactionTypeId;
     }
 
-    public void setTransactionTypeID(int transactionTypeID) {
-        this.transactionTypeID = transactionTypeID;
+    public void setTransactionTypeId(int transactionTypeId) {
+        this.transactionTypeId = transactionTypeId;
     }
 
     public char getTransactionTypeCode() {
@@ -45,7 +48,7 @@ public class TransactionType {
         this.name = name;
     }
 
-    // CRUD methods
+    /* ---------------------------- Database methods ---------------------------- */
     public static ArrayList<TransactionType> getAll() throws ClassNotFoundException, SQLException {
         ArrayList<TransactionType> data = new ArrayList<>();
 
@@ -61,11 +64,11 @@ public class TransactionType {
             rs = stmt.executeQuery();
 
             while (rs.next()) {
-                int transactionTypeID = rs.getInt("transaction_type_id");
+                int transactionTypeId = rs.getInt("transaction_type_id");
                 char transactionTypeCode = rs.getString("transaction_type_code").charAt(0);
                 String name = rs.getString("name");
 
-                data.add(new TransactionType(transactionTypeID, transactionTypeCode, name));
+                data.add(new TransactionType(transactionTypeId, transactionTypeCode, name));
             }
         } catch (Exception e) {
             if (conn != null) {
