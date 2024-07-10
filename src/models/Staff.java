@@ -5,6 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
+
+import database.PostgresResources;
 
 public class Staff {
     private int staffId;
@@ -47,31 +50,17 @@ public class Staff {
     }
 
     /* ---------------------------- Database methods ---------------------------- */
-    public ArrayList<Faction> getAll() {
-        ArrayList<Faction> data = new ArrayList<>();
-
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
+    public List<Faction> getAll() throws SQLException {
+        List<Faction> data = new ArrayList<>();
+        PostgresResources pg = new PostgresResources();
 
         try {
-
+            // TODO: Implement the getAll method of the Staff model
         } catch (Exception e) {
-            // Database operation error messages here
+            pg.rollback();
+            throw e;
         } finally {
-            try {
-
-                if (conn != null)
-                    conn.close();
-
-                if (stmt != null)
-                    stmt.close();
-
-                if (rs != null)
-                    rs.close();
-            } catch (SQLException e) {
-                // Closing error messages here
-            }
+            pg.closeResources();
         }
 
         return data;
