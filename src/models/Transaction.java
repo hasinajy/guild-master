@@ -106,17 +106,17 @@ public class Transaction {
             return;
         }
 
-        if (inventory.getPlayerId() != 0) {
+        if (inventory.getPlayer().getPlayerId() != 0) {
             Transaction transaction = new Transaction();
 
             TransactionType transactionType = new TransactionType();
             transactionType.setTransactionTypeId(2);
 
             Item item = new Item();
-            item.setItemId(inventory.getItemId());
+            item.setItemId(inventory.getItem().getItemId());
 
             Player player = new Player();
-            player.setPlayerId(inventory.getPlayerId());
+            player.setPlayerId(inventory.getPlayer().getPlayerId());
 
             Staff staff = new Staff();
             staff.setStaffId(1);
@@ -140,17 +140,17 @@ public class Transaction {
         }
 
         // Transaction can only occur if the player is still active
-        if (inventory.getPlayerId() != 0) {
+        if (inventory.getPlayer().getPlayerId() != 0) {
             Transaction transaction = new Transaction();
 
             TransactionType transactionType = new TransactionType();
             transactionType.setTransactionTypeId(1);
 
             Item item = new Item();
-            item.setItemId(inventory.getItemId());
+            item.setItemId(inventory.getItem().getItemId());
 
             Player player = new Player();
-            player.setPlayerId(inventory.getPlayerId());
+            player.setPlayerId(inventory.getPlayer().getPlayerId());
 
             Staff staff = new Staff();
             staff.setStaffId(1);
