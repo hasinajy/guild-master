@@ -1,13 +1,9 @@
 package models;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import database.Postgres;
 import database.PostgresResources;
 import utils.NameChecker;
 
@@ -19,6 +15,7 @@ public class Rarity {
     // Queries
     private static final String CREATE_QUERY = "INSERT INTO rarity(name, img_path) VALUES (?, ?)";
     private static final String READ_QUERY = "SELECT * FROM rarity";
+    private static final String DELETE_QUERY = "DELETE FROM rarity WHERE rarity_id = ?";
 
     /* ------------------------------ Constructors ------------------------------ */
     public Rarity() {
@@ -150,37 +147,25 @@ public class Rarity {
     }
 
     // Delete
-    public static void deleteById(int rarityId) throws ClassNotFoundException, SQLException {
-        new Rarity(rarityId).delete();
-    }
-
     public void delete() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
+        PostgresResources pg = new PostgresResources();
 
         try {
-            String query = "DELETE FROM rarity WHERE rarity_id = ?";
-
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setInt(1, this.rarityId);
-            stmt.executeUpdate();
+            pg.initResources(Rarity.getDeleteQuery());
+            pg.setStmtValues(int.class, new Object[] { this.getRarityId() });
+            pg.executeQuery(true);
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
     }
 
     public static void delete(int rarityId) throws ClassNotFoundException, SQLException {
-        new Rarity(rarityId).delete();
+        Rarity rarity = new Rarity();
+        rarity.setRarityId(rarityId);
+        rarity.delete();
     }
 
     /* ----------------------------- Utility methods ---------------------------- */
@@ -244,5 +229,10 @@ public class Rarity {
         }
 
         return sb.toString();
+    }
+
+    // Delete
+    private static String getDeleteQuery() {
+        return Rarity.DELETE_QUERY;
     }
 }
