@@ -23,7 +23,7 @@ public class PlayerCU extends HttpServlet {
         try {
             if (RequestChecker.isUpdateMode(req)) {
                 int playerId = Integer.parseInt(req.getParameter("player-id"));
-                req.setAttribute("updated-player", Player.getByID(playerId));
+                req.setAttribute("updated-player", Player.getById(playerId));
             }
 
             this.setAttributes(req);
