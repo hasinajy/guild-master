@@ -1,73 +1,48 @@
 package models;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import database.PostgresResources;
 
 public class Inventory {
-    // Primary attributes
     private int inventoryId;
-    private int itemId;
-    private int playerId;
     private int durability;
     private int quantity;
-
-    // Join attributes
-    private int typeId;
-    private int rarityId;
+    private Item item;
+    private Player player;
 
     // Queries
     private static final String CREATE_QUERY = "INSERT INTO inventory(item_id, player_id, durability, quantity) VALUES (?, ?, ?, ?)";
-    private static final String READ_QUERY = "SELECT inventory_id, item_id, player_id, durability, quantity, type_id, rarity_id, is_deleted FROM v_inventory";
+    private static final String READ_QUERY = "SELECT * FROM v_inventory_active";
     private static final String UPDATE_QUERY = "UPDATE inventory SET item_id = ?, player_id = ?, durability = ?, quantity = ? WHERE inventory_id = ?";
     private static final String DELETE_QUERY = "DELETE FROM inventory WHERE inventory_id = ?";
+    private static final String JOIN_QUERY = "SELECT * FROM v_inventory";
 
     /* ------------------------------ Constructors ------------------------------ */
     public Inventory() {
     }
 
-    public Inventory(int inventoryId) {
-        this.inventoryId = inventoryId;
-    }
-
-    public Inventory(int inventoryId, int itemId, int playerId, int durability, int quantity, int typeId,
-            int rarityId) {
+    public Inventory(int inventoryId, int durability, int quantity, Item item, Player player) {
         this.setInventoryId(inventoryId);
-        this.setItemId(itemId);
-        this.setPlayerId(playerId);
         this.setDurability(durability);
         this.setQuantity(quantity);
-        this.setTypeId(typeId);
-        this.setRarityId(rarityId);
+        this.setItem(item);
+        this.setPlayer(player);
     }
 
     /* --------------------------- Getters and setters -------------------------- */
     public int getInventoryId() {
-        return this.inventoryId;
+        return inventoryId;
     }
 
     public void setInventoryId(int inventoryId) {
         this.inventoryId = inventoryId;
     }
 
-    public int getItemId() {
-        return this.itemId;
-    }
-
-    public void setItemId(int itemId) {
-        this.itemId = itemId;
-    }
-
-    public int getPlayerId() {
-        return this.playerId;
-    }
-
-    public void setPlayerId(int playerId) {
-        this.playerId = playerId;
-    }
-
     public int getDurability() {
-        return this.durability;
+        return durability;
     }
 
     public void setDurability(int durability) {
@@ -75,27 +50,27 @@ public class Inventory {
     }
 
     public int getQuantity() {
-        return this.quantity;
+        return quantity;
     }
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
 
-    public int getTypeId() {
-        return this.typeId;
+    public Item getItem() {
+        return item;
     }
 
-    public void setTypeId(int typeId) {
-        this.typeId = typeId;
+    public void setItem(Item item) {
+        this.item = item;
     }
 
-    public int getRarityId() {
-        return this.rarityId;
+    public Player getPlayer() {
+        return player;
     }
 
-    public void setRarityId(int rarityId) {
-        this.rarityId = rarityId;
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 
     /* ---------------------------- Database methods ---------------------------- */
@@ -104,8 +79,8 @@ public class Inventory {
         PostgresResources pg = new PostgresResources();
 
         try {
-            pg.initResources(this.getCreateQuery());
-            pg.setStmtValues(this.getCreateClassList(), this.getCreateValues());
+            pg.initResources(Inventory.getCreateQuery());
+            pg.setStmtValues(Inventory.getCreateClassList(), this.getCreateValues());
             pg.executeQuery(true);
         } catch (Exception e) {
             pg.rollback();
@@ -122,10 +97,10 @@ public class Inventory {
 
         try {
             pg.initResources(Inventory.getReadQuery(true));
-            pg.setStmtValues(Inventory.getReadClassList(true), Inventory.getReadValues(inventoryId));
+            pg.setStmtValues(int.class, new Object[] { inventoryId });
             pg.executeQuery(false);
 
-            inventory = Inventory.getRowInstance(pg, inventoryId);
+            inventory = Inventory.getRowInstance(pg);
         } catch (Exception e) {
             pg.rollback();
             throw e;
@@ -136,13 +111,68 @@ public class Inventory {
         return inventory;
     }
 
+    public static List<Inventory> getAll() throws ClassNotFoundException, SQLException {
+        List<Inventory> inventoryList = new ArrayList<>();
+        PostgresResources pg = new PostgresResources();
+
+        try {
+            pg.initResources(Inventory.getJoinQuery(false));
+            pg.executeQuery(false);
+
+            inventoryList = Inventory.getJoinTableInstance(pg);
+        } catch (Exception e) {
+            pg.rollback();
+            throw e;
+        } finally {
+            pg.closeResources();
+        }
+
+        return inventoryList;
+    }
+
+    public static List<Inventory> searchInventories(InventorySearchCriteria criteria)
+            throws ClassNotFoundException, SQLException {
+        List<Inventory> inventoryList = new ArrayList<>();
+        PostgresResources pg = new PostgresResources();
+
+        try {
+            QueryCondition queryCondition = new QueryCondition(Inventory.getJoinQuery(true));
+
+            queryCondition.addCondition(" AND inventory.item_id = ?",
+                    int.class, criteria.getItemId());
+            queryCondition.addCondition(" AND player.character_name LIKE ?",
+                    String.class, "%" + criteria.getCharacterName() + "%");
+            queryCondition.addCondition(" AND durability >= ?",
+                    int.class, criteria.getMinDurability());
+            queryCondition.addCondition(" AND durability <= ?",
+                    int.class, criteria.getMaxDurability());
+            queryCondition.addCondition(" AND item.type_id = ?",
+                    int.class, criteria.getTypeId());
+            queryCondition.addCondition(" AND item.rarity_id = ?",
+                    int.class, criteria.getRarityId());
+
+            pg.initResources(queryCondition.getQuery());
+            pg.setStmtValues(queryCondition.getClassList(), queryCondition.getParameters());
+            pg.executeQuery(false);
+
+            inventoryList = Inventory.getJoinTableInstance(pg);
+        } catch (Exception e) {
+            pg.rollback();
+            throw e;
+        } finally {
+            pg.closeResources();
+        }
+
+        return inventoryList;
+    }
+
     // Update
     public void update() throws ClassNotFoundException, SQLException {
         PostgresResources pg = new PostgresResources();
 
         try {
-            pg.initResources(this.getUpdateQuery());
-            pg.setStmtValues(this.getUpdateClassList(), this.getUpdateValues());
+            pg.initResources(Inventory.getUpdateQuery());
+            pg.setStmtValues(Inventory.getUpdateClassList(), this.getUpdateValues());
             pg.executeQuery(true);
         } catch (Exception e) {
             pg.rollback();
@@ -162,8 +192,8 @@ public class Inventory {
         PostgresResources pg = new PostgresResources();
 
         try {
-            pg.initResources(this.getDeleteQuery());
-            pg.setStmtValues(this.getDeleteClassList(), this.getDeleteValues());
+            pg.initResources(Inventory.getDeleteQuery());
+            pg.setStmtValues(int.class, new Object[] { this.getInventoryId() });
             pg.executeQuery(true);
         } catch (Exception e) {
             pg.rollback();
@@ -174,14 +204,53 @@ public class Inventory {
     }
 
     public static void delete(int inventoryId) throws ClassNotFoundException, SQLException {
-        new Inventory(inventoryId).delete();
+        Inventory inventory = new Inventory();
+        inventory.setInventoryId(inventoryId);
+        inventory.delete();
     }
 
     /* ----------------------------- Utility methods ---------------------------- */
     // Object instantiation
-    private static Inventory getRowInstance(PostgresResources pg, int inventoryId) throws SQLException {
-        Inventory inventory = Inventory.getRowInstance(pg);
-        inventory.setInventoryId(inventoryId);
+    protected static Inventory createInventoryFromResultSet(PostgresResources pg) throws SQLException {
+        Inventory inventory = new Inventory();
+
+        Item item = new Item();
+        item.setItemId(pg.getInt("inventory.item_id"));
+
+        // Player may be deleted but the item remains in the inventory
+        int playerId = (pg.getString("player.is_deleted").equals("t")) ? 0 : pg.getInt("inventory.player_id");
+
+        Player player = new Player();
+        player.setPlayerId(playerId);
+
+        inventory.setInventoryId(pg.getInt("inventory.inventory_id"));
+        inventory.setDurability(pg.getInt("inventory.durability"));
+        inventory.setQuantity(pg.getInt("inventory.quantity"));
+        inventory.setItem(item);
+        inventory.setPlayer(player);
+
+        return inventory;
+    }
+
+    protected static Inventory createInventoryFromJoin(PostgresResources pg) throws SQLException {
+        Inventory inventory = new Inventory();
+
+        Item item = Item.createItemFromResultSet(pg);
+
+        // Player may be deleted but the item remains in the inventory
+        int playerId = (pg.getString("player.is_deleted").equals("t")) ? 0 : pg.getInt("inventory.player_id");
+
+        Name name = new Name();
+        name.setCharacterName(pg.getString("player.character_name"));
+
+        Player player = Player.createPlayerFromResultSet(pg);
+        player.setPlayerId(playerId);
+
+        inventory.setInventoryId(pg.getInt("inventory.inventory_id"));
+        inventory.setDurability(pg.getInt("inventory.durability"));
+        inventory.setQuantity(pg.getInt("inventory.quantity"));
+        inventory.setItem(item);
+        inventory.setPlayer(player);
 
         return inventory;
     }
@@ -189,40 +258,42 @@ public class Inventory {
     private static Inventory getRowInstance(PostgresResources pg) throws SQLException {
         Inventory inventory = new Inventory();
 
-        while (pg.next()) {
-            inventory.setItemId(pg.getInt("item_id"));
-            inventory.setPlayerId(pg.getInt("player_id"));
-            inventory.setDurability(pg.getInt("durability"));
-            inventory.setQuantity(pg.getInt("quantity"));
-            inventory.setTypeId(pg.getInt("type_id"));
-            inventory.setRarityId(pg.getInt("rarity_id"));
-
-            if (pg.getString("is_deleted").equals("t")) {
-                inventory.setPlayerId(0);
-            }
+        if (pg.next()) {
+            inventory = Inventory.createInventoryFromResultSet(pg);
         }
 
         return inventory;
     }
 
+    private static List<Inventory> getJoinTableInstance(PostgresResources pg) throws SQLException {
+        List<Inventory> inventoryList = new ArrayList<>();
+
+        while (pg.next()) {
+            Inventory inventory = Inventory.createInventoryFromJoin(pg);
+            inventoryList.add(inventory);
+        }
+
+        return inventoryList;
+    }
+
     // Create
-    private String getCreateQuery() {
+    private static String getCreateQuery() {
         return Inventory.CREATE_QUERY;
     }
 
-    private Class<?>[] getCreateClassList() {
+    private static Class<?>[] getCreateClassList() {
         return new Class<?>[] {
                 int.class,
                 int.class,
-                double.class,
+                int.class,
                 int.class
         };
     }
 
     private Object[] getCreateValues() {
         return new Object[] {
-                this.getItemId(),
-                this.getPlayerId(),
+                this.getItem().getItemId(),
+                this.getPlayer().getPlayerId(),
                 this.getDurability(),
                 this.getQuantity()
         };
@@ -233,34 +304,22 @@ public class Inventory {
         StringBuilder sb = new StringBuilder(Inventory.READ_QUERY);
 
         if (hasWhere) {
-            sb.append(" WHERE inventory_id = ?");
+            sb.append(" WHERE inventory.inventory_id = ?");
         }
 
         return sb.toString();
     }
 
-    private static Class<?>[] getReadClassList(boolean hasWhere) {
-        if (hasWhere) {
-            return new Class[] { int.class };
-        }
-
-        return new Class<?>[0];
-    }
-
-    private static Object[] getReadValues(int inventoryId) {
-        return new Object[] { inventoryId };
-    }
-
     // Update
-    private String getUpdateQuery() {
+    private static String getUpdateQuery() {
         return Inventory.UPDATE_QUERY;
     }
 
-    private Class<?>[] getUpdateClassList() {
+    private static Class<?>[] getUpdateClassList() {
         return new Class<?>[] {
                 int.class,
                 int.class,
-                double.class,
+                int.class,
                 int.class,
                 int.class
         };
@@ -268,8 +327,8 @@ public class Inventory {
 
     private Object[] getUpdateValues() {
         return new Object[] {
-                this.getItemId(),
-                this.getPlayerId(),
+                this.getItem().getItemId(),
+                this.getPlayer().getPlayerId(),
                 this.getDurability(),
                 this.getQuantity(),
                 this.getInventoryId()
@@ -277,15 +336,18 @@ public class Inventory {
     }
 
     // Delete
-    private String getDeleteQuery() {
+    private static String getDeleteQuery() {
         return Inventory.DELETE_QUERY;
     }
 
-    private Class<?>[] getDeleteClassList() {
-        return new Class[] { int.class };
-    }
+    // Join
+    private static String getJoinQuery(boolean hasWhere) {
+        StringBuilder sb = new StringBuilder(Inventory.JOIN_QUERY);
 
-    private Object[] getDeleteValues() {
-        return new Object[] { this.getInventoryId() };
+        if (hasWhere) {
+            sb.append(" WHERE 1 = 1");
+        }
+
+        return sb.toString();
     }
 }
