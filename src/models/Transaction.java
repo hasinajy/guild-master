@@ -405,7 +405,7 @@ public class Transaction {
                 this.getTransactionType().getTransactionTypeId(),
                 this.getDate(),
                 this.getItem().getItemId(),
-                this.getPlayer().getPlayerID(),
+                this.getPlayer().getPlayerId(),
                 this.getStaff().getStaffId(),
                 this.getNote()
         };
@@ -444,7 +444,7 @@ public class Transaction {
                 this.getDate(),
                 this.getTransactionType().getTransactionTypeId(),
                 this.getItem().getItemId(),
-                this.getPlayer().getPlayerID(),
+                this.getPlayer().getPlayerId(),
                 this.getStaff().getStaffId(),
                 this.getNote(),
                 this.getTransactionType()
