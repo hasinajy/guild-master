@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.ServletException;
 
 import models.Player;
-import models.PlayerFull;
 import utils.ExceptionHandler;
 import utils.RequestChecker;
 
@@ -30,6 +29,6 @@ public class PlayerRD extends HttpServlet {
     }
 
     private void setAttributes(HttpServletRequest req) throws ClassNotFoundException, SQLException {
-        req.setAttribute("player-list", PlayerFull.getAll());
+        req.setAttribute("player-list", Player.getAll());
     }
 }
