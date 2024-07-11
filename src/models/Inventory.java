@@ -1,6 +1,8 @@
 package models;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import database.PostgresResources;
 
@@ -16,6 +18,7 @@ public class Inventory {
     private static final String READ_QUERY = "SELECT * FROM v_inventory_active";
     private static final String UPDATE_QUERY = "UPDATE inventory SET item_id = ?, player_id = ?, durability = ?, quantity = ? WHERE inventory_id = ?";
     private static final String DELETE_QUERY = "DELETE FROM inventory WHERE inventory_id = ?";
+    private static final String JOIN_QUERY = "SELECT * FROM v_inventory";
 
     /* ------------------------------ Constructors ------------------------------ */
     public Inventory() {
@@ -108,6 +111,25 @@ public class Inventory {
         return inventory;
     }
 
+    public static List<Inventory> getAll() throws ClassNotFoundException, SQLException {
+        List<Inventory> inventoryList = new ArrayList<>();
+        PostgresResources pg = new PostgresResources();
+
+        try {
+            pg.initResources(Inventory.getJoinQuery(false));
+            pg.executeQuery(false);
+
+            inventoryList = Inventory.getJoinTableInstance(pg);
+        } catch (Exception e) {
+            pg.rollback();
+            throw e;
+        } finally {
+            pg.closeResources();
+        }
+
+        return inventoryList;
+    }
+
     // Update
     public void update() throws ClassNotFoundException, SQLException {
         PostgresResources pg = new PostgresResources();
@@ -174,6 +196,29 @@ public class Inventory {
         return inventory;
     }
 
+    protected static Inventory createInventoryFromJoin(PostgresResources pg) throws SQLException {
+        Inventory inventory = new Inventory();
+
+        Item item = Item.createItemFromResultSet(pg);
+
+        // Player may be deleted but the item remains in the inventory
+        int playerId = (pg.getString("player.is_deleted").equals("t")) ? 0 : pg.getInt("inventory.player_id");
+
+        Name name = new Name();
+        name.setCharacterName(pg.getString("player.character_name"));
+
+        Player player = Player.createPlayerFromResultSet(pg);
+        player.setPlayerId(playerId);
+
+        inventory.setInventoryId(pg.getInt("inventory.inventory_id"));
+        inventory.setDurability(pg.getInt("inventory.durability"));
+        inventory.setQuantity(pg.getInt("inventory.quantity"));
+        inventory.setItem(item);
+        inventory.setPlayer(player);
+
+        return inventory;
+    }
+
     private static Inventory getRowInstance(PostgresResources pg) throws SQLException {
         Inventory inventory = new Inventory();
 
@@ -182,6 +227,17 @@ public class Inventory {
         }
 
         return inventory;
+    }
+
+    private static List<Inventory> getJoinTableInstance(PostgresResources pg) throws SQLException {
+        List<Inventory> inventoryList = new ArrayList<>();
+
+        while (pg.next()) {
+            Inventory inventory = Inventory.createInventoryFromJoin(pg);
+            inventoryList.add(inventory);
+        }
+
+        return inventoryList;
     }
 
     // Create
@@ -246,5 +302,16 @@ public class Inventory {
     // Delete
     private static String getDeleteQuery() {
         return Inventory.DELETE_QUERY;
+    }
+
+    // Join
+    private static String getJoinQuery(boolean hasWhere) {
+        StringBuilder sb = new StringBuilder(Inventory.JOIN_QUERY);
+
+        if (hasWhere) {
+            sb.append(" WHERE 1 = 1");
+        }
+
+        return sb.toString();
     }
 }
