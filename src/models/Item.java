@@ -82,8 +82,8 @@ public class Item {
         PostgresResources pg = new PostgresResources();
 
         try {
-            pg.initResources(this.getCreateQuery());
-            pg.setStmtValues(this.getCreateClassList(), this.getCreateValues());
+            pg.initResources(Item.getCreateQuery());
+            pg.setStmtValues(Item.getCreateClassList(), this.getCreateValues());
             pg.executeQuery(true);
         } catch (Exception e) {
             pg.rollback();
@@ -173,7 +173,7 @@ public class Item {
         try {
             // TODO: Dynamic query based on img_path
             pg.initResources(Item.getUpdateQuery());
-            pg.setStmtValues(this.getUpdateClassList(), this.getUpdateValues());
+            pg.setStmtValues(Item.getUpdateClassList(), this.getUpdateValues());
             pg.executeQuery(true);
         } catch (Exception e) {
             pg.rollback();
@@ -210,7 +210,7 @@ public class Item {
 
     /* ----------------------------- Utility methods ---------------------------- */
     // Instantiation methods
-    private static Item createItemFromResultSet(PostgresResources pg) throws SQLException {
+    protected static Item createItemFromResultSet(PostgresResources pg) throws SQLException {
         Item item = new Item();
         item.setItemId(pg.getInt("item.item_id"));
         item.setName(pg.getString("item.name"));
@@ -248,11 +248,11 @@ public class Item {
     }
 
     // Create
-    private String getCreateQuery() {
+    private static String getCreateQuery() {
         return Item.CREATE_QUERY;
     }
 
-    private Class<?>[] getCreateClassList() {
+    private static Class<?>[] getCreateClassList() {
         return new Class[] {
                 String.class,
                 int.class,
@@ -286,7 +286,7 @@ public class Item {
         return Item.UPDATE_QUERY;
     }
 
-    private Class<?>[] getUpdateClassList() {
+    private static Class<?>[] getUpdateClassList() {
         return new Class<?>[] {
                 String.class,
                 int.class,
