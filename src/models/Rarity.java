@@ -17,6 +17,7 @@ public class Rarity {
 
     // Queries
     private static final String CREATE_QUERY = "INSERT INTO rarity(name, img_path) VALUES (?, ?)";
+    private static final String READ_QUERY = "SELECT * FROM rarity";
 
     /* ------------------------------ Constructors ------------------------------ */
     public Rarity() {
@@ -73,39 +74,19 @@ public class Rarity {
     // Read
     public static Rarity getById(int rarityId) throws ClassNotFoundException, SQLException {
         Rarity rarity = null;
-
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
+        PostgresResources pg = new PostgresResources();
 
         try {
-            String query = "SELECT * FROM rarity WHERE rarity_id = ?";
+            pg.initResources(Rarity.getReadQuery(false));
+            pg.setStmtValues(int.class, new Object[] { rarityId });
+            pg.executeQuery(false);
 
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setInt(1, rarityId);
-            rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                String name = rs.getString("name");
-                String imgPath = rs.getString("img_path");
-
-                rarity = new Rarity(rarityId, name, imgPath);
-            }
+            rarity = Rarity.getRowInstance(pg);
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (rs != null)
-                rs.close();
-
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
 
         return rarity;
@@ -230,12 +211,22 @@ public class Rarity {
 
     /* ----------------------------- Utility methods ---------------------------- */
     // Instantiation methods
-    protected static Rarity getRowInstance(PostgresResources pg) throws SQLException {
+    protected static Rarity createRarityFromResultSet(PostgresResources pg) throws SQLException {
         Rarity rarity = new Rarity();
 
         rarity.setRarityId(pg.getInt("rarity.rarity_id"));
         rarity.setName(pg.getString("rarity.name"));
         rarity.setImgPath(pg.getString("rarity.img_path"));
+
+        return rarity;
+    }
+
+    protected static Rarity getRowInstance(PostgresResources pg) throws SQLException {
+        Rarity rarity = null;
+
+        if (pg.next()) {
+            rarity = Rarity.createRarityFromResultSet(pg);
+        }
 
         return rarity;
     }
@@ -257,5 +248,16 @@ public class Rarity {
                 this.getName(),
                 this.getImgPath()
         };
+    }
+
+    // Read
+    private static String getReadQuery(boolean hasWhere) {
+        StringBuilder sb = new StringBuilder(Rarity.READ_QUERY);
+
+        if (hasWhere) {
+            sb.append(" WHERE rarity_id = ?");
+        }
+
+        return sb.toString();
     }
 }
