@@ -10,7 +10,6 @@ import jakarta.servlet.ServletException;
 
 import models.Item;
 import models.Player;
-import models.PlayerFull;
 import models.Rarity;
 import models.Staff;
 import models.Transaction;
@@ -89,7 +88,7 @@ public class InventoryCU extends HttpServlet {
 
     private void setAttributes(HttpServletRequest req) throws ClassNotFoundException, SQLException {
         req.setAttribute("item-list", Item.getAll());
-        req.setAttribute("player-list", PlayerFull.getAll());
+        req.setAttribute("player-list", Player.getAll());
         req.setAttribute("type-list", Type.getAll());
         req.setAttribute("rarity-list", Rarity.getAll());
     }
