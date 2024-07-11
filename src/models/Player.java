@@ -9,42 +9,38 @@ import java.sql.Types;
 import database.Postgres;
 
 public class Player {
-    private int playerID;
+    private int playerId;
     private String username;
     private String characterName;
-    private int genderID;
+    private int genderId;
     private int level;
-    private int factionID;
+    private int factionId;
     private String description;
     private String imgPath;
 
-    // Constructors
+    /* ------------------------------ Constructors ------------------------------ */
     public Player() {
     }
 
-    public Player(int playerID) {
-        this.playerID = playerID;
-    }
-
-    public Player(int playerID, String username, String characterName, int genderID, int level, int factionID,
+    public Player(int playerId, String username, String characterName, int genderId, int level, int factionId,
             String description, String imgPath) {
-        this.playerID = playerID;
+        this.playerId = playerId;
         this.username = username;
         this.characterName = characterName;
-        this.genderID = genderID;
+        this.genderId = genderId;
         this.level = level;
-        this.setFactionID(factionID);
+        this.setFactionId(factionId);
         this.setDescription(description);
         this.setImgPath(imgPath);
     }
 
-    // Getters & Setters
-    public int getPlayerID() {
-        return playerID;
+    /* --------------------------- Getters and setters -------------------------- */
+    public int getPlayerId() {
+        return playerId;
     }
 
-    public void setPlayerID(int playerID) {
-        this.playerID = playerID;
+    public void setPlayerId(int playerId) {
+        this.playerId = playerId;
     }
 
     public String getUsername() {
@@ -63,12 +59,12 @@ public class Player {
         this.characterName = characterName;
     }
 
-    public int getGenderID() {
-        return genderID;
+    public int getGenderId() {
+        return genderId;
     }
 
-    public void setGenderID(int genderID) {
-        this.genderID = genderID;
+    public void setGenderId(int genderId) {
+        this.genderId = genderId;
     }
 
     public int getLevel() {
@@ -79,12 +75,12 @@ public class Player {
         this.level = level;
     }
 
-    public int getFactionID() {
-        return factionID;
+    public int getFactionId() {
+        return factionId;
     }
 
-    public void setFactionID(int factionID) {
-        this.factionID = factionID;
+    public void setFactionId(int factionId) {
+        this.factionId = factionId;
     }
 
     public String getDescription() {
@@ -103,8 +99,8 @@ public class Player {
         this.imgPath = imgPath;
     }
 
-    // User methods
-    public static Player getByID(int playerID) throws ClassNotFoundException, SQLException {
+    /* ---------------------------- Database methods ---------------------------- */
+    public static Player getById(int playerId) throws ClassNotFoundException, SQLException {
         Player player = null;
 
         Connection conn = null;
@@ -116,19 +112,19 @@ public class Player {
 
             conn = Postgres.getInstance().getConnection();
             stmt = conn.prepareStatement(query);
-            stmt.setInt(1, playerID);
+            stmt.setInt(1, playerId);
             rs = stmt.executeQuery();
 
             while (rs.next()) {
                 String username = rs.getString("username");
                 String characterName = rs.getString("character_name");
-                int genderID = rs.getInt("gender_id");
+                int genderId = rs.getInt("gender_id");
                 int level = rs.getInt("level");
-                int factionID = rs.getInt("faction_id");
+                int factionId = rs.getInt("faction_id");
                 String description = rs.getString("description");
                 String imgPath = rs.getString("img_path");
 
-                player = new Player(playerID, username, characterName, genderID, level, factionID, description,
+                player = new Player(playerId, username, characterName, genderId, level, factionId, description,
                         imgPath);
             }
         } catch (Exception e) {
@@ -164,7 +160,7 @@ public class Player {
 
             conn = Postgres.getInstance().getConnection();
             stmt = conn.prepareStatement(query);
-            stmt.setInt(1, this.getPlayerID());
+            stmt.setInt(1, this.getPlayerId());
             stmt.executeUpdate();
         } catch (Exception e) {
             if (conn != null) {
@@ -180,6 +176,10 @@ public class Player {
         }
     }
 
+    public static void delete(int playerId) throws ClassNotFoundException, SQLException {
+        new Player(playerId).delete();
+    }
+
     public void create() throws ClassNotFoundException, SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -192,9 +192,9 @@ public class Player {
             stmt = conn.prepareStatement(query);
             stmt.setString(1, this.username);
             stmt.setString(2, this.characterName);
-            stmt.setInt(3, this.genderID);
+            stmt.setInt(3, this.genderId);
             stmt.setInt(4, this.level);
-            stmt.setInt(5, this.factionID);
+            stmt.setInt(5, this.factionId);
             stmt.setString(6, this.description);
             stmt.setString(7, this.getImgPath());
             stmt.executeUpdate();
@@ -227,17 +227,17 @@ public class Player {
                 stmt = conn.prepareStatement(query);
                 stmt.setString(1, this.getUsername());
                 stmt.setString(2, this.getCharacterName());
-                stmt.setInt(3, this.getGenderID());
+                stmt.setInt(3, this.getGenderId());
                 stmt.setInt(4, this.getLevel());
 
-                if (this.getFactionID() == 0) {
+                if (this.getFactionId() == 0) {
                     stmt.setNull(5, Types.INTEGER);
                 } else {
-                    stmt.setInt(5, this.getFactionID());
+                    stmt.setInt(5, this.getFactionId());
                 }
 
                 stmt.setString(6, this.getDescription());
-                stmt.setInt(7, this.playerID);
+                stmt.setInt(7, this.playerId);
             } else {
                 String query = "UPDATE player SET"
                         + " username = ?, character_name = ?, gender_id = ?, level = ?, faction_id = ?, description = ?, img_path = ?"
@@ -246,18 +246,18 @@ public class Player {
                 stmt = conn.prepareStatement(query);
                 stmt.setString(1, this.getUsername());
                 stmt.setString(2, this.getCharacterName());
-                stmt.setInt(3, this.getGenderID());
+                stmt.setInt(3, this.getGenderId());
                 stmt.setInt(4, this.getLevel());
 
-                if (this.getFactionID() == 0) {
+                if (this.getFactionId() == 0) {
                     stmt.setNull(5, Types.INTEGER);
                 } else {
-                    stmt.setInt(5, this.getFactionID());
+                    stmt.setInt(5, this.getFactionId());
                 }
 
                 stmt.setString(6, this.getDescription());
                 stmt.setString(7, this.getImgPath());
-                stmt.setInt(8, this.playerID);
+                stmt.setInt(8, this.playerId);
             }
 
             stmt.executeUpdate();
@@ -273,5 +273,10 @@ public class Player {
             if (conn != null)
                 conn.close();
         }
+    }
+
+    public void update(int playerId) throws ClassNotFoundException, SQLException {
+        this.setPlayerId(playerId);
+        this.update();
     }
 }
