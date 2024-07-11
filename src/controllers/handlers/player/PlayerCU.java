@@ -15,6 +15,7 @@ import utils.ImageProcessor;
 import utils.RequestChecker;
 import utils.UrlUtils;
 import models.Gender;
+import models.Name;
 
 @MultipartConfig
 public class PlayerCU extends HttpServlet {
@@ -44,7 +45,17 @@ public class PlayerCU extends HttpServlet {
             int factionId = Integer.parseInt(req.getParameter("faction-id"));
             String imgPath = ImageProcessor.processImage(null, req, "player");
 
-            Player player = new Player(0, username, characterName, genderId, level, factionId, "", imgPath);
+            Name name = new Name();
+            name.setUsername(username);
+            name.setCharacterName(characterName);
+
+            Gender gender = new Gender();
+            gender.setGenderId(genderId);
+
+            Faction faction = new Faction();
+            faction.setFactionId(factionId);
+
+            Player player = new Player(0, level, "", imgPath, name, gender, faction);
 
             if (RequestChecker.isUpdateMode(req)) {
                 int playerId = Integer.parseInt(req.getParameter("player-id"));
