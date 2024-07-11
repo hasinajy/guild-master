@@ -51,6 +51,34 @@ public class Rarity {
     }
 
     /* ---------------------------- Database methods ---------------------------- */
+    // Create
+    public void create() throws ClassNotFoundException, SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            String query = "INSERT INTO rarity(name, img_path) VALUES (?, ?)";
+
+            conn = Postgres.getInstance().getConnection();
+            stmt = conn.prepareStatement(query);
+            stmt.setString(1, this.getName());
+            stmt.setString(2, this.getImgPath());
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            if (conn != null) {
+                conn.rollback();
+            }
+            throw e;
+        } finally {
+            if (stmt != null)
+                stmt.close();
+
+            if (conn != null)
+                conn.close();
+        }
+    }
+
+    // Read
     public static Rarity getById(int rarityId) throws ClassNotFoundException, SQLException {
         Rarity rarity = null;
 
@@ -89,10 +117,6 @@ public class Rarity {
         }
 
         return rarity;
-    }
-
-    public static void deleteById(int rarityId) throws ClassNotFoundException, SQLException {
-        new Rarity(rarityId).delete();
     }
 
     public static List<Rarity> getAll() throws ClassNotFoundException, SQLException {
@@ -135,61 +159,7 @@ public class Rarity {
         return data;
     }
 
-    public void delete() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-
-        try {
-            String query = "DELETE FROM rarity WHERE rarity_id = ?";
-
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setInt(1, this.rarityId);
-            stmt.executeUpdate();
-        } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
-            throw e;
-        } finally {
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
-        }
-    }
-
-    public static void delete(int rarityId) throws ClassNotFoundException, SQLException {
-        new Rarity(rarityId).delete();
-    }
-
-    public void create() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-
-        try {
-            String query = "INSERT INTO rarity(name, img_path) VALUES (?, ?)";
-
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setString(1, this.getName());
-            stmt.setString(2, this.getImgPath());
-            stmt.executeUpdate();
-        } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
-            throw e;
-        } finally {
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
-        }
-    }
-
+    // Update
     public void update() throws ClassNotFoundException, SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -232,9 +202,43 @@ public class Rarity {
         this.update();
     }
 
+    // Delete
+    public static void deleteById(int rarityId) throws ClassNotFoundException, SQLException {
+        new Rarity(rarityId).delete();
+    }
+
+    public void delete() throws ClassNotFoundException, SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            String query = "DELETE FROM rarity WHERE rarity_id = ?";
+
+            conn = Postgres.getInstance().getConnection();
+            stmt = conn.prepareStatement(query);
+            stmt.setInt(1, this.rarityId);
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            if (conn != null) {
+                conn.rollback();
+            }
+            throw e;
+        } finally {
+            if (stmt != null)
+                stmt.close();
+
+            if (conn != null)
+                conn.close();
+        }
+    }
+
+    public static void delete(int rarityId) throws ClassNotFoundException, SQLException {
+        new Rarity(rarityId).delete();
+    }
+
     /* ----------------------------- Utility methods ---------------------------- */
     // Instantiation methods
-        protected static Rarity getRowInstance(PostgresResources pg) throws SQLException {
+    protected static Rarity getRowInstance(PostgresResources pg) throws SQLException {
         Rarity rarity = new Rarity();
 
         rarity.setRarityId(pg.getInt("rarity.rarity_id"));
