@@ -10,28 +10,26 @@ import database.Postgres;
 
 public class Player {
     private int playerId;
-    private String username;
-    private String characterName;
-    private int genderId;
     private int level;
-    private int factionId;
     private String description;
     private String imgPath;
+    private Name name;
+    private Gender gender;
+    private Faction faction;
 
     /* ------------------------------ Constructors ------------------------------ */
     public Player() {
     }
 
-    public Player(int playerId, String username, String characterName, int genderId, int level, int factionId,
-            String description, String imgPath) {
-        this.playerId = playerId;
-        this.username = username;
-        this.characterName = characterName;
-        this.genderId = genderId;
-        this.level = level;
-        this.setFactionId(factionId);
+    public Player(int playerId, int level, String description, String imgPath, Name name, Gender gender,
+            Faction faction) {
+        this.setPlayerId(playerId);
+        this.setLevel(level);
         this.setDescription(description);
         this.setImgPath(imgPath);
+        this.setName(name);
+        this.setGender(gender);
+        this.setFaction(faction);
     }
 
     /* --------------------------- Getters and setters -------------------------- */
@@ -43,30 +41,6 @@ public class Player {
         this.playerId = playerId;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getCharacterName() {
-        return characterName;
-    }
-
-    public void setCharacterName(String characterName) {
-        this.characterName = characterName;
-    }
-
-    public int getGenderId() {
-        return genderId;
-    }
-
-    public void setGenderId(int genderId) {
-        this.genderId = genderId;
-    }
-
     public int getLevel() {
         return level;
     }
@@ -75,16 +49,8 @@ public class Player {
         this.level = level;
     }
 
-    public int getFactionId() {
-        return factionId;
-    }
-
-    public void setFactionId(int factionId) {
-        this.factionId = factionId;
-    }
-
     public String getDescription() {
-        return this.description;
+        return description;
     }
 
     public void setDescription(String description) {
@@ -92,11 +58,35 @@ public class Player {
     }
 
     public String getImgPath() {
-        return this.imgPath;
+        return imgPath;
     }
 
     public void setImgPath(String imgPath) {
         this.imgPath = imgPath;
+    }
+
+    public Name getName() {
+        return name;
+    }
+
+    public void setName(Name name) {
+        this.name = name;
+    }
+
+    public Gender getGender() {
+        return gender;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
+
+    public Faction getFaction() {
+        return faction;
+    }
+
+    public void setFaction(Faction faction) {
+        this.faction = faction;
     }
 
     /* ---------------------------- Database methods ---------------------------- */
