@@ -20,6 +20,7 @@ public class Player {
 
     // Queries
     private static final String CREATE_QUERY = "INSERT INTO player(username, character_name, gender_id, level, faction_id, description, img_path) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    private static final String READ_QUERY = "SELECT * FROM player";
 
     /* ------------------------------ Constructors ------------------------------ */
     public Player() {
@@ -113,45 +114,19 @@ public class Player {
     // Read
     public static Player getById(int playerId) throws ClassNotFoundException, SQLException {
         Player player = null;
-
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
+        PostgresResources pg = new PostgresResources();
 
         try {
-            String query = "SELECT * FROM player WHERE player_id = ?";
+            pg.initResources(Player.getReadQuery(true));
+            pg.setStmtValues(int.class, new Object[] { playerId });
+            pg.executeQuery(false);
 
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setInt(1, playerId);
-            rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                String username = rs.getString("username");
-                String characterName = rs.getString("character_name");
-                int genderId = rs.getInt("gender_id");
-                int level = rs.getInt("level");
-                int factionId = rs.getInt("faction_id");
-                String description = rs.getString("description");
-                String imgPath = rs.getString("img_path");
-
-                player = new Player(playerId, username, characterName, genderId, level, factionId, description,
-                        imgPath);
-            }
+            player = Player.getRowInstance(pg);
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (rs != null)
-                rs.close();
-
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
 
         return player;
@@ -262,6 +237,41 @@ public class Player {
     }
 
     /* ----------------------------- Utility methods ---------------------------- */
+    // Instantiation methods
+    protected static Player createPlayerFromResultSet(PostgresResources pg) throws SQLException {
+        Player player = new Player();
+
+        Name name = new Name();
+        name.setUsername(pg.getString("player.username"));
+        name.setCharacterName(pg.getString("player.character_name"));
+
+        Gender gender = new Gender();
+        gender.setGenderId(pg.getInt("player.gender_id"));
+
+        Faction faction = new Faction();
+        faction.setFactionId(pg.getInt("player.faction_id"));
+
+        player.setPlayerId(pg.getInt("player.player_id"));
+        player.setName(name);
+        player.setGender(gender);
+        player.setLevel(pg.getInt("player.level"));
+        player.setFaction(faction);
+        player.setDescription(pg.getString("player.description"));
+        player.setImgPath(pg.getString("player.img_path"));
+
+        return player;
+    }
+
+    private static Player getRowInstance(PostgresResources pg) throws SQLException {
+        Player player = null;
+
+        if (pg.next()) {
+            player = Player.createPlayerFromResultSet(pg);
+        }
+
+        return player;
+    }
+
     // Create
     private static String getCreateQuery() {
         return Player.CREATE_QUERY;
@@ -289,5 +299,16 @@ public class Player {
                 this.getDescription(),
                 this.getImgPath()
         };
+    }
+
+    // Read
+    private static String getReadQuery(boolean hasWhere) {
+        StringBuilder sb = new StringBuilder(Player.READ_QUERY);
+
+        if (hasWhere) {
+            sb.append(" WHERE player_id = ?");
+        }
+
+        return sb.toString();
     }
 }
