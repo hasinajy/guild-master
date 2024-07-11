@@ -130,6 +130,42 @@ public class Inventory {
         return inventoryList;
     }
 
+    public static List<Inventory> searchInventories(InventorySearchCriteria criteria)
+            throws ClassNotFoundException, SQLException {
+        List<Inventory> inventoryList = new ArrayList<>();
+        PostgresResources pg = new PostgresResources();
+
+        try {
+            QueryCondition queryCondition = new QueryCondition(Inventory.getJoinQuery(true));
+
+            queryCondition.addCondition(" AND inventory.item_id = ?",
+                    int.class, criteria.getItemId());
+            queryCondition.addCondition(" AND player.character_name LIKE ?",
+                    String.class, "%" + criteria.getCharacterName() + "%");
+            queryCondition.addCondition(" AND durability >= ?",
+                    int.class, criteria.getMinDurability());
+            queryCondition.addCondition(" AND durability <= ?",
+                    int.class, criteria.getMaxDurability());
+            queryCondition.addCondition(" AND item.type_id = ?",
+                    int.class, criteria.getTypeId());
+            queryCondition.addCondition(" AND item.rarity_id = ?",
+                    int.class, criteria.getRarityId());
+
+            pg.initResources(queryCondition.getQuery());
+            pg.setStmtValues(queryCondition.getClassList(), queryCondition.getParameters());
+            pg.executeQuery(false);
+
+            inventoryList = Inventory.getJoinTableInstance(pg);
+        } catch (Exception e) {
+            pg.rollback();
+            throw e;
+        } finally {
+            pg.closeResources();
+        }
+
+        return inventoryList;
+    }
+
     // Update
     public void update() throws ClassNotFoundException, SQLException {
         PostgresResources pg = new PostgresResources();
