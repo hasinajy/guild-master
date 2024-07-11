@@ -11,7 +11,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import models.Item;
 import models.Player;
-import models.PlayerFull;
 import models.Staff;
 import models.Transaction;
 import models.TransactionType;
@@ -59,7 +58,7 @@ public class TransactionCU extends HttpServlet {
             item.setItemId(itemId);
 
             Player player = new Player();
-            player.setPlayerID(playerId);
+            player.setPlayerId(playerId);
 
             Staff staff = new Staff();
             staff.setStaffId(staffId);
@@ -90,6 +89,6 @@ public class TransactionCU extends HttpServlet {
     private void setAttributes(HttpServletRequest req) throws ClassNotFoundException, SQLException {
         req.setAttribute("transaction-type-list", TransactionType.getAll());
         req.setAttribute("item-list", Item.getAll());
-        req.setAttribute("player-list", PlayerFull.getAll());
+        req.setAttribute("player-list", Player.getAll());
     }
 }
