@@ -68,7 +68,7 @@ public class InventoryCU extends HttpServlet {
                 item.setItemId(itemId);
 
                 Player player = new Player();
-                player.setPlayerID(playerId);
+                player.setPlayerId(playerId);
 
                 Staff staff = new Staff();
                 staff.setStaffId(1);
