@@ -134,8 +134,8 @@ public class Inventory {
         PostgresResources pg = new PostgresResources();
 
         try {
-            pg.initResources(this.getDeleteQuery());
-            pg.setStmtValues(this.getDeleteClassList(), this.getDeleteValues());
+            pg.initResources(Inventory.getDeleteQuery());
+            pg.setStmtValues(int.class, new Object[] { this.getInventoryId() });
             pg.executeQuery(true);
         } catch (Exception e) {
             pg.rollback();
@@ -146,7 +146,9 @@ public class Inventory {
     }
 
     public static void delete(int inventoryId) throws ClassNotFoundException, SQLException {
-        new Inventory(inventoryId).delete();
+        Inventory inventory = new Inventory();
+        inventory.setInventoryId(inventoryId);
+        inventory.delete();
     }
 
     /* ----------------------------- Utility methods ---------------------------- */
@@ -242,15 +244,7 @@ public class Inventory {
     }
 
     // Delete
-    private String getDeleteQuery() {
+    private static String getDeleteQuery() {
         return Inventory.DELETE_QUERY;
-    }
-
-    private Class<?>[] getDeleteClassList() {
-        return new Class[] { int.class };
-    }
-
-    private Object[] getDeleteValues() {
-        return new Object[] { this.getInventoryId() };
     }
 }
