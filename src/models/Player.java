@@ -90,6 +90,40 @@ public class Player {
     }
 
     /* ---------------------------- Database methods ---------------------------- */
+    // Create
+    public void create() throws ClassNotFoundException, SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            String query = "INSERT INTO player(username, character_name, gender_id, level, faction_id, description, img_path)"
+                    + " VALUES (?, ?, ?, ?, ?, ?, ?)";
+
+            conn = Postgres.getInstance().getConnection();
+            stmt = conn.prepareStatement(query);
+            stmt.setString(1, this.username);
+            stmt.setString(2, this.characterName);
+            stmt.setInt(3, this.genderId);
+            stmt.setInt(4, this.level);
+            stmt.setInt(5, this.factionId);
+            stmt.setString(6, this.description);
+            stmt.setString(7, this.getImgPath());
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            if (conn != null) {
+                conn.rollback();
+            }
+            throw e;
+        } finally {
+            if (stmt != null)
+                stmt.close();
+
+            if (conn != null)
+                conn.close();
+        }
+    }
+
+    // Read
     public static Player getById(int playerId) throws ClassNotFoundException, SQLException {
         Player player = null;
 
@@ -136,72 +170,7 @@ public class Player {
         return player;
     }
 
-    public void delete() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-
-        try {
-            String query = "UPDATE\r\n" + //
-                    "    player\r\n" + //
-                    "SET\r\n" + //
-                    "    is_deleted = true\r\n" + //
-                    "WHERE\r\n" + //
-                    "    player_id = ?;";
-
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setInt(1, this.getPlayerId());
-            stmt.executeUpdate();
-        } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
-            throw e;
-        } finally {
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
-        }
-    }
-
-    public static void delete(int playerId) throws ClassNotFoundException, SQLException {
-        new Player(playerId).delete();
-    }
-
-    public void create() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-
-        try {
-            String query = "INSERT INTO player(username, character_name, gender_id, level, faction_id, description, img_path)"
-                    + " VALUES (?, ?, ?, ?, ?, ?, ?)";
-
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setString(1, this.username);
-            stmt.setString(2, this.characterName);
-            stmt.setInt(3, this.genderId);
-            stmt.setInt(4, this.level);
-            stmt.setInt(5, this.factionId);
-            stmt.setString(6, this.description);
-            stmt.setString(7, this.getImgPath());
-            stmt.executeUpdate();
-        } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
-            throw e;
-        } finally {
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
-        }
-    }
-
+    // Update
     public void update() throws ClassNotFoundException, SQLException {
         Connection conn = null;
         PreparedStatement stmt = null;
@@ -268,5 +237,40 @@ public class Player {
     public void update(int playerId) throws ClassNotFoundException, SQLException {
         this.setPlayerId(playerId);
         this.update();
+    }
+
+    // Delete
+    public void delete() throws ClassNotFoundException, SQLException {
+        Connection conn = null;
+        PreparedStatement stmt = null;
+
+        try {
+            String query = "UPDATE\r\n" + //
+                    "    player\r\n" + //
+                    "SET\r\n" + //
+                    "    is_deleted = true\r\n" + //
+                    "WHERE\r\n" + //
+                    "    player_id = ?;";
+
+            conn = Postgres.getInstance().getConnection();
+            stmt = conn.prepareStatement(query);
+            stmt.setInt(1, this.getPlayerId());
+            stmt.executeUpdate();
+        } catch (Exception e) {
+            if (conn != null) {
+                conn.rollback();
+            }
+            throw e;
+        } finally {
+            if (stmt != null)
+                stmt.close();
+
+            if (conn != null)
+                conn.close();
+        }
+    }
+
+    public static void delete(int playerId) throws ClassNotFoundException, SQLException {
+        new Player(playerId).delete();
     }
 }
