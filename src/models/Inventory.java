@@ -5,16 +5,11 @@ import java.sql.SQLException;
 import database.PostgresResources;
 
 public class Inventory {
-    // Primary attributes
     private int inventoryId;
-    private int itemId;
-    private int playerId;
     private int durability;
     private int quantity;
-
-    // Join attributes
-    private int typeId;
-    private int rarityId;
+    private Item item;
+    private Player player;
 
     // Queries
     private static final String CREATE_QUERY = "INSERT INTO inventory(item_id, player_id, durability, quantity) VALUES (?, ?, ?, ?)";
@@ -26,48 +21,25 @@ public class Inventory {
     public Inventory() {
     }
 
-    public Inventory(int inventoryId) {
-        this.inventoryId = inventoryId;
-    }
-
-    public Inventory(int inventoryId, int itemId, int playerId, int durability, int quantity, int typeId,
-            int rarityId) {
+    public Inventory(int inventoryId, int durability, int quantity, Item item, Player player) {
         this.setInventoryId(inventoryId);
-        this.setItemId(itemId);
-        this.setPlayerId(playerId);
         this.setDurability(durability);
         this.setQuantity(quantity);
-        this.setTypeId(typeId);
-        this.setRarityId(rarityId);
+        this.setItem(item);
+        this.setPlayer(player);
     }
 
     /* --------------------------- Getters and setters -------------------------- */
     public int getInventoryId() {
-        return this.inventoryId;
+        return inventoryId;
     }
 
     public void setInventoryId(int inventoryId) {
         this.inventoryId = inventoryId;
     }
 
-    public int getItemId() {
-        return this.itemId;
-    }
-
-    public void setItemId(int itemId) {
-        this.itemId = itemId;
-    }
-
-    public int getPlayerId() {
-        return this.playerId;
-    }
-
-    public void setPlayerId(int playerId) {
-        this.playerId = playerId;
-    }
-
     public int getDurability() {
-        return this.durability;
+        return durability;
     }
 
     public void setDurability(int durability) {
@@ -75,27 +47,27 @@ public class Inventory {
     }
 
     public int getQuantity() {
-        return this.quantity;
+        return quantity;
     }
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
 
-    public int getTypeId() {
-        return this.typeId;
+    public Item getItem() {
+        return item;
     }
 
-    public void setTypeId(int typeId) {
-        this.typeId = typeId;
+    public void setItem(Item item) {
+        this.item = item;
     }
 
-    public int getRarityId() {
-        return this.rarityId;
+    public Player getPlayer() {
+        return player;
     }
 
-    public void setRarityId(int rarityId) {
-        this.rarityId = rarityId;
+    public void setPlayer(Player player) {
+        this.player = player;
     }
 
     /* ---------------------------- Database methods ---------------------------- */
