@@ -173,7 +173,7 @@ public class Item {
         try {
             // TODO: Dynamic query based on img_path
             pg.initResources(Item.getUpdateQuery());
-            pg.setStmtValues(this.getUpdateClassList(), this.getUpdateValues());
+            pg.setStmtValues(Item.getUpdateClassList(), this.getUpdateValues());
             pg.executeQuery(true);
         } catch (Exception e) {
             pg.rollback();
@@ -286,7 +286,7 @@ public class Item {
         return Item.UPDATE_QUERY;
     }
 
-    private Class<?>[] getUpdateClassList() {
+    private static Class<?>[] getUpdateClassList() {
         return new Class<?>[] {
                 String.class,
                 int.class,
