@@ -76,8 +76,8 @@ public class Inventory {
         PostgresResources pg = new PostgresResources();
 
         try {
-            pg.initResources(this.getCreateQuery());
-            pg.setStmtValues(this.getCreateClassList(), this.getCreateValues());
+            pg.initResources(Inventory.getCreateQuery());
+            pg.setStmtValues(Inventory.getCreateClassList(), this.getCreateValues());
             pg.executeQuery(true);
         } catch (Exception e) {
             pg.rollback();
@@ -178,23 +178,23 @@ public class Inventory {
     }
 
     // Create
-    private String getCreateQuery() {
+    private static String getCreateQuery() {
         return Inventory.CREATE_QUERY;
     }
 
-    private Class<?>[] getCreateClassList() {
+    private static Class<?>[] getCreateClassList() {
         return new Class<?>[] {
                 int.class,
                 int.class,
-                double.class,
+                int.class,
                 int.class
         };
     }
 
     private Object[] getCreateValues() {
         return new Object[] {
-                this.getItemId(),
-                this.getPlayerId(),
+                this.getItem().getItemId(),
+                this.getPlayer().getPlayerId(),
                 this.getDurability(),
                 this.getQuantity()
         };
