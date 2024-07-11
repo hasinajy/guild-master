@@ -1,12 +1,6 @@
 package models;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
-
-import database.Postgres;
 import database.PostgresResources;
 import utils.NameChecker;
 
@@ -22,6 +16,7 @@ public class Player {
     // Queries
     private static final String CREATE_QUERY = "INSERT INTO player(username, character_name, gender_id, level, faction_id, description, img_path) VALUES (?, ?, ?, ?, ?, ?, ?)";
     private static final String READ_QUERY = "SELECT * FROM player";
+    private static final String DELETE_QUERY = "UPDATE player SET is_deleted = true WHERE player_id = ?";
 
     /* ------------------------------ Constructors ------------------------------ */
     public Player() {
@@ -212,37 +207,24 @@ public class Player {
 
     // Delete
     public void delete() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
+        PostgresResources pg = new PostgresResources();
 
         try {
-            String query = "UPDATE\r\n" + //
-                    "    player\r\n" + //
-                    "SET\r\n" + //
-                    "    is_deleted = true\r\n" + //
-                    "WHERE\r\n" + //
-                    "    player_id = ?;";
-
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setInt(1, this.getPlayerId());
-            stmt.executeUpdate();
+            pg.initResources(Player.getDeleteQuery());
+            pg.setStmtValues(int.class, new Object[] { this.getPlayerId() });
+            pg.executeQuery(true);
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
     }
 
     public static void delete(int playerId) throws ClassNotFoundException, SQLException {
-        new Player(playerId).delete();
+        Player player = new Player();
+        player.setPlayerId(playerId);
+        player.delete();
     }
 
     /* ----------------------------- Utility methods ---------------------------- */
@@ -319,5 +301,10 @@ public class Player {
         }
 
         return sb.toString();
+    }
+
+    // Delete
+    private static String getDeleteQuery() {
+        return Player.DELETE_QUERY;
     }
 }
