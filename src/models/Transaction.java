@@ -339,19 +339,22 @@ public class Transaction {
 
         TransactionType transactionType = new TransactionType();
         transactionType.setTransactionTypeId(pg.getInt("transaction.transaction_type_id"));
-        transactionType.setName("transaction_type.name");
+        transactionType.setName(pg.getString("transaction_type.name"));
 
         Item item = new Item();
         item.setItemId(pg.getInt("transaction.item_id"));
-        item.setName("item.name");
+        item.setName(pg.getString("item.name"));
+
+        Name name = new Name();
+        name.setCharacterName(pg.getString("player.character_name"));
 
         Player player = new Player();
         player.setPlayerId(pg.getInt("transaction.player_id"));
-        player.setCharacterName("player.character_name");
+        player.setName(name);
 
         Staff staff = new Staff();
         staff.setStaffId(pg.getInt("transaction.staff_id"));
-        staff.setCharacterName("staff.character_name");
+        staff.setCharacterName(pg.getString("staff.character_name"));
 
         transaction.setTransactionType(transactionType);
         transaction.setDate(pg.getDate("transaction.date"));
