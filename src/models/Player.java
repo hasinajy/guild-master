@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.sql.Types;
 
 import database.Postgres;
+import database.PostgresResources;
 
 public class Player {
     private int playerId;
@@ -16,6 +17,9 @@ public class Player {
     private Name name;
     private Gender gender;
     private Faction faction;
+
+    // Queries
+    private static final String CREATE_QUERY = "INSERT INTO player(username, character_name, gender_id, level, faction_id, description, img_path) VALUES (?, ?, ?, ?, ?, ?, ?)";
 
     /* ------------------------------ Constructors ------------------------------ */
     public Player() {
@@ -92,34 +96,17 @@ public class Player {
     /* ---------------------------- Database methods ---------------------------- */
     // Create
     public void create() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
+        PostgresResources pg = new PostgresResources();
 
         try {
-            String query = "INSERT INTO player(username, character_name, gender_id, level, faction_id, description, img_path)"
-                    + " VALUES (?, ?, ?, ?, ?, ?, ?)";
-
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setString(1, this.username);
-            stmt.setString(2, this.characterName);
-            stmt.setInt(3, this.genderId);
-            stmt.setInt(4, this.level);
-            stmt.setInt(5, this.factionId);
-            stmt.setString(6, this.description);
-            stmt.setString(7, this.getImgPath());
-            stmt.executeUpdate();
+            pg.initResources(Player.getCreateQuery());
+            pg.setStmtValues(Player.getCreateClassList(), this.getCreateValues());
+            pg.executeQuery(true);
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
     }
 
@@ -272,5 +259,35 @@ public class Player {
 
     public static void delete(int playerId) throws ClassNotFoundException, SQLException {
         new Player(playerId).delete();
+    }
+
+    /* ----------------------------- Utility methods ---------------------------- */
+    // Create
+    private static String getCreateQuery() {
+        return Player.CREATE_QUERY;
+    }
+
+    private static Class<?>[] getCreateClassList() {
+        return new Class[] {
+                String.class,
+                String.class,
+                int.class,
+                int.class,
+                int.class,
+                String.class,
+                String.class
+        };
+    }
+
+    private Object[] getCreateValues() {
+        return new Object[] {
+                this.getName().getUsername(),
+                this.getName().getCharacterName(),
+                this.getGender().getGenderId(),
+                this.getLevel(),
+                this.getFaction().getFactionId(),
+                this.getDescription(),
+                this.getImgPath()
+        };
     }
 }
