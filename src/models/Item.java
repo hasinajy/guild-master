@@ -216,8 +216,9 @@ public class Item {
         item.setName(pg.getString("item.name"));
         item.setImgPath(pg.getString("item.img_path"));
 
-        Type type = Type.getRowInstance(pg);
-        Rarity rarity = Rarity.getRowInstance(pg);
+        // TODO: Check getRowInstance use of Rarity since it's changed
+        Type type = Type.createTypeFromResultSet(pg);
+        Rarity rarity = Rarity.createRarityFromResultSet(pg);
 
         item.setType(type);
         item.setRarity(rarity);
