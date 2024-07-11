@@ -45,7 +45,13 @@ public class InventoryCU extends HttpServlet {
             int playerId = Integer.parseInt(req.getParameter("player-id"));
             int durability = Integer.parseInt(req.getParameter("durability"));
 
-            Inventory inventory = new Inventory(0, itemId, playerId, durability, 1, 0, 0);
+            Item item = new Item();
+            item.setItemId(itemId);
+
+            Player player = new Player();
+            player.setPlayerId(playerId);
+
+            Inventory inventory = new Inventory(0, durability, 1, item, player);
 
             if (RequestChecker.isUpdateMode(req)) {
                 int inventoryId = Integer.parseInt(req.getParameter("inventory-id"));
@@ -62,12 +68,6 @@ public class InventoryCU extends HttpServlet {
 
                 TransactionType transactionType = new TransactionType();
                 transactionType.setTransactionTypeId(2);
-
-                Item item = new Item();
-                item.setItemId(itemId);
-
-                Player player = new Player();
-                player.setPlayerId(playerId);
 
                 Staff staff = new Staff();
                 staff.setStaffId(1);

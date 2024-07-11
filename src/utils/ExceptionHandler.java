@@ -13,6 +13,7 @@ public class ExceptionHandler extends Utility {
         String msg;
 
         if (e instanceof NumberFormatException) {
+            // TODO: All numeric values should be handled
             msg = "Invalid Id value from the request parameters";
         } else if (e instanceof ServletException || e instanceof IOException) {
             if (isGet) {

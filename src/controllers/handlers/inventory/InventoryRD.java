@@ -9,7 +9,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.ServletException;
 
 import models.Inventory;
-import models.InventoryFull;
 import models.Transaction;
 import utils.ExceptionHandler;
 import utils.RequestChecker;
@@ -37,6 +36,6 @@ public class InventoryRD extends HttpServlet {
     }
 
     private void setAttributes(HttpServletRequest req) throws ClassNotFoundException, SQLException {
-        req.setAttribute("inventory-list", InventoryFull.getAll());
+        req.setAttribute("inventory-list", Inventory.getAll());
     }
 }
