@@ -8,6 +8,7 @@ import java.sql.Types;
 
 import database.Postgres;
 import database.PostgresResources;
+import utils.NameChecker;
 
 public class Player {
     private int playerId;
@@ -134,65 +135,73 @@ public class Player {
 
     // Update
     public void update() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
+        PostgresResources pg = new PostgresResources();
 
         try {
-            conn = Postgres.getInstance().getConnection();
+            // TODO: Check if factionId can be null
+            // TODO: Extract methods for classList and values
 
-            if (this.getImgPath().equals("player/")) {
-                String query = "UPDATE player SET"
-                        + " username = ?, character_name = ?, gender_id = ?, level = ?, faction_id = ?, description = ?"
-                        + " WHERE player_id = ?";
+            String query = null;
+            Class<?>[] classList = null;
+            Object[] values = null;
 
-                stmt = conn.prepareStatement(query);
-                stmt.setString(1, this.getUsername());
-                stmt.setString(2, this.getCharacterName());
-                stmt.setInt(3, this.getGenderId());
-                stmt.setInt(4, this.getLevel());
+            if (NameChecker.isNewImgPath(this.getImgPath(), "player")) {
+                query = "UPDATE player SET username = ?, character_name = ?, gender_id = ?, level = ?, faction_id = ?, description = ?, img_path = ? WHERE player_id = ?";
 
-                if (this.getFactionId() == 0) {
-                    stmt.setNull(5, Types.INTEGER);
-                } else {
-                    stmt.setInt(5, this.getFactionId());
-                }
+                classList = new Class[] {
+                        String.class,
+                        String.class,
+                        int.class,
+                        int.class,
+                        int.class,
+                        String.class,
+                        String.class,
+                        int.class
+                };
 
-                stmt.setString(6, this.getDescription());
-                stmt.setInt(7, this.playerId);
+                values = new Object[] {
+                        this.getName().getUsername(),
+                        this.getName().getCharacterName(),
+                        this.getGender().getGenderId(),
+                        this.getLevel(),
+                        this.getFaction().getFactionId(),
+                        this.getDescription(),
+                        this.getImgPath(),
+                        this.getPlayerId()
+                };
             } else {
-                String query = "UPDATE player SET"
-                        + " username = ?, character_name = ?, gender_id = ?, level = ?, faction_id = ?, description = ?, img_path = ?"
-                        + " WHERE player_id = ?";
+                query = "UPDATE player SET username = ?, character_name = ?, gender_id = ?, level = ?, faction_id = ?, description = ? WHERE player_id = ?";
 
-                stmt = conn.prepareStatement(query);
-                stmt.setString(1, this.getUsername());
-                stmt.setString(2, this.getCharacterName());
-                stmt.setInt(3, this.getGenderId());
-                stmt.setInt(4, this.getLevel());
+                classList = new Class[] {
+                        String.class,
+                        String.class,
+                        int.class,
+                        int.class,
+                        int.class,
+                        String.class,
+                        int.class
+                };
 
-                if (this.getFactionId() == 0) {
-                    stmt.setNull(5, Types.INTEGER);
-                } else {
-                    stmt.setInt(5, this.getFactionId());
-                }
+                values = new Object[] {
+                        this.getName().getUsername(),
+                        this.getName().getCharacterName(),
+                        this.getGender().getGenderId(),
+                        this.getLevel(),
+                        this.getFaction().getFactionId(),
+                        this.getDescription(),
+                        this.getPlayerId()
+                };
 
-                stmt.setString(6, this.getDescription());
-                stmt.setString(7, this.getImgPath());
-                stmt.setInt(8, this.playerId);
             }
 
-            stmt.executeUpdate();
+            pg.initResources(query);
+            pg.setStmtValues(classList, values);
+            pg.executeQuery(true);
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
     }
 
