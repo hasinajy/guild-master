@@ -151,6 +151,40 @@ public class Player {
         return playerList;
     }
 
+    public static List<Player> searchPlayers(PlayerSearchCriteria criteria)
+            throws ClassNotFoundException, SQLException {
+        List<Player> playerList = new ArrayList<>();
+        PostgresResources pg = new PostgresResources();
+
+        try {
+            QueryCondition queryCondition = new QueryCondition(Player.getJoinQuery(true));
+
+            queryCondition.addCondition(" AND player.username ILIKE ?",
+                    String.class, "%" + criteria.getUsername() + "%");
+            queryCondition.addCondition(" AND player.character_name ILIKE ?",
+                    String.class, "%" + criteria.getCharacterName() + "%");
+            queryCondition.addCondition(" AND player.level >= ?",
+                    int.class, criteria.getMinLevel());
+            queryCondition.addCondition(" AND player.level <= ?",
+                    int.class, criteria.getMaxLevel());
+            queryCondition.addCondition(" AND player.faction_id = ?",
+                    int.class, criteria.getFactionId());
+
+            pg.initResources(queryCondition.getQuery());
+            pg.setStmtValues(queryCondition.getClassList(), queryCondition.getParameters());
+            pg.executeQuery(false);
+
+            playerList = Player.getJoinTableInstance(pg);
+        } catch (Exception e) {
+            pg.rollback();
+            throw e;
+        } finally {
+            pg.closeResources();
+        }
+
+        return playerList;
+    }
+
     // Update
     public void update() throws ClassNotFoundException, SQLException {
         PostgresResources pg = new PostgresResources();
