@@ -18,7 +18,7 @@ public class Inventory {
 
     // Queries
     private static final String CREATE_QUERY = "INSERT INTO inventory(item_id, player_id, durability, quantity) VALUES (?, ?, ?, ?)";
-    private static final String READ_QUERY = "SELECT inventory_id, item_id, player_id, durability, quantity, type_id, rarity_id, is_deleted FROM v_inventory";
+    private static final String READ_QUERY = "SELECT * FROM v_inventory";
     private static final String UPDATE_QUERY = "UPDATE inventory SET item_id = ?, player_id = ?, durability = ?, quantity = ? WHERE inventory_id = ?";
     private static final String DELETE_QUERY = "DELETE FROM inventory WHERE inventory_id = ?";
 
