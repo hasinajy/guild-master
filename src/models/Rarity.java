@@ -9,6 +9,7 @@ import java.util.List;
 
 import database.Postgres;
 import database.PostgresResources;
+import utils.NameChecker;
 
 public class Rarity {
     private int rarityId;
@@ -113,39 +114,33 @@ public class Rarity {
 
     // Update
     public void update() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
+        PostgresResources pg = new PostgresResources();
 
         try {
-            conn = Postgres.getInstance().getConnection();
+            // TODO: Extract methods for the classList and values
 
-            if (this.getImgPath().equals("rarity/")) {
-                String query = "UPDATE rarity SET name = ? WHERE rarity_id = ?";
+            String query = null;
+            Class<?>[] classList = null;
+            Object[] values = null;
 
-                stmt = conn.prepareStatement(query);
-                stmt.setString(1, this.getName());
-                stmt.setInt(2, this.getRarityId());
+            if (NameChecker.isNewImgPath(this.getImgPath(), "rarity")) {
+                query = "UPDATE rarity SET name = ?, img_path = ? WHERE rarity_id = ?";
+                classList = new Class<?>[] { String.class, String.class, int.class };
+                values = new Object[] { this.getName(), this.getImgPath(), this.getRarityId() };
             } else {
-                String query = "UPDATE rarity SET name = ?, img_path = ? WHERE rarity_id = ?";
-
-                stmt = conn.prepareStatement(query);
-                stmt.setString(1, this.getName());
-                stmt.setString(2, this.getImgPath());
-                stmt.setInt(3, this.getRarityId());
+                query = "UPDATE rarity SET name = ? WHERE rarity_id = ?";
+                classList = new Class<?>[] { String.class, int.class };
+                values = new Object[] { this.getName(), this.getRarityId() };
             }
 
-            stmt.executeUpdate();
+            pg.initResources(query);
+            pg.setStmtValues(classList, values);
+            pg.executeQuery(true);
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
     }
 
