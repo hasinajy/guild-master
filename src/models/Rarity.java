@@ -94,39 +94,18 @@ public class Rarity {
 
     public static List<Rarity> getAll() throws ClassNotFoundException, SQLException {
         List<Rarity> data = new ArrayList<>();
-
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
+        PostgresResources pg = new PostgresResources();
 
         try {
-            String query = "SELECT rarity_id, name, img_path FROM rarity";
+            pg.initResources(Rarity.getReadQuery(false));
+            pg.executeQuery(false);
 
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                int rarityId = rs.getInt("rarity_id");
-                String name = rs.getString("name");
-                String imgPath = rs.getString("img_path");
-
-                data.add(new Rarity(rarityId, name, imgPath));
-            }
+            data = Rarity.getTableInstance(pg);
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (rs != null)
-                rs.close();
-
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
 
         return data;
@@ -229,6 +208,17 @@ public class Rarity {
         }
 
         return rarity;
+    }
+
+    private static List<Rarity> getTableInstance(PostgresResources pg) throws SQLException {
+        List<Rarity> rarityList = new ArrayList<>();
+
+        while (pg.next()) {
+            Rarity rarity = Rarity.createRarityFromResultSet(pg);
+            rarityList.add(rarity);
+        }
+
+        return rarityList;
     }
 
     // Create
