@@ -113,8 +113,8 @@ public class Inventory {
         PostgresResources pg = new PostgresResources();
 
         try {
-            pg.initResources(this.getUpdateQuery());
-            pg.setStmtValues(this.getUpdateClassList(), this.getUpdateValues());
+            pg.initResources(Inventory.getUpdateQuery());
+            pg.setStmtValues(Inventory.getUpdateClassList(), this.getUpdateValues());
             pg.executeQuery(true);
         } catch (Exception e) {
             pg.rollback();
@@ -217,15 +217,15 @@ public class Inventory {
     }
 
     // Update
-    private String getUpdateQuery() {
+    private static String getUpdateQuery() {
         return Inventory.UPDATE_QUERY;
     }
 
-    private Class<?>[] getUpdateClassList() {
+    private static Class<?>[] getUpdateClassList() {
         return new Class<?>[] {
                 int.class,
                 int.class,
-                double.class,
+                int.class,
                 int.class,
                 int.class
         };
@@ -233,8 +233,8 @@ public class Inventory {
 
     private Object[] getUpdateValues() {
         return new Object[] {
-                this.getItemId(),
-                this.getPlayerId(),
+                this.getItem().getItemId(),
+                this.getPlayer().getPlayerId(),
                 this.getDurability(),
                 this.getQuantity(),
                 this.getInventoryId()
