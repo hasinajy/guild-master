@@ -22,7 +22,7 @@ public class Transaction {
     private static final String READ_QUERY = "SELECT * FROM transaction";
     private static final String UPDATE_QUERY = "UPDATE transaction SET date = ?, transaction_type_id = ?, item_id = ?, player_id = ?, staff_id = ?, note = ? WHERE transaction_id = ?";
     private static final String DELETE_QUERY = "DELETE FROM transaction WHERE transaction_id = ?";
-    private static final String JOIN_QUERY = "SELECT * FROM v_transaction WHERE 1=1";
+    private static final String JOIN_QUERY = "SELECT * FROM v_transaction";
 
     /* ------------------------------ Constructors ------------------------------ */
     public Transaction() {
@@ -116,7 +116,7 @@ public class Transaction {
             item.setItemId(inventory.getItemId());
 
             Player player = new Player();
-            player.setPlayerID(inventory.getPlayerId());
+            player.setPlayerId(inventory.getPlayerId());
 
             Staff staff = new Staff();
             staff.setStaffId(1);
@@ -150,7 +150,7 @@ public class Transaction {
             item.setItemId(inventory.getItemId());
 
             Player player = new Player();
-            player.setPlayerID(inventory.getPlayerId());
+            player.setPlayerId(inventory.getPlayerId());
 
             Staff staff = new Staff();
             staff.setStaffId(1);
@@ -216,7 +216,7 @@ public class Transaction {
         PostgresResources pg = new PostgresResources();
 
         try {
-            pg.initResources(Transaction.getJoinQuery());
+            pg.initResources(Transaction.getJoinQuery(false));
             pg.executeQuery(false);
 
             transactions = Transaction.getJoinTableInstance(pg);
@@ -236,7 +236,7 @@ public class Transaction {
         PostgresResources pg = new PostgresResources();
 
         try {
-            QueryCondition queryCondition = new QueryCondition(Transaction.getJoinQuery());
+            QueryCondition queryCondition = new QueryCondition(Transaction.getJoinQuery(true));
 
             queryCondition.addCondition(" AND transaction.transaction_type_id = ?",
                     int.class, criteria.getTransactionTypeId());
@@ -319,7 +319,7 @@ public class Transaction {
         item.setItemId(pg.getInt("transaction.item_id"));
 
         Player player = new Player();
-        player.setPlayerID(pg.getInt("transaction.player_id"));
+        player.setPlayerId(pg.getInt("transaction.player_id"));
 
         Staff staff = new Staff();
         staff.setStaffId(pg.getInt("transaction.staff_id"));
@@ -339,19 +339,22 @@ public class Transaction {
 
         TransactionType transactionType = new TransactionType();
         transactionType.setTransactionTypeId(pg.getInt("transaction.transaction_type_id"));
-        transactionType.setName("transaction_type.name");
+        transactionType.setName(pg.getString("transaction_type.name"));
 
         Item item = new Item();
         item.setItemId(pg.getInt("transaction.item_id"));
-        item.setName("item.name");
+        item.setName(pg.getString("item.name"));
+
+        Name name = new Name();
+        name.setCharacterName(pg.getString("player.character_name"));
 
         Player player = new Player();
-        player.setPlayerID(pg.getInt("transaction.player_id"));
-        player.setCharacterName("player.character_name");
+        player.setPlayerId(pg.getInt("transaction.player_id"));
+        player.setName(name);
 
         Staff staff = new Staff();
         staff.setStaffId(pg.getInt("transaction.staff_id"));
-        staff.setCharacterName("staff.character_name");
+        staff.setCharacterName(pg.getString("staff.character_name"));
 
         transaction.setTransactionType(transactionType);
         transaction.setDate(pg.getDate("transaction.date"));
@@ -405,7 +408,7 @@ public class Transaction {
                 this.getTransactionType().getTransactionTypeId(),
                 this.getDate(),
                 this.getItem().getItemId(),
-                this.getPlayer().getPlayerID(),
+                this.getPlayer().getPlayerId(),
                 this.getStaff().getStaffId(),
                 this.getNote()
         };
@@ -444,7 +447,7 @@ public class Transaction {
                 this.getDate(),
                 this.getTransactionType().getTransactionTypeId(),
                 this.getItem().getItemId(),
-                this.getPlayer().getPlayerID(),
+                this.getPlayer().getPlayerId(),
                 this.getStaff().getStaffId(),
                 this.getNote(),
                 this.getTransactionType()
@@ -457,7 +460,13 @@ public class Transaction {
     }
 
     // Join
-    private static String getJoinQuery() {
-        return Transaction.JOIN_QUERY;
+    private static String getJoinQuery(boolean hasWhere) {
+        StringBuilder sb = new StringBuilder(Transaction.JOIN_QUERY);
+
+        if (hasWhere) {
+            sb.append(" WHERE 1 = 1");
+        }
+
+        return sb.toString();
     }
 }
