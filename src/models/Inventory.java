@@ -13,7 +13,7 @@ public class Inventory {
 
     // Queries
     private static final String CREATE_QUERY = "INSERT INTO inventory(item_id, player_id, durability, quantity) VALUES (?, ?, ?, ?)";
-    private static final String READ_QUERY = "SELECT * FROM inventory";
+    private static final String READ_QUERY = "SELECT * FROM v_inventory_active";
     private static final String UPDATE_QUERY = "UPDATE inventory SET item_id = ?, player_id = ?, durability = ?, quantity = ? WHERE inventory_id = ?";
     private static final String DELETE_QUERY = "DELETE FROM inventory WHERE inventory_id = ?";
 
@@ -94,10 +94,10 @@ public class Inventory {
 
         try {
             pg.initResources(Inventory.getReadQuery(true));
-            pg.setStmtValues(Inventory.getReadClassList(true), Inventory.getReadValues(inventoryId));
+            pg.setStmtValues(int.class, new Object[] { inventoryId });
             pg.executeQuery(false);
 
-            inventory = Inventory.getRowInstance(pg, inventoryId);
+            inventory = Inventory.getRowInstance(pg);
         } catch (Exception e) {
             pg.rollback();
             throw e;
@@ -151,9 +151,23 @@ public class Inventory {
 
     /* ----------------------------- Utility methods ---------------------------- */
     // Object instantiation
-    private static Inventory getRowInstance(PostgresResources pg, int inventoryId) throws SQLException {
-        Inventory inventory = Inventory.getRowInstance(pg);
-        inventory.setInventoryId(inventoryId);
+    protected static Inventory createInventoryFromResultSet(PostgresResources pg) throws SQLException {
+        Inventory inventory = new Inventory();
+
+        Item item = new Item();
+        item.setItemId(pg.getInt("inventory.item_id"));
+
+        // Player may be deleted but the item remains in the inventory
+        int playerId = (pg.getString("player.is_deleted").equals("t")) ? 0 : pg.getInt("inventory.player_id");
+
+        Player player = new Player();
+        player.setPlayerId(playerId);
+
+        inventory.setInventoryId(pg.getInt("inventory.inventory_id"));
+        inventory.setDurability(pg.getInt("inventory.durability"));
+        inventory.setQuantity(pg.getInt("inventory.quantity"));
+        inventory.setItem(item);
+        inventory.setPlayer(player);
 
         return inventory;
     }
@@ -161,17 +175,8 @@ public class Inventory {
     private static Inventory getRowInstance(PostgresResources pg) throws SQLException {
         Inventory inventory = new Inventory();
 
-        while (pg.next()) {
-            inventory.setItemId(pg.getInt("item_id"));
-            inventory.setPlayerId(pg.getInt("player_id"));
-            inventory.setDurability(pg.getInt("durability"));
-            inventory.setQuantity(pg.getInt("quantity"));
-            inventory.setTypeId(pg.getInt("type_id"));
-            inventory.setRarityId(pg.getInt("rarity_id"));
-
-            if (pg.getString("is_deleted").equals("t")) {
-                inventory.setPlayerId(0);
-            }
+        if (pg.next()) {
+            inventory = Inventory.createInventoryFromResultSet(pg);
         }
 
         return inventory;
@@ -205,22 +210,10 @@ public class Inventory {
         StringBuilder sb = new StringBuilder(Inventory.READ_QUERY);
 
         if (hasWhere) {
-            sb.append(" WHERE inventory_id = ?");
+            sb.append(" WHERE inventory.inventory_id = ?");
         }
 
         return sb.toString();
-    }
-
-    private static Class<?>[] getReadClassList(boolean hasWhere) {
-        if (hasWhere) {
-            return new Class[] { int.class };
-        }
-
-        return new Class<?>[0];
-    }
-
-    private static Object[] getReadValues(int inventoryId) {
-        return new Object[] { inventoryId };
     }
 
     // Update
