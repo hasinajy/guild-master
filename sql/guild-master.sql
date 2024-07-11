@@ -69,10 +69,11 @@ CREATE TABLE
         inventory_id SERIAL PRIMARY KEY,
         item_id INT,
         player_id INT,
-        durability FLOAT,
+        durability INT,
         quantity INT,
         FOREIGN KEY (item_id) REFERENCES item (item_id),
         FOREIGN KEY (player_id) REFERENCES player (player_id)
+        -- TODO: Add durability constraint
     );
 
 CREATE TABLE
