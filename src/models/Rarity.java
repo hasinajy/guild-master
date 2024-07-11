@@ -15,6 +15,9 @@ public class Rarity {
     private String name;
     private String imgPath;
 
+    // Queries
+    private static final String CREATE_QUERY = "INSERT INTO rarity(name, img_path) VALUES (?, ?)";
+
     /* ------------------------------ Constructors ------------------------------ */
     public Rarity() {
     }
@@ -53,28 +56,17 @@ public class Rarity {
     /* ---------------------------- Database methods ---------------------------- */
     // Create
     public void create() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
+        PostgresResources pg = new PostgresResources();
 
         try {
-            String query = "INSERT INTO rarity(name, img_path) VALUES (?, ?)";
-
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setString(1, this.getName());
-            stmt.setString(2, this.getImgPath());
-            stmt.executeUpdate();
+            pg.initResources(Rarity.getCreateQuery());
+            pg.setStmtValues(Rarity.getCreateClassList(), this.getCreateValues());
+            pg.executeQuery(true);
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
     }
 
@@ -246,5 +238,24 @@ public class Rarity {
         rarity.setImgPath(pg.getString("rarity.img_path"));
 
         return rarity;
+    }
+
+    // Create
+    private static String getCreateQuery() {
+        return Rarity.CREATE_QUERY;
+    }
+
+    private static Class<?>[] getCreateClassList() {
+        return new Class[] {
+                String.class,
+                String.class
+        };
+    }
+
+    private Object[] getCreateValues() {
+        return new Object[] {
+                this.getName(),
+                this.getImgPath()
+        };
     }
 }
