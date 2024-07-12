@@ -13,7 +13,7 @@ public class RaritiesRedirection extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            req.getRequestDispatcher("RarityRD").forward(req, resp);
+            req.getRequestDispatcher("WEB-INF/jsp/rarities.jsp").forward(req, resp);
         } catch (ServletException | IOException e) {
             ExceptionHandler.handleException(e, Level.SEVERE, resp);
         } catch (Exception e) {

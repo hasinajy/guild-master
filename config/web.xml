@@ -127,7 +127,7 @@
 
     <servlet-mapping>
         <servlet-name>RarityRD</servlet-name>
-        <url-pattern>/rarity-rd</url-pattern>
+        <url-pattern>/rarities</url-pattern>
     </servlet-mapping>
 
     <!-- Inventory -->
@@ -215,7 +215,7 @@
 
     <servlet-mapping>
         <servlet-name>Rarities</servlet-name>
-        <url-pattern>/rarities</url-pattern>
+        <url-pattern>/re-rarities</url-pattern>
     </servlet-mapping>
 
     <!-- Type -->
