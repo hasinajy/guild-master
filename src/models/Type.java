@@ -14,7 +14,12 @@ public class Type {
 
     // Queries
     private static final String CREATE_QUERY = "INSERT INTO type(name, img_path) VALUES (?, ?)";
-    private static final String READ_QUERY = "SELECT * FROM type";
+    private static final String READ_QUERY = "SELECT\r\n" + //
+            "    type.type_id AS \"type.type_id\",\r\n" + //
+            "    type.name AS \"type.name\",\r\n" + //
+            "    type.img_path AS \"type.img_path\"\r\n" + //
+            "FROM\r\n" + //
+            "    type";
     private static final String DELETE_QUERY = "DELETE FROM type WHERE type_id = ?";
 
     /* ------------------------------ Constructors ------------------------------ */
@@ -84,7 +89,7 @@ public class Type {
             pg.setStmtValues(int.class, new Object[] { typeId });
             pg.executeQuery(false);
 
-            type = Type.createTypeFromResultSet(pg);
+            type = Type.getRowInstance(pg);
         } catch (Exception e) {
             pg.rollback();
             throw e;

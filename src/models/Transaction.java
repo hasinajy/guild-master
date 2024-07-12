@@ -19,7 +19,16 @@ public class Transaction {
 
     // Queries
     private static final String CREATE_QUERY = "INSERT INTO transaction(transaction_type_id, date, item_id, player_id, staff_id, note) VALUES (?, ?, ?, ?, ?, ?)";
-    private static final String READ_QUERY = "SELECT * FROM transaction";
+    private static final String READ_QUERY = "SELECT\r\n" + //
+            "    transaction.transaction_id AS \"transaction.transaction_id\",\r\n" + //
+            "    transaction.date AS \"transaction.date\",\r\n" + //
+            "    transaction.transaction_type_id AS \"transaction.transaction_type_id\",\r\n" + //
+            "    transaction.item_id AS \"transaction.item_id\",\r\n" + //
+            "    transaction.player_id AS \"transaction.player_id\",\r\n" + //
+            "    transaction.staff_id AS \"transaction.staff_id\",\r\n" + //
+            "    transaction.note AS \"transaction.note\"\r\n" + //
+            "FROM\r\n" + //
+            "    transaction";
     private static final String UPDATE_QUERY = "UPDATE transaction SET date = ?, transaction_type_id = ?, item_id = ?, player_id = ?, staff_id = ?, note = ? WHERE transaction_id = ?";
     private static final String DELETE_QUERY = "DELETE FROM transaction WHERE transaction_id = ?";
     private static final String JOIN_QUERY = "SELECT * FROM v_transaction";
@@ -324,6 +333,7 @@ public class Transaction {
         Staff staff = new Staff();
         staff.setStaffId(pg.getInt("transaction.staff_id"));
 
+        transaction.setTransactionId(pg.getInt("transaction.transaction_id"));
         transaction.setTransactionType(transactionType);
         transaction.setDate(pg.getDate("transaction.date"));
         transaction.setItem(item);
@@ -356,6 +366,7 @@ public class Transaction {
         staff.setStaffId(pg.getInt("transaction.staff_id"));
         staff.setCharacterName(pg.getString("staff.character_name"));
 
+        transaction.setTransactionId(pg.getInt("transaction.transaction_id"));
         transaction.setTransactionType(transactionType);
         transaction.setDate(pg.getDate("transaction.date"));
         transaction.setItem(item);
@@ -450,7 +461,7 @@ public class Transaction {
                 this.getPlayer().getPlayerId(),
                 this.getStaff().getStaffId(),
                 this.getNote(),
-                this.getTransactionType()
+                this.getTransactionId()
         };
     }
 

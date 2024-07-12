@@ -304,7 +304,7 @@ public class Inventory {
         StringBuilder sb = new StringBuilder(Inventory.READ_QUERY);
 
         if (hasWhere) {
-            sb.append(" WHERE inventory.inventory_id = ?");
+            sb.append(" WHERE \"inventory.inventory_id\" = ?");
         }
 
         return sb.toString();

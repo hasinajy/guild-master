@@ -275,7 +275,7 @@ public class Item {
         StringBuilder sb = new StringBuilder(Item.READ_QUERY);
 
         if (hasWhere) {
-            sb.append(" WHERE item_id = ?");
+            sb.append(" WHERE \"item.item_id\" = ?");
         }
 
         return sb.toString();

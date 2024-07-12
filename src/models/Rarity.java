@@ -14,7 +14,12 @@ public class Rarity {
 
     // Queries
     private static final String CREATE_QUERY = "INSERT INTO rarity(name, img_path) VALUES (?, ?)";
-    private static final String READ_QUERY = "SELECT * FROM rarity";
+    private static final String READ_QUERY = "SELECT\r\n" + //
+            "    rarity.rarity_id AS \"rarity.rarity_id\",\r\n" + //
+            "    rarity.name AS \"rarity.name\",\r\n" + //
+            "    rarity.img_path AS \"rarity.img_path\"\r\n" + //
+            "FROM\r\n" + //
+            "    rarity";
     private static final String DELETE_QUERY = "DELETE FROM rarity WHERE rarity_id = ?";
 
     /* ------------------------------ Constructors ------------------------------ */
@@ -75,7 +80,7 @@ public class Rarity {
         PostgresResources pg = new PostgresResources();
 
         try {
-            pg.initResources(Rarity.getReadQuery(false));
+            pg.initResources(Rarity.getReadQuery(true));
             pg.setStmtValues(int.class, new Object[] { rarityId });
             pg.executeQuery(false);
 
@@ -225,7 +230,7 @@ public class Rarity {
         StringBuilder sb = new StringBuilder(Rarity.READ_QUERY);
 
         if (hasWhere) {
-            sb.append(" WHERE rarity_id = ?");
+            sb.append(" WHERE rarity.rarity_id = ?");
         }
 
         return sb.toString();
