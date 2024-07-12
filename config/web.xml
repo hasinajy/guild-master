@@ -22,7 +22,7 @@
 
     <servlet-mapping>
         <servlet-name>FactionRD</servlet-name>
-        <url-pattern>/faction-rd</url-pattern>
+        <url-pattern>/factions</url-pattern>
     </servlet-mapping>
 
     <!-- Player -->
@@ -193,7 +193,7 @@
 
     <servlet-mapping>
         <servlet-name>Factions</servlet-name>
-        <url-pattern>/factions</url-pattern>
+        <url-pattern>/re-factions</url-pattern>
     </servlet-mapping>
 
     <!-- Item -->

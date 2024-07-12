@@ -22,7 +22,7 @@ public class FactionCU extends HttpServlet {
                 req.setAttribute("updated-faction", Faction.getById(factionId));
             }
 
-            req.getRequestDispatcher("FactionForm").forward(req, resp);
+            req.getRequestDispatcher("/faction-form").forward(req, resp);
         } catch (Exception e) {
             ExceptionHandler.handleException(e, resp, true);
         }
@@ -31,7 +31,7 @@ public class FactionCU extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            String url = "FactionCU";
+            String url = "faction-cu";
             String name = req.getParameter("faction-name");
             String imgPath = ImageProcessor.processImage(this, req, "faction");
 
