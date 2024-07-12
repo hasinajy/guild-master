@@ -85,7 +85,7 @@
 
     <servlet-mapping>
         <servlet-name>ItemRD</servlet-name>
-        <url-pattern>/item-rd</url-pattern>
+        <url-pattern>/items</url-pattern>
     </servlet-mapping>
 
     <!-- Inventory -->
@@ -204,7 +204,7 @@
 
     <servlet-mapping>
         <servlet-name>Items</servlet-name>
-        <url-pattern>/items</url-pattern>
+        <url-pattern>/re-items</url-pattern>
     </servlet-mapping>
 
     <!-- Rarity -->
