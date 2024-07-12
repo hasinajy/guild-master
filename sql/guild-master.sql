@@ -102,21 +102,51 @@ CREATE TABLE
 CREATE
 OR REPLACE VIEW v_item AS
 SELECT
-    *
+    item.item_id AS "item.item_id",
+    item.name AS "item.name",
+    item.type_id AS "item.type_id",
+    item.rarity_id AS "item.rarity_id",
+    item.img_path AS "item.img_path",
+    item.is_deleted AS "item.is_deleted",
+    type.type_id AS "type.type_id",
+    type.name AS "type.name",
+    type.img_path AS "type.img_path",
+    rarity.rarity_id AS "rarity.rarity_id",
+    rarity.name AS "rarity.name",
+    rarity.img_path AS "rarity.img_path"
 FROM
     item
     LEFT JOIN type ON item.type_id = type.type_id
     LEFT JOIN rarity ON item.rarity_id = rarity.rarity_id
 WHERE
-    is_deleted = false
+    item.is_deleted = false
 ORDER BY
-    item_name;
+    item.name;
 
 -- Active inventory view
 CREATE
 OR REPLACE VIEW v_inventory_active AS
 SELECT
-    *
+    inventory.inventory_id AS "inventory.inventory_id",
+    inventory.item_id AS "inventory.item_id",
+    inventory.player_id AS "inventory.player_id",
+    inventory.durability AS "inventory.durability",
+    inventory.quantity AS "inventory.quantity",
+    item.item_id AS "item.item_id",
+    item.name AS "item.name",
+    item.type_id AS "item.type_id",
+    item.rarity_id AS "item.rarity_id",
+    item.img_path AS "item.img_path",
+    item.is_deleted AS "item.is_deleted",
+    player.player_id AS "player.player_id",
+    player.username AS "player.username",
+    player.character_name AS "player.character_name",
+    player.gender_id AS "player.gender_id",
+    player.level AS "player.level",
+    player.faction_id AS "player.faction_id",
+    player.description AS "player.description",
+    player.img_path AS "player.img_path",
+    player.is_deleted AS "player.is_deleted"
 FROM
     inventory
     JOIN item ON inventory.item_id = item.item_id
@@ -124,13 +154,38 @@ FROM
 WHERE
     item.is_deleted = false
 ORDER BY
-    inventory_id ASC;
+    inventory.inventory_id ASC;
 
 -- Inventory view
 CREATE
 OR REPLACE VIEW v_inventory AS
 SELECT
-    *
+    inventory.inventory_id AS "inventory.inventory_id",
+    inventory.item_id AS "inventory.item_id",
+    inventory.player_id AS "inventory.player_id",
+    inventory.durability AS "inventory.durability",
+    inventory.quantity AS "inventory.quantity",
+    item.item_id AS "item.item_id",
+    item.name AS "item.name",
+    item.type_id AS "item.type_id",
+    item.rarity_id AS "item.rarity_id",
+    item.img_path AS "item.img_path",
+    item.is_deleted AS "item.is_deleted",
+    player.player_id AS "player.player_id",
+    player.username AS "player.username",
+    player.character_name AS "player.character_name",
+    player.gender_id AS "player.gender_id",
+    player.level AS "player.level",
+    player.faction_id AS "player.faction_id",
+    player.description AS "player.description",
+    player.img_path AS "player.img_path",
+    player.is_deleted AS "player.is_deleted",
+    type.type_id AS "type.type_id",
+    type.name AS "type.name",
+    type.img_path AS "type.img_path",
+    rarity.rarity_id AS "rarity.rarity_id",
+    rarity.name AS "rarity.name",
+    rarity.img_path AS "rarity.img_path"
 FROM
     inventory
     JOIN item ON inventory.item_id = item.item_id
@@ -140,13 +195,40 @@ FROM
 WHERE
     item.is_deleted = false
 ORDER BY
-    inventory_id ASC;
+    inventory.inventory_id ASC;
 
 -- Transaction full view
 CREATE
 OR REPLACE VIEW v_transaction AS
 SELECT
-    *
+    transaction.transaction_id AS "transaction.transaction_id",
+    transaction.date AS "transaction.date",
+    transaction.transaction_type_id AS "transaction.transaction_type_id",
+    transaction.item_id AS "transaction.item_id",
+    transaction.player_id AS "transaction.player_id",
+    transaction.staff_id AS "transaction.staff_id",
+    transaction.note AS "transaction.note",
+    transaction_type.transaction_type_id AS "transaction_type.transaction_type_id",
+    transaction_type.transaction_type_code AS "transaction_type.transaction_type_code",
+    transaction_type.name AS "transaction_type.name",
+    item.item_id AS "item.item_id",
+    item.name AS "item.name",
+    item.type_id AS "item.type_id",
+    item.rarity_id AS "item.rarity_id",
+    item.img_path AS "item.img_path",
+    item.is_deleted AS "item.is_deleted",
+    player.player_id AS "player.player_id",
+    player.username AS "player.username",
+    player.character_name AS "player.character_name",
+    player.gender_id AS "player.gender_id",
+    player.level AS "player.level",
+    player.faction_id AS "player.faction_id",
+    player.description AS "player.description",
+    player.img_path AS "player.img_path",
+    player.is_deleted AS "player.is_deleted",
+    staff.staff_id AS "staff.staff_id",
+    staff.username AS "staff.username",
+    staff.character_name AS "staff.character_name"
 FROM
     transaction
     JOIN transaction_type ON transaction.transaction_type_id = transaction_type.transaction_type_id
@@ -154,13 +236,27 @@ FROM
     JOIN player ON transaction.player_id = player.player_id
     JOIN staff ON transaction.staff_id = staff.staff_id
 ORDER BY
-    date DESC;
+    transaction.date DESC;
 
 -- Player full view
 CREATE
 OR REPLACE VIEW v_player AS
 SELECT
-    *
+    player.player_id AS "player.player_id",
+    player.username AS "player.username",
+    player.character_name AS "player.character_name",
+    player.gender_id AS "player.gender_id",
+    player.level AS "player.level",
+    player.faction_id AS "player.faction_id",
+    player.description AS "player.description",
+    player.img_path AS "player.img_path",
+    player.is_deleted AS "player.is_deleted",
+    gender.gender_id AS "gender.gender_id",
+    gender.gender_code AS "gender.gender_code",
+    gender.name AS "gender.name",
+    faction.faction_id AS "faction.faction_id",
+    faction.name AS "faction.name",
+    faction.img_path AS "faction.img_path"
 FROM
     player
     JOIN gender ON player.gender_id = gender.gender_id

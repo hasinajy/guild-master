@@ -18,7 +18,18 @@ public class Player {
 
     // Queries
     private static final String CREATE_QUERY = "INSERT INTO player(username, character_name, gender_id, level, faction_id, description, img_path) VALUES (?, ?, ?, ?, ?, ?, ?)";
-    private static final String READ_QUERY = "SELECT * FROM player";
+    private static final String READ_QUERY = "SELECT\r\n" + //
+            "    player.player_id AS \"player.player_id\",\r\n" + //
+            "    player.username AS \"player.username\",\r\n" + //
+            "    player.character_name AS \"player.character_name\",\r\n" + //
+            "    player.gender_id AS \"player.gender_id\",\r\n" + //
+            "    player.level AS \"player.level\",\r\n" + //
+            "    player.faction_id AS \"player.faction_id\",\r\n" + //
+            "    player.description AS \"player.description\",\r\n" + //
+            "    player.img_path AS \"player.img_path\",\r\n" + //
+            "    player.is_deleted AS \"player.is_deleted\"\r\n" + //
+            "FROM\r\n" + //
+            "    player";
     private static final String DELETE_QUERY = "UPDATE player SET is_deleted = true WHERE player_id = ?";
     private static final String JOIN_QUERY = "SELECT * FROM v_player";
 
