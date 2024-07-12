@@ -106,7 +106,7 @@
 
     <servlet-mapping>
         <servlet-name>TypeRD</servlet-name>
-        <url-pattern>/type-rd</url-pattern>
+        <url-pattern>/types</url-pattern>
     </servlet-mapping>
 
     <!-- Rarity -->
@@ -226,7 +226,7 @@
 
     <servlet-mapping>
         <servlet-name>Types</servlet-name>
-        <url-pattern>/types</url-pattern>
+        <url-pattern>/re-types</url-pattern>
     </servlet-mapping>
 
     <!-- Transaction -->

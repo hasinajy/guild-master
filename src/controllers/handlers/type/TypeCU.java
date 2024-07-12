@@ -22,7 +22,7 @@ public class TypeCU extends HttpServlet {
                 req.setAttribute("updated-type", Type.getById(typeId));
             }
 
-            req.getRequestDispatcher("TypeForm").forward(req, resp);
+            req.getRequestDispatcher("/type-form").forward(req, resp);
         } catch (Exception e) {
             ExceptionHandler.handleException(e, resp, true);
         }
@@ -31,9 +31,9 @@ public class TypeCU extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            String url = "TypeCU";
+            String url = "type-cu";
             String name = req.getParameter("type-name");
-            String imgPath = ImageProcessor.processImage(null, req, "type");
+            String imgPath = ImageProcessor.processImage(this, req, "type");
 
             Type type = new Type(0, name, imgPath);
 
