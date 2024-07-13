@@ -9,7 +9,11 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.ServletException;
 
 import models.Inventory;
+import models.InventorySearchCriteria;
+import models.Item;
+import models.Rarity;
 import models.Transaction;
+import models.Type;
 import utils.ExceptionHandler;
 import utils.RequestChecker;
 
@@ -28,14 +32,29 @@ public class InventoryRD extends HttpServlet {
                 resp.sendRedirect("inventories");
             }
 
-            this.setAttributes(req);
+            InventorySearchCriteria criteria = null;
+
+            if (RequestChecker.isSearchMode(req)) {
+                criteria = InventorySearchCriteria.getCriteriaFromRequest(req);
+            }
+
+            this.setAttributes(req, criteria);
             req.getRequestDispatcher("/re-inventories").forward(req, resp);
         } catch (Exception e) {
             ExceptionHandler.handleException(e, resp, true);
         }
     }
 
-    private void setAttributes(HttpServletRequest req) throws ClassNotFoundException, SQLException {
-        req.setAttribute("inventory-list", Inventory.getAll());
+    private void setAttributes(HttpServletRequest req, InventorySearchCriteria criteria) throws ClassNotFoundException, SQLException {
+        req.setAttribute("item-list", Item.getAll());
+        req.setAttribute("type-list", Type.getAll());
+        req.setAttribute("rarity-list", Rarity.getAll());
+
+        if (criteria == null) {
+            req.setAttribute("inventory-list", Inventory.getAll());
+        } else {
+            req.setAttribute("inventory-list", Inventory.searchInventories(criteria));
+        }
     }
 }
+ 

@@ -138,17 +138,17 @@ public class Inventory {
         try {
             QueryCondition queryCondition = new QueryCondition(Inventory.getJoinQuery(true));
 
-            queryCondition.addCondition(" AND inventory.item_id = ?",
+            queryCondition.addCondition(" AND \"inventory.item_id\" = ?",
                     int.class, criteria.getItemId());
-            queryCondition.addCondition(" AND player.character_name LIKE ?",
+            queryCondition.addCondition(" AND \"player.character_name\" ILIKE ?",
                     String.class, "%" + criteria.getCharacterName() + "%");
-            queryCondition.addCondition(" AND durability >= ?",
+            queryCondition.addCondition(" AND \"inventory.durability\" >= ?",
                     int.class, criteria.getMinDurability());
-            queryCondition.addCondition(" AND durability <= ?",
+            queryCondition.addCondition(" AND \"inventory.durability\" <= ?",
                     int.class, criteria.getMaxDurability());
-            queryCondition.addCondition(" AND item.type_id = ?",
+            queryCondition.addCondition(" AND \"item.type_id\" = ?",
                     int.class, criteria.getTypeId());
-            queryCondition.addCondition(" AND item.rarity_id = ?",
+            queryCondition.addCondition(" AND \"item.rarity_id\" = ?",
                     int.class, criteria.getRarityId());
 
             pg.initResources(queryCondition.getQuery());
