@@ -1,9 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List" %>
 <%@ page import="models.Transaction" %>
+<%@ page import="models.TransactionType" %>
+<%@ page import="models.Item" %>
 
 <%
     List<Transaction> transactionList = (List<Transaction>) request.getAttribute("transaction-list");
+    List<TransactionType> transactionTypeList = (List<TransactionType>) request.getAttribute("transaction-type-list");
+    List<Item> itemList = (List<Item>) request.getAttribute("item-list");
 %>
 
 <!DOCTYPE html>
@@ -68,13 +72,28 @@
     <section class="filter">
         <span class="section__title">Filters:</span>
 
-        <form action="" class="filter-form">
+        <form action="${pageContext.request.contextPath}/transactions" method="get" class="filter-form">
             <div>
+                <div class="form__group horizontal large hidden">
+                    <div class="form__control">
+                        <label for="mode" class="form__input-label">Mode:</label>
+                        <input type="text" name="mode" value="s" id="mode"
+                               class="form__input-field" placeholder="Mode ...">
+                    </div>
+                </div>
+
                 <div class="form__control">
                     <label for="type" class="form__input-label">Transaction Type:</label>
                     <select name="transaction-type-id" id="type" class="form__input-field">
-                        <option value="0">Deposit</option>
-                        <option value="1">Withdraw</option>
+                        <option value="">All</option>
+
+                        <%
+                            for (TransactionType transactionType : transactionTypeList) {
+                        %>
+                        <option value="<%= transactionType.getTransactionTypeId() %>"><%= transactionType.getName() %></option>
+                        <%
+                            }
+                        %>
                     </select>
                 </div>
 
@@ -91,17 +110,24 @@
                 </div>
 
                 <div class="form__control">
-                    <label for="item" class="form__input-label">Item Name:</label>
-                    <select name="item_name" id="item" class="form__input-field" class="form__input-field">
-                        <option value="0">Excalibur</option>
-                        <option value="1">Dragon Claws</option>
+                    <label for="item" class="form__input-label">Item:</label>
+                    <select name="item-id" id="item" class="form__input-field" class="form__input-field">
+                        <option value="">All</option>
+
+                        <%
+                            for (Item item : itemList) {
+                        %>
+                        <option value="<%= item.getItemId() %>"><%= item.getName() %></option>
+                        <%
+                            }
+                        %>
                     </select>
                 </div>
 
                 <div class="form__control">
-                    <label for="owner" class="form__input-label">Owner Username:</label>
+                    <label for="owner" class="form__input-label">Owner:</label>
                     <input type="text" name="character-name" id="owner" class="form__input-field"
-                           placeholder="Owner Username ...">
+                           placeholder="Character Name ...">
                 </div>
             </div>
 

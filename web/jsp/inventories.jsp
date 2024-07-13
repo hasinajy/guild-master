@@ -77,7 +77,7 @@
     <section class="filter">
         <span class="section__title">Filters:</span>
 
-        <form action="${pageContext.request.contextPath}/inventories" class="filter-form">
+        <form action="${pageContext.request.contextPath}/inventories" method="get" class="filter-form">
             <div class="form__group vertical">
                 <div class="form__group horizontal large">
                     <div class="form__group horizontal large hidden">
