@@ -31,9 +31,18 @@ public class QueryCondition {
     /* ------------------------------ Class methods ----------------------------- */
     public void addCondition(String condition, Class<?> type, Object value) {
         if (value != null) {
-            query.append(condition);
-            classList.add(type);
-            parameters.add(value);
+            if (value instanceof String) {
+                String stringValue = (String) value;
+                if (!stringValue.isEmpty() && !stringValue.equals("%null%")) {
+                    query.append(condition);
+                    classList.add(type);
+                    parameters.add(stringValue);
+                }
+            } else {
+                query.append(condition);
+                classList.add(type);
+                parameters.add(value);
+            }
         }
     }
 

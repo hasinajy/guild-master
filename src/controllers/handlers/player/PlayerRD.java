@@ -7,8 +7,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.ServletException;
-
+import models.Faction;
 import models.Player;
+import models.PlayerSearchCriteria;
 import utils.ExceptionHandler;
 import utils.RequestChecker;
 
@@ -21,14 +22,26 @@ public class PlayerRD extends HttpServlet {
                 Player.delete(playerId);
             }
 
-            this.setAttributes(req);
+            PlayerSearchCriteria criteria = null;
+
+            if (RequestChecker.isSearchMode(req)) {
+                criteria = PlayerSearchCriteria.getCriteriaFromRequest(req);
+            }
+            
+            this.setAttributes(req, criteria);
             req.getRequestDispatcher("/re-players").forward(req, resp);
         } catch (Exception e) {
             ExceptionHandler.handleException(e, resp, true);
         }
     }
 
-    private void setAttributes(HttpServletRequest req) throws ClassNotFoundException, SQLException {
-        req.setAttribute("player-list", Player.getAll());
+    private void setAttributes(HttpServletRequest req, PlayerSearchCriteria criteria) throws ClassNotFoundException, SQLException {
+        req.setAttribute("faction-list", Faction.getAll());
+
+        if (criteria == null) {
+            req.setAttribute("player-list", Player.getAll());
+        } else {
+            req.setAttribute("player-list", Player.searchPlayers(criteria));
+        }
     }
 }

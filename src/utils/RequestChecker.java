@@ -14,4 +14,8 @@ public class RequestChecker extends Utility {
     public static boolean isWithdrawMode(HttpServletRequest req) {
         return (req.getParameter("type") != null && req.getParameter("type").equals("w"));
     }
+
+    public static boolean isSearchMode(HttpServletRequest req) {
+        return (req.getParameter("mode") != null && req.getParameter("mode").equals("s"));
+    }
 }
