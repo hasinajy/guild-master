@@ -1,9 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.List" %>
 <%@ page import="models.Item" %>
+<%@ page import="utils.NameChecker" %>
 
 <%
-    ArrayList<Item> itemList = (ArrayList<Item>) request.getAttribute("item-list");
+    List<Item> itemList = (List<Item>) request.getAttribute("item-list");
 %>
 
 <!DOCTYPE html>
@@ -45,7 +46,7 @@
 
     </div>
 
-    <a href="ItemForm" class="add-btn">
+    <a href="${pageContext.request.contextPath}/item-cu" class="add-btn">
             <svg class="add-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
                 <path id="add" d="M207.143,312v-7.143H200v-1.714h7.143V296h1.714v7.143H216v1.714h-7.143V312Z"
                       transform="translate(-200 -296)" fill="#f2f2f2"/>
@@ -70,11 +71,19 @@
     <section class="filter">
         <span class="section__title">Filter:</span>
 
-        <form action="" class="filter-form">
+        <form action="${pageContext.request.contextPath}/items" class="filter-form">
+            <div class="form__group horizontal large hidden">
+                <div class="form__control">
+                    <label for="mode" class="form__input-label">Mode:</label>
+                    <input type="text" name="mode" value="s" id="mode"
+                           class="form__input-field" placeholder="Mode ...">
+                </div>
+            </div>
+
             <div class="form__group horizontal large">
                 <div class="form__control">
                     <label for="item-name" class="form__input-label">Item Name:</label>
-                    <input type="text" name="item_name" id="item-name" class="form__input-field"
+                    <input type="text" name="item-name" id="item-name" class="form__input-field"
                            placeholder="Item Name ...">
                 </div>
             </div>
@@ -111,14 +120,14 @@
         <div class="card-container card">
             <div class="card__img">
                 <div class="action-container">
-                    <a href="ItemCU?mode=u&&item-id=<%= item.getItemID() %>"><span
+                    <a href="${pageContext.request.contextPath}/item-cu?mode=u&&item-id=<%= item.getItemId() %>"><span
                             class="fa fa-pencil-alt action-icon"></span></a>
-                    <a href="ItemRD?mode=d&&item-id=<%= item.getItemID() %>"><span
+                    <a href="${pageContext.request.contextPath}/items?mode=d&&item-id=<%= item.getItemId() %>"><span
                             class="fa fa-trash-alt action-icon"></span></a>
                 </div>
 
                 <%
-                    String imgPath = (item.getImgPath() == null || item.getImgPath().equals("item/")) ? "item/default.jpeg" : item.getImgPath();
+                    String imgPath = (NameChecker.isNewImgPath(item.getImgPath(), "item")) ? item.getImgPath() : "item/default.jpeg";
                 %>
 
                 <img src="uploads/<%= imgPath %>" alt="Armor">
@@ -139,17 +148,17 @@
                 <div class="card__details">
                     <div class="card__detail-item">
                         <span class="card__detail-label">name</span>
-                        <span class="card__detail-data"><%= (item.getItemID() == 0) ? "None" : item.getName() %></span>
+                        <span class="card__detail-data"><%= (item.getItemId() == 0) ? "None" : item.getName() %></span>
                     </div>
 
                     <div class="card__detail-group">
                         <div class="card__detail-item">
                             <span class="card__detail-label">type</span>
-                            <span class="card__detail-data"><%= (item.getTypeID() == 0) ? "None" : item.getType() %></span>
+                            <span class="card__detail-data"><%= (item.getType().getTypeId() == 0) ? "None" : item.getType().getName() %></span>
                         </div>
                         <div class="card__detail-item">
                             <span class="card__detail-label">rarity</span>
-                            <span class="card__detail-data"><%= (item.getRarityID() == 0) ? "None" : item.getRarity() %></span>
+                            <span class="card__detail-data"><%= (item.getRarity().getRarityId() == 0) ? "None" : item.getRarity().getName() %></span>
                         </div>
                     </div>
                 </div>

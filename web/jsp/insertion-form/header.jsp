@@ -5,8 +5,8 @@
 
         <nav class="header__nav nav">
             <ul>
-                <li class="nav__item"><a href="Dashboard" class="nav__link">Dashboard</a></li>
-                <li class="nav__item"><a href="Transaction" class="nav__link">Transactions</a></li>
+                <li class="nav__item"><a href="${pageContext.request.contextPath}/dashboard" class="nav__link">Dashboard</a></li>
+                <li class="nav__item"><a href="${pageContext.request.contextPath}/transactions" class="nav__link">Transactions</a></li>
                 <li class="nav__item dropdown">
                     <span class="nav__link dropdown__label">
                         Storage
@@ -19,8 +19,8 @@
                     </span>
 
                     <ul class="dropdown__items-container">
-                        <li class="dropdown__item"><a href="Inventory" class="dropdown__link">Inventory</a></li>
-                        <li class="dropdown__item"><a href="Item" class="dropdown__link">Item</a></li>
+                        <li class="dropdown__item"><a href="${pageContext.request.contextPath}/inventories" class="dropdown__link">Inventories</a></li>
+                        <li class="dropdown__item"><a href="${pageContext.request.contextPath}/items" class="dropdown__link">Items</a></li>
                     </ul>
                 </li>
                 <li class="nav__item dropdown">
@@ -35,8 +35,8 @@
                     </span>
 
                     <ul class="dropdown__items-container">
-                        <li class="dropdown__item"><a href="Player" class="dropdown__link">Player</a></li>
-                        <li class="dropdown__item"><a href="Faction" class="dropdown__link">Faction</a></li>
+                        <li class="dropdown__item"><a href="${pageContext.request.contextPath}/players" class="dropdown__link">Players</a></li>
+                        <li class="dropdown__item"><a href="${pageContext.request.contextPath}/factions" class="dropdown__link">Factions</a></li>
                     </ul>
                 </li>
                 <li class="nav__item dropdown">
@@ -51,8 +51,8 @@
                     </span>
 
                     <ul class="dropdown__items-container">
-                        <li class="dropdown__item"><a href="Rarity" class="dropdown__link">Rarity</a></li>
-                        <li class="dropdown__item"><a href="Type" class="dropdown__link">Type</a></li>
+                        <li class="dropdown__item"><a href="${pageContext.request.contextPath}/rarities" class="dropdown__link">Rarities</a></li>
+                        <li class="dropdown__item"><a href="${pageContext.request.contextPath}/types" class="dropdown__link">Types</a></li>
                     </ul>
                 </li>
             </ul>

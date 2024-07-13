@@ -1,44 +1,43 @@
 package models;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
-import database.Postgres;
+import database.PostgresResources;
+import utils.NameChecker;
 
 public class Faction {
-    private int factionID;
+    private int factionId;
     private String name;
     private String imgPath;
 
-    // Constructor
+    /* ------------------------------ Constructors ------------------------------ */
     public Faction() {
     }
 
-    public Faction(int factionID) {
-        this.factionID = factionID;
-        this.name = "Default Faction";
+    public Faction(int factionId) {
+        this.setFactionId(factionId);
+        this.setName("Default Faction");
     }
 
-    public Faction(int factionID, String name, String imgPath) {
-        this.setFactionID(factionID);
+    public Faction(int factionId, String name, String imgPath) {
+        this.setFactionId(factionId);
         this.setName(name);
         this.setImgPath(imgPath);
     }
 
-    // Getters & Setters
-    public int getFactionID() {
-        return factionID;
+    /* --------------------------- Getters and setters -------------------------- */
+    public int getFactionId() {
+        return this.factionId;
     }
 
-    public void setFactionID(int factionID) {
-        this.factionID = factionID;
+    public void setFactionId(int factionId) {
+        this.factionId = factionId;
     }
 
     public String getName() {
-        return name;
+        return this.name;
     }
 
     public void setName(String name) {
@@ -46,183 +45,156 @@ public class Faction {
     }
 
     public String getImgPath() {
-        return imgPath;
+        return this.imgPath;
     }
 
     public void setImgPath(String imgPath) {
         this.imgPath = imgPath;
     }
 
-    // User methods
-    public static Faction getByID(int factionID) throws ClassNotFoundException, SQLException {
-        Faction faction = null;
+    /* ---------------------------- Database methods ---------------------------- */
+    // Utility methods
+    private static Faction getRowInstance(PostgresResources pg) throws SQLException {
+        Faction faction = new Faction();
 
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
+        faction.setFactionId(pg.getInt("faction_id"));
+        faction.setName(pg.getString("name"));
+        faction.setImgPath(pg.getString("img_path"));
+
+        return faction;
+    }
+
+    private static List<Faction> getTableInstance(PostgresResources pg) throws SQLException {
+        List<Faction> factionList = new ArrayList<>();
+
+        while (pg.next()) {
+            factionList.add(Faction.getRowInstance(pg));
+        }
+
+        return factionList;
+    }
+
+    // Create
+    public void create() throws ClassNotFoundException, SQLException {
+        PostgresResources pg = new PostgresResources();
 
         try {
-            String query = "SELECT * FROM faction WHERE faction_id = ?";
+            String query = "INSERT INTO faction(name, img_path) VALUES (?, ?)";
 
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setInt(1, factionID);
-            rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                String name = rs.getString("name");
-                String imgPath = rs.getString("img_path");
-
-                faction = new Faction(factionID, name, imgPath);
-            }
+            pg.initResources(query);
+            pg.setStmtValues(String.class, new Object[] { this.getName(), this.getImgPath() });
+            pg.executeQuery(true);
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (rs != null)
-                rs.close();
+            pg.closeResources();
+        }
+    }
 
-            if (stmt != null)
-                stmt.close();
+    // Read
+    public static Faction getById(int factionId) throws ClassNotFoundException, SQLException {
+        Faction faction = null;
+        PostgresResources pg = new PostgresResources();
 
-            if (conn != null)
-                conn.close();
+        try {
+            String query = "SELECT name, img_path FROM faction WHERE faction_id = ?";
+
+            pg.initResources(query);
+            pg.setStmtValues(new Class<?>[] { int.class }, new Object[] { factionId });
+            pg.executeQuery(false);
+
+            while (pg.next()) {
+                String name = pg.getString("name");
+                String imgPath = pg.getString("img_path");
+
+                faction = new Faction(factionId, name, imgPath);
+            }
+        } catch (Exception e) {
+            pg.rollback();
+            throw e;
+        } finally {
+            pg.closeResources();
         }
 
         return faction;
     }
 
-    public static void deleteByID(int factionID) throws ClassNotFoundException, SQLException {
-        new Faction(factionID).delete();
-    }
-
-    public static ArrayList<Faction> getAll() throws ClassNotFoundException, SQLException {
-        ArrayList<Faction> data = new ArrayList<>();
-
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
+    public static List<Faction> getAll() throws ClassNotFoundException, SQLException {
+        List<Faction> data = new ArrayList<>();
+        PostgresResources pg = new PostgresResources();
 
         try {
-            String query = "SELECT * FROM faction";
+            String query = "SELECT faction_id, name, img_path FROM faction";
 
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            rs = stmt.executeQuery();
+            pg.initResources(query);
+            pg.executeQuery(false);
 
-            while (rs.next()) {
-                int factionID = rs.getInt("faction_id");
-                String name = rs.getString("name");
-                String imgPath = rs.getString("img_path");
-
-                data.add(new Faction(factionID, name, imgPath));
-            }
+            data = Faction.getTableInstance(pg);
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (rs != null)
-                rs.close();
-
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
 
         return data;
     }
 
+    // Update
+    public void update() throws ClassNotFoundException, SQLException {
+        PostgresResources pg = new PostgresResources();
+
+        try {
+            String query = null;
+            Class<?>[] classList = null;
+            Object[] values = null;
+
+            if (NameChecker.isNewImgPath(this.getImgPath(), "faction")) {
+                query = "UPDATE faction SET name = ?, img_path = ? WHERE faction_id = ?";
+                classList = new Class<?>[] { String.class, String.class, int.class };
+                values = new Object[] { this.getName(), this.getImgPath(), this.getFactionId() };
+            } else {
+                query = "UPDATE faction SET name = ? WHERE faction_id = ?";
+                classList = new Class<?>[] { String.class, int.class };
+                values = new Object[] { this.getName(), this.getFactionId() };
+            }
+
+            pg.initResources(query);
+            pg.setStmtValues(classList, values);
+            pg.executeQuery(true);
+        } catch (Exception e) {
+            pg.rollback();
+            throw e;
+        } finally {
+            pg.closeResources();
+        }
+    }
+
+    public void update(int factionId) throws ClassNotFoundException, SQLException {
+        this.setFactionId(factionId);
+        this.update();
+    }
+
+    // Delete
+    public static void deleteById(int factionId) throws ClassNotFoundException, SQLException {
+        new Faction(factionId).delete();
+    }
+
     public void delete() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
+        PostgresResources pg = new PostgresResources();
 
         try {
             String query = "DELETE FROM faction WHERE faction_id = ?";
 
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setInt(1, this.factionID);
-            stmt.executeUpdate();
+            pg.initResources(query);
+            pg.setStmtValues(int.class, new Object[] { this.getFactionId() });
+            pg.executeQuery(true);
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
-        }
-    }
-
-    public void create() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-
-        try {
-            String query = "INSERT INTO faction(name, img_path) VALUES (?, ?)";
-
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setString(1, this.getName());
-            stmt.setString(2, this.getImgPath());
-            stmt.executeUpdate();
-        } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
-            throw e;
-        } finally {
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
-        }
-    }
-
-    public void update() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-
-        try {
-            conn = Postgres.getInstance().getConnection();
-
-            if (this.getImgPath().equals("faction/")) {
-                String query = "UPDATE faction SET name = ? WHERE faction_id = ?";
-
-                stmt = conn.prepareStatement(query);
-                stmt.setString(1, this.getName());
-                stmt.setInt(2, this.getFactionID());
-            } else {
-                String query = "UPDATE faction SET name = ?, img_path = ? WHERE faction_id = ?";
-
-                stmt = conn.prepareStatement(query);
-                stmt.setString(1, this.getName());
-                stmt.setString(2, this.getImgPath());
-                stmt.setInt(3, this.getFactionID());
-            }
-
-            stmt.executeUpdate();
-        } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
-            throw e;
-        } finally {
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
     }
 }

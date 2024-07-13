@@ -1,9 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.List" %>
 <%@ page import="models.Faction" %>
+<%@ page import="utils.NameChecker" %>
 
 <%
-    ArrayList<Faction> factionList = (ArrayList<Faction>) request.getAttribute("faction_list");
+    List<Faction> factionList = (List<Faction>) request.getAttribute("faction-list");
 %>
 
 <!DOCTYPE html>
@@ -45,7 +46,7 @@
 
     </div>
 
-    <a href="FactionForm" class="add-btn">
+    <a href="${pageContext.request.contextPath}/faction-form" class="add-btn">
         <svg class="add-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
             <path id="add" d="M207.143,312v-7.143H200v-1.714h7.143V296h1.714v7.143H216v1.714h-7.143V312Z"
                   transform="translate(-200 -296)" fill="#f2f2f2"/>
@@ -74,17 +75,17 @@
         <div class="card-container card single">
             <div class="card__img">
                 <div class="action-container">
-                    <a href="FactionCU?mode=u&&faction_id=<% out.print(faction.getFactionID()); %>"><span
+                    <a href="${pageContext.request.contextPath}/faction-cu?mode=u&&faction-id=<%= faction.getFactionId() %>"><span
                             class="fa fa-pencil-alt action-icon"></span></a>
-                    <a href="FactionRD?mode=d&&faction_id=<% out.print(faction.getFactionID()); %>"><span
+                    <a href="${pageContext.request.contextPath}/factions?mode=d&&faction-id=<%= faction.getFactionId() %>"><span
                             class="fa fa-trash-alt action-icon"></span></a>
                 </div>
 
                 <%
-                    String imgPath = (faction.getImgPath() == null || faction.getImgPath().equals("faction/")) ? "faction/default.jpeg" : faction.getImgPath();
+                    String imgPath = (NameChecker.isNewImgPath(faction.getImgPath(), "faction")) ? faction.getImgPath() : "faction/default.jpeg";
                 %>
 
-                <img src="uploads/<% out.print(imgPath); %>" alt="Faction image">
+                <img src="uploads/<%= imgPath %>" alt="Image of a faction">
             </div>
 
             <svg class="sep--small" xmlns="http://www.w3.org/2000/svg" width="84" height="5.657"
@@ -99,7 +100,7 @@
 
             <div class="card__desc">
                 <span class="card__detail-label">
-                <% out.println(faction.getName()); %>
+                <%= faction.getName() %>
                 </span>
             </div>
         </div>
@@ -110,20 +111,6 @@
 </div>
 
 <jsp:include page="footer.jsp"/>
-
-<script>
-    const dotMenuArray = document.querySelectorAll('.dot-menu');
-    const menuArray = document.querySelectorAll('.menu-options');
-
-    for (let index = 0; index < dotMenuArray.length; index++) {
-        let dotMenu = dotMenuArray[index];
-        let menu = menuArray[index];
-
-        dotMenu.addEventListener('click', () => {
-            menu.classList.toggle('active');
-        });
-    }
-</script>
 </body>
 
 </html>

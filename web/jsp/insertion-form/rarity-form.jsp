@@ -1,19 +1,20 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="models.Rarity" %>
+<%@ page import="utils.NameChecker" %>
 
 <% String sectionTitle = "Rarity Insertion", btnValue = "Insert";
     String mode = request.getParameter("mode");
     Rarity updatedRarity = null;
-    String rarityID = "", rarityName = "", imgPath = "rarity/default.jpeg";
+    String rarityId = "", rarityName = "", imgPath = "rarity/default.jpeg";
 
     if (mode != null && mode.equals("u")) {
         sectionTitle = "Rarity Update";
         btnValue = "Update";
-        updatedRarity = (Rarity) request.getAttribute("updated_rarity");
-        rarityID = String.valueOf(updatedRarity.getRarityID());
+        updatedRarity = (Rarity) request.getAttribute("updated-rarity");
+        rarityId = String.valueOf(updatedRarity.getRarityId());
         rarityName = updatedRarity.getName();
 
-        if (updatedRarity.getImgPath() != null && !updatedRarity.getImgPath().equals("rarity/")) {
+        if (NameChecker.isNewImgPath(updatedRarity.getImgPath(), "rarity")) {
             imgPath = updatedRarity.getImgPath();
         }
     } %>
@@ -43,7 +44,7 @@
 
 <div class="body wrapper">
     <h1 class="page__title">
-        <% out.println(sectionTitle); %>
+        <%= sectionTitle %>
     </h1>
 
     <div class="sep--large">
@@ -60,12 +61,12 @@
     </div>
 
     <div class="entity-form">
-        <form action="RarityCU" method="post" enctype="multipart/form-data" class="filter-form filter-form--borderless">
+        <form action="${pageContext.request.contextPath}/rarity-cu" method="post" enctype="multipart/form-data" class="filter-form filter-form--borderless">
             <% if (mode != null) { %>
             <div class="form__group horizontal large hidden">
                 <div class="form__control">
                     <label for="mode" class="form__input-label">Mode:</label>
-                    <input type="text" name="mode" value="<% out.println(mode); %>" id="mode"
+                    <input type="text" name="mode" value="<%= mode %>" id="mode"
                            class="form__input-field" placeholder="Mode ...">
                 </div>
             </div>
@@ -74,19 +75,19 @@
             <div class="form__group horizontal large hidden">
                 <div class="form__control">
                     <label for="rarity-id" class="form__input-label">Rarity ID:</label>
-                    <input type="text" name="rarity_id" value="<% out.println(rarityID); %>"
+                    <input type="text" name="rarity-id" value="<%= rarityId %>"
                            id="rarity-id" class="form__input-field" placeholder="Rarity ID ...">
                 </div>
             </div>
 
             <div class="form__group horizontal large form__input-field form__image-container">
-                <img src="uploads/<% out.print(imgPath); %>" alt="Rarity image" id="img-display">
+                <img src="uploads/<%= imgPath %>" alt="Rarity image" id="img-display">
 
                 <div class="form__control">
                     <label for="imageUpload" class="control__label">
                         <span class="fa-solid fa-camera"></span>
                     </label>
-                    <input type="file" name="rarity_img" id="imageUpload" accept=".jpg,.jpeg,.png"
+                    <input type="file" name="rarity-img" id="imageUpload" accept=".jpg,.jpeg,.png"
                            class="form__input-field control__input-field" hidden>
                 </div>
             </div>
@@ -94,7 +95,7 @@
             <div class="form__group horizontal large">
                 <div class="form__control">
                     <label for="rarity-name" class="form__input-label">Rarity Name:</label>
-                    <input type="text" name="rarity_name" value="<% out.println(rarityName); %>"
+                    <input type="text" name="rarity-name" value="<%= rarityName %>"
                            id="rarity-name" class="form__input-field"
                            placeholder="Rarity Name ...">
                 </div>
@@ -108,7 +109,7 @@
                           transform="translate(-120 -215)" fill="#f2f2f2"/>
                 </svg>
                 <span>
-                    <% out.println(btnValue); %>
+                    <%= btnValue %>
                 </span>
             </button>
         </form>

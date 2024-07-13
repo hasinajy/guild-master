@@ -1,20 +1,21 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="models.Faction" %>
+<%@ page import="utils.NameChecker" %>
 
 <%
     String sectionTitle = "Faction Insertion", btnValue = "Insert";
     String mode = request.getParameter("mode");
     Faction updatedFaction = null;
-    String factionID = "", factionName = "", imgPath = "faction/default.jpeg";
+    String factionId = "", factionName = "", imgPath = "faction/default.jpeg";
 
     if (mode != null && mode.equals("u")) {
         sectionTitle = "Faction Update";
         btnValue = "Update";
-        updatedFaction = (Faction) request.getAttribute("updated_faction");
-        factionID = String.valueOf(updatedFaction.getFactionID());
+        updatedFaction = (Faction) request.getAttribute("updated-faction");
+        factionId = String.valueOf(updatedFaction.getFactionId());
         factionName = updatedFaction.getName();
 
-        if (updatedFaction.getImgPath() != null && !updatedFaction.getImgPath().equals("faction/")) {
+        if (NameChecker.isNewImgPath(updatedFaction.getImgPath(), "faction")) {
             imgPath = updatedFaction.getImgPath();
         }
     }
@@ -45,9 +46,7 @@
 
 <div class="body wrapper">
     <h1 class="page__title">
-        <%
-            out.println(sectionTitle);
-        %>
+        <%= sectionTitle %>
     </h1>
 
     <div class="sep--large">
@@ -64,7 +63,7 @@
     </div>
 
     <div class="entity-form">
-        <form action="FactionCU" method="post" enctype="multipart/form-data"
+        <form action="${pageContext.request.contextPath}/faction-cu" method="post" enctype="multipart/form-data"
               class="filter-form filter-form--borderless">
             <%
                 if (mode != null) {
@@ -72,7 +71,7 @@
             <div class="form__group horizontal large hidden">
                 <div class="form__control">
                     <label for="mode" class="form__input-label">Mode:</label>
-                    <input type="text" name="mode" value="<% out.println(mode); %>" id="mode"
+                    <input type="text" name="mode" value="<%= mode %>" id="mode"
                            class="form__input-field"
                            placeholder="Mode ...">
                 </div>
@@ -84,20 +83,20 @@
             <div class="form__group horizontal large hidden">
                 <div class="form__control">
                     <label for="faction-id" class="form__input-label">Faction ID:</label>
-                    <input type="text" name="faction_id" value="<% out.println(factionID); %>" id="faction-id"
+                    <input type="text" name="faction-id" value="<%= factionId %>" id="faction-id"
                            class="form__input-field"
                            placeholder="Faction ID ...">
                 </div>
             </div>
 
             <div class="form__group horizontal large form__input-field form__image-container">
-                <img src="uploads/<% out.print(imgPath); %>" alt="Faction image" id="img-display">
+                <img src="uploads/<%= imgPath %>" alt="Faction image" id="img-display">
 
                 <div class="form__control">
                     <label for="imageUpload" class="control__label">
                         <span class="fa-solid fa-camera"></span>
                     </label>
-                    <input type="file" name="faction_img" id="imageUpload"
+                    <input type="file" name="faction-img" id="imageUpload"
                            accept=".jpg,.jpeg,.png"
                            class="form__input-field control__input-field" hidden>
                 </div>
@@ -106,7 +105,7 @@
             <div class="form__group horizontal large">
                 <div class="form__control">
                     <label for="faction-name" class="form__input-label">Faction Name:</label>
-                    <input type="text" name="faction_name" value="<% out.println(factionName); %>" id="faction-name"
+                    <input type="text" name="faction-name" value="<%= factionName %>" id="faction-name"
                            class="form__input-field"
                            placeholder="Faction Name ...">
                 </div>
@@ -120,10 +119,8 @@
                           transform="translate(-120 -215)" fill="#f2f2f2"/>
                 </svg>
                 <span>
-                        <%
-                            out.println(btnValue);
-                        %>
-                    </span>
+                        <%= btnValue %>
+                </span>
             </button>
         </form>
     </div>

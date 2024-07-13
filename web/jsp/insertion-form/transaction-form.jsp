@@ -1,30 +1,30 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.List" %>
 <%@ page import="java.sql.Date" %>
 <%@ page import="models.Transaction" %>
 <%@ page import="models.Item" %>
-<%@ page import="models.PlayerFull" %>
+<%@ page import="models.Player" %>
 <%@ page import="models.TransactionType" %>
 
 <%
     String sectionTitle = "Transaction Insertion", btnValue = "Insert";
     String mode = request.getParameter("mode");
     Transaction updatedTransaction = null;
-    String transactionID = "", transactionTypeID = "", transactionDate = "", itemID = "", playerID = "";
+    String transactionId = "", transactionTypeId = "", transactionDate = "", itemId = "", playerId = "";
 
-    ArrayList<TransactionType> transactionTypeList = (ArrayList<TransactionType>) request.getAttribute("transaction-type-list");
-    ArrayList<Item> itemList = (ArrayList<Item>) request.getAttribute("item-list");
-    ArrayList<PlayerFull> playerList = (ArrayList<PlayerFull>) request.getAttribute("player-list");
+    List<TransactionType> transactionTypeList = (List<TransactionType>) request.getAttribute("transaction-type-list");
+    List<Item> itemList = (List<Item>) request.getAttribute("item-list");
+    List<Player> playerList = (List<Player>) request.getAttribute("player-list");
 
     if (mode != null && mode.equals("u")) {
         sectionTitle = "Transaction Update";
         btnValue = "Update";
         updatedTransaction = (Transaction) request.getAttribute("updated-transaction");
-        transactionID = String.valueOf(updatedTransaction.getTransactionID());
+        transactionId = String.valueOf(updatedTransaction.getTransactionId());
         transactionDate = updatedTransaction.getDate().toString();
-        transactionTypeID = String.valueOf(updatedTransaction.getTransactionTypeID());
-        itemID = String.valueOf(updatedTransaction.getItemID());
-        playerID = String.valueOf(updatedTransaction.getPlayerID());
+        transactionTypeId = String.valueOf(updatedTransaction.getTransactionType().getTransactionTypeId());
+        itemId = String.valueOf(updatedTransaction.getItem().getItemId());
+        playerId = String.valueOf(updatedTransaction.getPlayer().getPlayerId());
     }
 %>
 
@@ -53,7 +53,7 @@
 
 <div class="body wrapper">
     <h1 class="page__title">
-        <% out.println(sectionTitle); %>
+        <%= sectionTitle %>
     </h1>
 
     <div class="sep--large">
@@ -70,7 +70,7 @@
     </div>
 
     <div class="entity-form">
-        <form action="TransactionCU" method="post" class="filter-form filter-form--borderless">
+        <form action="${pageContext.request.contextPath}/transaction-cu" method="post" class="filter-form filter-form--borderless">
             <% if (mode != null) { %>
             <div class="form__group horizontal large hidden">
                 <div class="form__control">
@@ -84,7 +84,7 @@
             <div class="form__group horizontal large hidden">
                 <div class="form__control">
                     <label for="transaction-id" class="form__input-label">Transaction ID:</label>
-                    <input type="text" name="transaction-id" value="<%= transactionID %>"
+                    <input type="text" name="transaction-id" value="<%= transactionId %>"
                            id="transaction-id" class="form__input-field" placeholder="Transaction ID ...">
                 </div>
             </div>
@@ -97,11 +97,11 @@
                             for (TransactionType transactionType : transactionTypeList) {
                                 String transactionTypeSelect = "";
 
-                                if (mode != null && updatedTransaction.getTransactionTypeID() == transactionType.getTransactionTypeID()) {
+                                if (mode != null && updatedTransaction.getTransactionType().getTransactionTypeId() == transactionType.getTransactionTypeId()) {
                                     transactionTypeSelect = "selected";
                                 }
                         %>
-                        <option value="<%= transactionType.getTransactionTypeID() %>" <%= transactionTypeSelect %>>
+                        <option value="<%= transactionType.getTransactionTypeId() %>" <%= transactionTypeSelect %>>
                             <%= transactionType.getName() %>
                         </option>
                         <%
@@ -127,11 +127,11 @@
                             for (Item item : itemList) {
                                 String itemSelect = "";
 
-                                if (mode != null && updatedTransaction.getItemID() == item.getItemID()) {
+                                if (mode != null && updatedTransaction.getItem().getItemId() == item.getItemId()) {
                                     itemSelect = "selected";
                                 }
                         %>
-                        <option value="<%= item.getItemID() %>" <%= itemSelect %>>
+                        <option value="<%= item.getItemId() %>" <%= itemSelect %>>
                             <%= item.getName() %>
                         </option>
                         <%
@@ -146,15 +146,15 @@
                     <label for="player" class="form__input-label">Player:</label>
                     <select name="player-id" id="player" class="form__input-field">
                         <%
-                            for (PlayerFull player : playerList) {
+                            for (Player player : playerList) {
                                 String playerSelect = "";
 
-                                if (mode != null && updatedTransaction.getPlayerID() == player.getPlayerID()) {
+                                if (mode != null && updatedTransaction.getPlayer().getPlayerId() == player.getPlayerId()) {
                                     playerSelect = "selected";
                                 }
                         %>
-                        <option value="<%= player.getPlayerID() %>" <%= playerSelect %>>
-                            <%= player.getCharacterName() %>
+                        <option value="<%= player.getPlayerId() %>" <%= playerSelect %>>
+                            <%= player.getName().getCharacterName() %>
                         </option>
                         <%
                             }
@@ -171,7 +171,7 @@
                           transform="translate(-120 -215)" fill="#f2f2f2"/>
                 </svg>
                 <span>
-                    <% out.println(btnValue); %>
+                    <%= btnValue %>
                 </span>
             </button>
         </form>

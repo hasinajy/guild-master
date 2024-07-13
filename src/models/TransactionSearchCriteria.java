@@ -2,12 +2,14 @@ package models;
 
 import java.sql.Date;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 public class TransactionSearchCriteria {
     private Integer transactionTypeId;
     private Date startDate;
     private Date endDate;
     private Integer itemId;
-    private Integer playerId;
+    private String characterName;
 
     // Constructors
     public TransactionSearchCriteria() {
@@ -51,11 +53,60 @@ public class TransactionSearchCriteria {
         this.itemId = itemId;
     }
 
-    public Integer getPlayerId() {
-        return playerId;
+    public String getCharacterName() {
+        return characterName;
     }
 
-    public void setPlayerId(Integer playerId) {
-        this.playerId = playerId;
+    public void setCharacterName(String characterName) {
+        this.characterName = characterName;
+    }
+
+    /* ------------------------------ Class methods ----------------------------- */
+    public static TransactionSearchCriteria getCriteriaFromRequest(HttpServletRequest req) {
+        TransactionSearchCriteria criteria = new TransactionSearchCriteria();
+
+        String transactionTypeIdParam = req.getParameter("transaction-type-id");
+        String startDateParam = req.getParameter("start-date");
+        String endDateParam = req.getParameter("end-date");
+        String itemIdParam = req.getParameter("item-id");
+        String characterNameParam = req.getParameter("character-name");
+
+        if (transactionTypeIdParam != null && !transactionTypeIdParam.isEmpty()) {
+            try {
+                criteria.setTransactionTypeId(Integer.parseInt(transactionTypeIdParam));
+            } catch (NumberFormatException e) {
+                criteria.setTransactionTypeId(null);
+            }
+        }
+
+        if (startDateParam != null && !startDateParam.isEmpty()) {
+            try {
+                criteria.setStartDate(Date.valueOf(startDateParam));
+            } catch (IllegalArgumentException e) {
+                criteria.setStartDate(null);
+            }
+        }
+
+        if (endDateParam != null && !endDateParam.isEmpty()) {
+            try {
+                criteria.setEndDate(Date.valueOf(endDateParam));
+            } catch (IllegalArgumentException e) {
+                criteria.setEndDate(null);
+            }
+        }
+
+        if (itemIdParam != null && !itemIdParam.isEmpty()) {
+            try {
+                criteria.setItemId(Integer.parseInt(itemIdParam));
+            } catch (NumberFormatException e) {
+                criteria.setItemId(null);
+            }
+        }
+
+        if (characterNameParam != null && !characterNameParam.isEmpty()) {
+            criteria.setCharacterName(characterNameParam.trim());
+        }
+
+        return criteria;
     }
 }
