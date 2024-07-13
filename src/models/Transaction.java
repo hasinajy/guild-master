@@ -251,16 +251,16 @@ public class Transaction {
         try {
             QueryCondition queryCondition = new QueryCondition(Transaction.getJoinQuery(true));
 
-            queryCondition.addCondition(" AND transaction.transaction_type_id = ?",
+            queryCondition.addCondition(" AND \"transaction.transaction_type_id\" = ?",
                     int.class, criteria.getTransactionTypeId());
-            queryCondition.addCondition(" AND transaction.date >= ?",
+            queryCondition.addCondition(" AND \"transaction.date\" >= ?",
                     Date.class, criteria.getStartDate());
-            queryCondition.addCondition(" AND transaction.date <= ?",
+            queryCondition.addCondition(" AND \"transaction.date\" <= ?",
                     Date.class, criteria.getEndDate());
-            queryCondition.addCondition(" AND transaction.item_id = ?",
+            queryCondition.addCondition(" AND \"transaction.item_id\" = ?",
                     int.class, criteria.getItemId());
-            queryCondition.addCondition(" AND transaction.player_id = ?",
-                    int.class, criteria.getPlayerId());
+            queryCondition.addCondition(" AND \"player.character_name\" ILIKE ?",
+                    String.class, "%" + criteria.getCharacterName() + "%");
 
             pg.initResources(queryCondition.getQuery());
             pg.setStmtValues(queryCondition.getClassList(), queryCondition.getParameters());
