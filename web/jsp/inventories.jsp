@@ -2,9 +2,15 @@
 <%@ page import="java.util.List" %>
 <%@ page import="models.Inventory" %>
 <%@ page import="utils.NameChecker" %>
+<%@ page import="models.Item" %>
+<%@ page import="models.Type" %>
+<%@ page import="models.Rarity" %>
 
 <%
     List<Inventory> inventoryList = (List<Inventory>) request.getAttribute("inventory-list");
+    List<Item> itemList = (List<Item>) request.getAttribute("item-list");
+    List<Type> typeList = (List<Type>) request.getAttribute("type-list");
+    List<Rarity> rarityList = (List<Rarity>) request.getAttribute("rarity-list");
 %>
 
 <!DOCTYPE html>
@@ -71,19 +77,34 @@
     <section class="filter">
         <span class="section__title">Filters:</span>
 
-        <form action="" class="filter-form">
+        <form action="${pageContext.request.contextPath}/inventories" class="filter-form">
             <div class="form__group vertical">
                 <div class="form__group horizontal large">
+                    <div class="form__group horizontal large hidden">
+                        <div class="form__control">
+                            <label for="mode" class="form__input-label">Mode:</label>
+                            <input type="text" name="mode" value="s" id="mode"
+                                   class="form__input-field" placeholder="Mode ...">
+                        </div>
+                    </div>
+
                     <div class="form__control">
                         <label for="item" class="form__input-label">Item Name:</label>
-                        <select name="item-name" id="item" class="form__input-field" class="form__input-field">
-                            <option value="0">Excalibur</option>
-                            <option value="1">Dragon Claws</option>
+                        <select name="item-id" id="item" class="form__input-field" class="form__input-field">
+                            <option value="">All</option>
+
+                            <%
+                                for (Item item : itemList) {
+                            %>
+                            <option value="<%= item.getItemId() %>"><%= item.getName() %></option>
+                            <%
+                                }
+                            %>
                         </select>
                     </div>
 
                     <div class="form__control">
-                        <label for="owner" class="form__input-label">Owner Username:</label>
+                        <label for="owner" class="form__input-label">Owner:</label>
                         <input type="text" name="character-name" id="owner" class="form__input-field"
                                placeholder="Owner Character Name ...">
                     </div>
@@ -107,32 +128,31 @@
                     <div class="form__control">
                         <label for="type" class="form__input-label">Item Type:</label>
                         <select name="type-id" id="type" class="form__input-field">
-                            <option value="0">Weapon</option>
-                            <option value="1">Food</option>
-                            <option value="1">Armor</option>
+                            <option value="">All</option>
+
+                            <%
+                                for (Type type : typeList) {
+                            %>
+                            <option value="<%= type.getTypeId() %>"><%= type.getName() %></option>
+                            <%
+                                }
+                            %>
                         </select>
                     </div>
 
                     <div class="form__control">
                         <label for="rarity" class="form__input-label">Item Rarity:</label>
                         <select name="rarity-id" id="rarity" class="form__input-field">
-                            <option value="0">Common</option>
-                            <option value="1">Rare</option>
+                            <option value="">All</option>
+
+                            <%
+                                for (Rarity rarity : rarityList) {
+                            %>
+                            <option value="<%= rarity.getRarityId() %>"><%= rarity.getName() %></option>
+                            <%
+                                }
+                            %>
                         </select>
-                    </div>
-
-                    <div class="form__group horizontal">
-                        <div class="form__control">
-                            <label for="min-quantity" class="form__input-label">Quantity:</label>
-                            <input type="number" name="min-quantity" id="min-quantity" class="form__input-field"
-                                   placeholder="Min Quantity">
-                        </div>
-
-                        <div class="form__control">
-                            <label for="max-quantity" class="form__input-label">&nbsp;</label>
-                            <input type="number" name="max-quantity" id="max-quantity" class="form__input-field"
-                                   placeholder="Max Quantity">
-                        </div>
                     </div>
                 </div>
             </div>

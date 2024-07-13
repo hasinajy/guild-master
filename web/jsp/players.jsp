@@ -112,7 +112,7 @@
                 <div class="form__control">
                     <label for="faction-id" class="form__input-label">Faction:</label>
                     <select name="faction-id" id="faction-id" class="form__input-field">
-                        <option value="">None</option>
+                        <option value="">All</option>
 
                         <%
                             for (Faction faction : factionList) {
