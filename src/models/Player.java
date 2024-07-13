@@ -181,9 +181,6 @@ public class Player {
             queryCondition.addCondition(" AND \"player.faction_id\" = ?",
                     int.class, criteria.getFactionId());
 
-            // Debugging
-            System.out.println(queryCondition.getQuery());
-
             pg.initResources(queryCondition.getQuery());
             pg.setStmtValues(queryCondition.getClassList(), queryCondition.getParameters());
             pg.executeQuery(false);

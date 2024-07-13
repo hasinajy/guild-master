@@ -142,7 +142,7 @@ public class Item {
             List<Object> parameters = new ArrayList<>();
 
             if (name != null && !name.isEmpty()) {
-                query.append(" AND item.name ILIKE ?");
+                query.append(" WHERE \"item.name\" ILIKE ?");
                 parameters.add("%" + name + "%");
             }
 

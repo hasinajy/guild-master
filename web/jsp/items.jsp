@@ -71,7 +71,15 @@
     <section class="filter">
         <span class="section__title">Filter:</span>
 
-        <form action="" class="filter-form">
+        <form action="${pageContext.request.contextPath}/items" class="filter-form">
+            <div class="form__group horizontal large hidden">
+                <div class="form__control">
+                    <label for="mode" class="form__input-label">Mode:</label>
+                    <input type="text" name="mode" value="s" id="mode"
+                           class="form__input-field" placeholder="Mode ...">
+                </div>
+            </div>
+
             <div class="form__group horizontal large">
                 <div class="form__control">
                     <label for="item-name" class="form__input-label">Item Name:</label>

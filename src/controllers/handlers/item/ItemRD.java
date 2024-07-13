@@ -21,14 +21,24 @@ public class ItemRD extends HttpServlet {
                 Item.deleteById(itemId);
             }
 
-            this.setAttributes(req);
+            String searchKeyword = null;
+
+            if (RequestChecker.isSearchMode(req)) {
+                searchKeyword = req.getParameter("item-name");
+            }
+
+            this.setAttributes(req, searchKeyword);
             req.getRequestDispatcher("/re-items").forward(req, resp);
         } catch (Exception e) {
             ExceptionHandler.handleException(e, resp, true);
         }
     }
 
-    private void setAttributes(HttpServletRequest req) throws ClassNotFoundException, SQLException {
-        req.setAttribute("item-list", Item.getAll());
+    private void setAttributes(HttpServletRequest req, String searchKeyword) throws ClassNotFoundException, SQLException {
+        if (searchKeyword != null && !searchKeyword.isEmpty()) {
+            req.setAttribute("item-list", Item.searchItem(searchKeyword));
+        } else {
+            req.setAttribute("item-list", Item.getAll());
+        }
     }
 }
