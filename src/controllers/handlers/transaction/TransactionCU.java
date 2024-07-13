@@ -29,7 +29,7 @@ public class TransactionCU extends HttpServlet {
             }
 
             this.setAttributes(req);
-            req.getRequestDispatcher("TransactionForm").forward(req, resp);
+            req.getRequestDispatcher("/transaction-form").forward(req, resp);
         } catch (Exception e) {
             ExceptionHandler.handleException(e, resp, true);
         }
@@ -38,7 +38,7 @@ public class TransactionCU extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            String url = "TransactionCU";
+            String url = "transaction-cu";
 
             String transactionDate = req.getParameter("transaction-date");
             LocalDate localDate = LocalDate.parse(transactionDate, DateTimeFormatter.ISO_LOCAL_DATE);
@@ -67,6 +67,7 @@ public class TransactionCU extends HttpServlet {
             transaction.setDate(sqlDate);
             transaction.setItem(item);
             transaction.setPlayer(player);
+            transaction.setStaff(staff);
 
             // TODO: Add note from the client
             transaction.setNote("");

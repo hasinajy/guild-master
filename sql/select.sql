@@ -39,3 +39,11 @@ SELECT
     transaction.note AS "transaction.note"
 FROM
     transaction;
+
+-- Transaction type
+SELECT
+    transaction_type.transaction_type_id AS "transaction_type.transaction_type_id",
+    transaction_type.transaction_type_code AS "transaction_type.transaction_type_code",
+    transaction_type.name AS "transaction_type.name"
+FROM
+    transaction_type;

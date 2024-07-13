@@ -1,19 +1,19 @@
-package controllers.redirections.lists;
+package controllers.redirections.forms;
 
 import java.io.IOException;
 import java.util.logging.Level;
 
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import utils.ExceptionHandler;
-import jakarta.servlet.ServletException;
 
-public class TransactionsRedirection extends HttpServlet {
+public class TransactionFormRedirection extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            req.getRequestDispatcher("WEB-INF/jsp/transactions.jsp").forward(req, resp);
+            req.getRequestDispatcher("WEB-INF/jsp/insertion-form/transaction-form.jsp").forward(req, resp);
         } catch (ServletException | IOException e) {
             ExceptionHandler.handleException(e, Level.SEVERE, resp);
         } catch (Exception e) {

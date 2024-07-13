@@ -169,7 +169,7 @@
 
     <servlet-mapping>
         <servlet-name>TransactionRD</servlet-name>
-        <url-pattern>/transaction-rd</url-pattern>
+        <url-pattern>/transactions</url-pattern>
     </servlet-mapping>
 
     <!-- Redirection -->
@@ -237,7 +237,7 @@
 
     <servlet-mapping>
         <servlet-name>Transactions</servlet-name>
-        <url-pattern>/transactions</url-pattern>
+        <url-pattern>/re-transactions</url-pattern>
     </servlet-mapping>
 
     <!-- Player -->
@@ -263,6 +263,17 @@
     </servlet-mapping>
 
     <!-- Form Mapping -->
+        <!-- Transaction form -->
+        <servlet>
+            <servlet-name>TransactionForm</servlet-name>
+            <servlet-class>controllers.redirections.forms.TransactionFormRedirection</servlet-class>
+        </servlet>
+    
+        <servlet-mapping>
+            <servlet-name>TransactionForm</servlet-name>
+            <url-pattern>/transaction-form</url-pattern>
+        </servlet-mapping>
+
     <!-- Faction form -->
     <servlet>
         <servlet-name>FactionForm</servlet-name>
