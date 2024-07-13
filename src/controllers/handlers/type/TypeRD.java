@@ -22,7 +22,7 @@ public class TypeRD extends HttpServlet {
             }
 
             this.setAttributes(req);
-            req.getRequestDispatcher("Types").forward(req, resp);
+            req.getRequestDispatcher("/re-types").forward(req, resp);
         } catch (Exception e) {
             ExceptionHandler.handleException(e, resp, true);
         }

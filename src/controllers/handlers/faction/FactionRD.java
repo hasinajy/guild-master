@@ -22,7 +22,7 @@ public class FactionRD extends HttpServlet {
             }
 
             this.setAttributes(req);
-            req.getRequestDispatcher("Factions").forward(req, resp);
+            req.getRequestDispatcher("/re-factions").forward(req, resp);
         } catch (Exception e) {
             ExceptionHandler.handleException(e, resp, true);
         }

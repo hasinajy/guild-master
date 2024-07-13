@@ -1,28 +1,29 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.List" %>
 <%@ page import="models.Item" %>
 <%@ page import="models.Rarity" %>
 <%@ page import="models.Type" %>
+<%@ page import="utils.NameChecker" %>
 
 <%
     String sectionTitle = "Item Insertion", btnValue = "Insert";
     String mode = request.getParameter("mode");
     Item updatedItem = null;
-    String itemID = "", itemName = "", typeID = "", rarityID = "", imgPath = "item/default.jpeg";
+    String itemId = "", itemName = "", typeId = "", rarityId = "", imgPath = "item/default.jpeg";
 
-    ArrayList<Type> typeList = (ArrayList<Type>) request.getAttribute("type-list");
-    ArrayList<Rarity> rarityList = (ArrayList<Rarity>) request.getAttribute("rarity-list");
+    List<Type> typeList = (List<Type>) request.getAttribute("type-list");
+    List<Rarity> rarityList = (List<Rarity>) request.getAttribute("rarity-list");
 
     if (mode != null && mode.equals("u")) {
         sectionTitle = "Item Update";
         btnValue = "Update";
         updatedItem = (Item) request.getAttribute("updated-item");
-        itemID = String.valueOf(updatedItem.getItemID());
+        itemId = String.valueOf(updatedItem.getItemId());
         itemName = updatedItem.getName();
-        typeID = String.valueOf(updatedItem.getTypeID());
-        rarityID = String.valueOf(updatedItem.getRarityID());
+        typeId = String.valueOf(updatedItem.getType().getTypeId());
+        rarityId = String.valueOf(updatedItem.getRarity().getRarityId());
 
-        if (updatedItem.getImgPath() != null && !updatedItem.getImgPath().equals("item/")) {
+        if (NameChecker.isNewImgPath(updatedItem.getImgPath(), "item")) {
             imgPath = updatedItem.getImgPath();
         }
     }
@@ -54,9 +55,7 @@
 
 <div class="body wrapper">
     <h1 class="page__title">
-        <%
-            out.print(sectionTitle);
-        %>
+        <%= sectionTitle %>
     </h1>
 
     <div class="sep--large">
@@ -73,14 +72,14 @@
     </div>
 
     <div class="entity-form">
-        <form action="ItemCU" method="post" enctype="multipart/form-data" class="filter-form filter-form--borderless">
+        <form action="${pageContext.request.contextPath}/item-cu" method="post" enctype="multipart/form-data" class="filter-form filter-form--borderless">
             <%
                 if (mode != null) {
             %>
             <div class="form__group horizontal large hidden">
                 <div class="form__control">
                     <label for="mode" class="form__input-label">Mode:</label>
-                    <input type="text" name="mode" value="<% out.print(mode); %>" id="mode"
+                    <input type="text" name="mode" value="<%= mode %>" id="mode"
                            class="form__input-field" placeholder="Mode ...">
                 </div>
             </div>
@@ -91,7 +90,7 @@
             <div class="form__group horizontal large hidden">
                 <div class="form__control">
                     <label for="item-id" class="form__input-label">Item ID:</label>
-                    <input type="text" name="item-id" value="<%= itemID %>" id="item-id"
+                    <input type="text" name="item-id" value="<%= itemId %>" id="item-id"
                            class="form__input-field" placeholder="Item ID ...">
                 </div>
             </div>
@@ -124,11 +123,11 @@
                             for (Type type : typeList) {
                                 String typeSelect = "";
 
-                                if (mode != null && updatedItem.getTypeID() == type.getTypeID()) {
+                                if (mode != null && updatedItem.getType().getTypeId() == type.getTypeId()) {
                                     typeSelect = "selected";
                                 }
                         %>
-                        <option value="<%= type.getTypeID()%>" <%= typeSelect %>>
+                        <option value="<%= type.getTypeId()%>" <%= typeSelect %>>
                             <%= type.getName() %>
                         </option>
                         <%
@@ -146,11 +145,11 @@
                             for (Rarity rarity : rarityList) {
                                 String raritySelect = "";
 
-                                if (mode != null && updatedItem.getRarityID() == rarity.getRarityID()) {
+                                if (mode != null && updatedItem.getRarity().getRarityId() == rarity.getRarityId()) {
                                     raritySelect = "selected";
                                 }
                         %>
-                        <option value="<%= rarity.getRarityID() %>" <%= raritySelect %>>
+                        <option value="<%= rarity.getRarityId() %>" <%= raritySelect %>>
                             <%= rarity.getName() %>
                         </option>
                         <%
@@ -168,7 +167,7 @@
                           transform="translate(-120 -215)" fill="#f2f2f2"/>
                 </svg>
                 <span>
-                        <% out.print(btnValue); %>
+                        <%= btnValue %>
                 </span>
             </button>
         </form>

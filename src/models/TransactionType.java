@@ -12,7 +12,12 @@ public class TransactionType {
     private String name;
 
     // Queries
-    private static final String READ_QUERY = "SELECT * FROM transaction_type";
+    private static final String READ_QUERY = "SELECT\r\n" + //
+            "    transaction_type.transaction_type_id AS \"transaction_type.transaction_type_id\",\r\n" + //
+            "    transaction_type.transaction_type_code AS \"transaction_type.transaction_type_code\",\r\n" + //
+            "    transaction_type.name AS \"transaction_type.name\"\r\n" + //
+            "FROM\r\n" + //
+            "    transaction_type";
 
     /* ------------------------------ Constructors ------------------------------ */
     public TransactionType() {

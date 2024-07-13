@@ -22,7 +22,7 @@ public class ItemRD extends HttpServlet {
             }
 
             this.setAttributes(req);
-            req.getRequestDispatcher("Items").forward(req, resp);
+            req.getRequestDispatcher("/re-items").forward(req, resp);
         } catch (Exception e) {
             ExceptionHandler.handleException(e, resp, true);
         }

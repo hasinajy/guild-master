@@ -134,6 +134,8 @@ public class Transaction {
             transaction.setDate(DateUtils.getCurrentDate());
             transaction.setItem(item);
             transaction.setPlayer(player);
+            transaction.setStaff(staff);
+            transaction.setNote("A new deposit");
 
             transaction.create();
         }
@@ -168,6 +170,8 @@ public class Transaction {
             transaction.setDate(DateUtils.getCurrentDate());
             transaction.setItem(item);
             transaction.setPlayer(player);
+            transaction.setStaff(staff);
+            transaction.setNote("A new withdrawal");
 
             transaction.create();
         }

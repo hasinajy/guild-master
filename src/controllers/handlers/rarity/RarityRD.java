@@ -22,7 +22,7 @@ public class RarityRD extends HttpServlet {
             }
 
             this.setAttributes(req);
-            req.getRequestDispatcher("Rarities").forward(req, resp);
+            req.getRequestDispatcher("/re-rarities").forward(req, resp);
         } catch (Exception e) {
             ExceptionHandler.handleException(e, resp, true);
         }

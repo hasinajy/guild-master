@@ -9,8 +9,8 @@ import java.util.logging.Logger;
 import utils.ConfigLoader;
 
 public class Postgres {
-    // private static final String CONFIG_FILE = "webapps/guild-master/WEB-INF/db-config.xml";
-    private static final String CONFIG_FILE = "config/db-config.xml";
+    private static final String CONFIG_FILE = "webapps/guild-master/WEB-INF/db-config.xml";
+    // private static final String CONFIG_FILE = "config/db-config.xml";
     private static Configuration config;
     private static final Logger logger = Logger.getLogger(Postgres.class.getName());
     private static Postgres instance = new Postgres();

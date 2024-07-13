@@ -22,7 +22,7 @@ public class RarityCU extends HttpServlet {
                 req.setAttribute("updated-rarity", Rarity.getById(rarityId));
             }
 
-            req.getRequestDispatcher("RarityForm").forward(req, resp);
+            req.getRequestDispatcher("/rarity-form").forward(req, resp);
         } catch (Exception e) {
             ExceptionHandler.handleException(e, resp, true);
         }
@@ -31,7 +31,7 @@ public class RarityCU extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            String url = "RarityCU";
+            String url = "rarity-cu";
             String name = req.getParameter("rarity-name");
             String imgPath = ImageProcessor.processImage(this, req, "rarity");
 

@@ -22,7 +22,7 @@ public class TransactionRD extends HttpServlet {
             }
 
             this.setAttributes(req);
-            req.getRequestDispatcher("Transactions").forward(req, resp);
+            req.getRequestDispatcher("/re-transactions").forward(req, resp);
         } catch (Exception e) {
             ExceptionHandler.handleException(e, resp, true);
         }

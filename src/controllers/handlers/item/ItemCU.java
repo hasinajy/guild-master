@@ -27,7 +27,7 @@ public class ItemCU extends HttpServlet {
             }
 
             this.setAttributes(req);
-            req.getRequestDispatcher("ItemForm").forward(req, resp);
+            req.getRequestDispatcher("/item-form").forward(req, resp);
         } catch (Exception e) {
             ExceptionHandler.handleException(e, resp, true);
         }
@@ -36,7 +36,7 @@ public class ItemCU extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            String url = "ItemCU";
+            String url = "item-cu";
             String name = req.getParameter("item-name");
             String imgPath = ImageProcessor.processImage(this, req, "item");
 

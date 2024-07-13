@@ -28,7 +28,7 @@ public class PlayerCU extends HttpServlet {
             }
 
             this.setAttributes(req);
-            req.getRequestDispatcher("PlayerForm").forward(req, resp);
+            req.getRequestDispatcher("/player-form").forward(req, resp);
         } catch (Exception e) {
             ExceptionHandler.handleException(e, resp, true);
         }
@@ -37,13 +37,13 @@ public class PlayerCU extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            String url = "PlayerCU";
+            String url = "player-cu";
             String username = req.getParameter("username");
             String characterName = req.getParameter("character-name");
             int genderId = Integer.parseInt(req.getParameter("gender-id"));
             int level = Integer.parseInt(req.getParameter("level"));
             int factionId = Integer.parseInt(req.getParameter("faction-id"));
-            String imgPath = ImageProcessor.processImage(null, req, "player");
+            String imgPath = ImageProcessor.processImage(this, req, "player");
 
             Name name = new Name();
             name.setUsername(username);

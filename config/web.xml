@@ -22,7 +22,7 @@
 
     <servlet-mapping>
         <servlet-name>FactionRD</servlet-name>
-        <url-pattern>/faction-rd</url-pattern>
+        <url-pattern>/factions</url-pattern>
     </servlet-mapping>
 
     <!-- Player -->
@@ -43,7 +43,7 @@
 
     <servlet-mapping>
         <servlet-name>PlayerRD</servlet-name>
-        <url-pattern>/player-rd</url-pattern>
+        <url-pattern>/players</url-pattern>
     </servlet-mapping>
 
     <!-- Staff -->
@@ -85,7 +85,7 @@
 
     <servlet-mapping>
         <servlet-name>ItemRD</servlet-name>
-        <url-pattern>/item-rd</url-pattern>
+        <url-pattern>/items</url-pattern>
     </servlet-mapping>
 
     <!-- Inventory -->
@@ -106,7 +106,7 @@
 
     <servlet-mapping>
         <servlet-name>TypeRD</servlet-name>
-        <url-pattern>/type-rd</url-pattern>
+        <url-pattern>/types</url-pattern>
     </servlet-mapping>
 
     <!-- Rarity -->
@@ -127,7 +127,7 @@
 
     <servlet-mapping>
         <servlet-name>RarityRD</servlet-name>
-        <url-pattern>/rarity-rd</url-pattern>
+        <url-pattern>/rarities</url-pattern>
     </servlet-mapping>
 
     <!-- Inventory -->
@@ -148,7 +148,7 @@
 
     <servlet-mapping>
         <servlet-name>InventoryRD</servlet-name>
-        <url-pattern>/inventory-rd</url-pattern>
+        <url-pattern>/inventories</url-pattern>
     </servlet-mapping>
 
     <!-- Transaction -->
@@ -169,7 +169,7 @@
 
     <servlet-mapping>
         <servlet-name>TransactionRD</servlet-name>
-        <url-pattern>/transaction-rd</url-pattern>
+        <url-pattern>/transactions</url-pattern>
     </servlet-mapping>
 
     <!-- Redirection -->
@@ -193,7 +193,7 @@
 
     <servlet-mapping>
         <servlet-name>Factions</servlet-name>
-        <url-pattern>/factions</url-pattern>
+        <url-pattern>/re-factions</url-pattern>
     </servlet-mapping>
 
     <!-- Item -->
@@ -204,7 +204,7 @@
 
     <servlet-mapping>
         <servlet-name>Items</servlet-name>
-        <url-pattern>/items</url-pattern>
+        <url-pattern>/re-items</url-pattern>
     </servlet-mapping>
 
     <!-- Rarity -->
@@ -215,7 +215,7 @@
 
     <servlet-mapping>
         <servlet-name>Rarities</servlet-name>
-        <url-pattern>/rarities</url-pattern>
+        <url-pattern>/re-rarities</url-pattern>
     </servlet-mapping>
 
     <!-- Type -->
@@ -226,7 +226,7 @@
 
     <servlet-mapping>
         <servlet-name>Types</servlet-name>
-        <url-pattern>/types</url-pattern>
+        <url-pattern>/re-types</url-pattern>
     </servlet-mapping>
 
     <!-- Transaction -->
@@ -237,7 +237,7 @@
 
     <servlet-mapping>
         <servlet-name>Transactions</servlet-name>
-        <url-pattern>/transactions</url-pattern>
+        <url-pattern>/re-transactions</url-pattern>
     </servlet-mapping>
 
     <!-- Player -->
@@ -248,7 +248,7 @@
 
     <servlet-mapping>
         <servlet-name>Players</servlet-name>
-        <url-pattern>/players</url-pattern>
+        <url-pattern>/re-players</url-pattern>
     </servlet-mapping>
 
     <!-- Inventory -->
@@ -259,10 +259,21 @@
 
     <servlet-mapping>
         <servlet-name>Inventories</servlet-name>
-        <url-pattern>/inventories</url-pattern>
+        <url-pattern>/re-inventories</url-pattern>
     </servlet-mapping>
 
     <!-- Form Mapping -->
+        <!-- Transaction form -->
+        <servlet>
+            <servlet-name>TransactionForm</servlet-name>
+            <servlet-class>controllers.redirections.forms.TransactionFormRedirection</servlet-class>
+        </servlet>
+    
+        <servlet-mapping>
+            <servlet-name>TransactionForm</servlet-name>
+            <url-pattern>/transaction-form</url-pattern>
+        </servlet-mapping>
+
     <!-- Faction form -->
     <servlet>
         <servlet-name>FactionForm</servlet-name>
