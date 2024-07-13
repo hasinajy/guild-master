@@ -148,7 +148,7 @@
 
     <servlet-mapping>
         <servlet-name>InventoryRD</servlet-name>
-        <url-pattern>/inventory-rd</url-pattern>
+        <url-pattern>/inventories</url-pattern>
     </servlet-mapping>
 
     <!-- Transaction -->
@@ -259,7 +259,7 @@
 
     <servlet-mapping>
         <servlet-name>Inventories</servlet-name>
-        <url-pattern>/inventories</url-pattern>
+        <url-pattern>/re-inventories</url-pattern>
     </servlet-mapping>
 
     <!-- Form Mapping -->

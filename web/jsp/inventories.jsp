@@ -1,9 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="java.util.ArrayList" %>
-<%@ page import="models.InventoryFull" %>
+<%@ page import="java.util.List" %>
+<%@ page import="models.Inventory" %>
+<%@ page import="utils.NameChecker" %>
 
 <%
-    ArrayList<InventoryFull> inventoryList = (ArrayList<InventoryFull>) request.getAttribute("inventory_list");
+    List<Inventory> inventoryList = (List<Inventory>) request.getAttribute("inventory-list");
 %>
 
 <!DOCTYPE html>
@@ -45,7 +46,7 @@
 
     </div>
 
-    <a href="InventoryForm" class="add-btn">
+    <a href="${pageContext.request.contextPath}/inventory-cu" class="add-btn">
         <svg class="add-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
             <path id="add" d="M207.143,312v-7.143H200v-1.714h7.143V296h1.714v7.143H216v1.714h-7.143V312Z"
                   transform="translate(-200 -296)" fill="#f2f2f2"/>
@@ -75,7 +76,7 @@
                 <div class="form__group horizontal large">
                     <div class="form__control">
                         <label for="item" class="form__input-label">Item Name:</label>
-                        <select name="item_name" id="item" class="form__input-field" class="form__input-field">
+                        <select name="item-name" id="item" class="form__input-field" class="form__input-field">
                             <option value="0">Excalibur</option>
                             <option value="1">Dragon Claws</option>
                         </select>
@@ -83,20 +84,20 @@
 
                     <div class="form__control">
                         <label for="owner" class="form__input-label">Owner Username:</label>
-                        <input type="text" name="owner_username" id="owner" class="form__input-field"
-                               placeholder="Owner Username ...">
+                        <input type="text" name="character-name" id="owner" class="form__input-field"
+                               placeholder="Owner Character Name ...">
                     </div>
 
                     <div class="form__group horizontal">
                         <div class="form__control">
                             <label for="min-durability" class="form__input-label">Durability:</label>
-                            <input type="number" name="min_durability" id="min-durability" class="form__input-field"
+                            <input type="number" name="min-durability" id="min-durability" class="form__input-field"
                                    placeholder="Min Durability">
                         </div>
 
                         <div class="form__control">
                             <label for="max-durability" class="form__input-label">&nbsp;</label>
-                            <input type="number" name="max_durability" id="max-durability" class="form__input-field"
+                            <input type="number" name="max-durability" id="max-durability" class="form__input-field"
                                    placeholder="Max Durability">
                         </div>
                     </div>
@@ -105,7 +106,7 @@
                 <div class="form__group horizontal large">
                     <div class="form__control">
                         <label for="type" class="form__input-label">Item Type:</label>
-                        <select name="item_type" id="type" class="form__input-field">
+                        <select name="type-id" id="type" class="form__input-field">
                             <option value="0">Weapon</option>
                             <option value="1">Food</option>
                             <option value="1">Armor</option>
@@ -114,7 +115,7 @@
 
                     <div class="form__control">
                         <label for="rarity" class="form__input-label">Item Rarity:</label>
-                        <select name="rarity" id="rarity" class="form__input-field">
+                        <select name="rarity-id" id="rarity" class="form__input-field">
                             <option value="0">Common</option>
                             <option value="1">Rare</option>
                         </select>
@@ -123,13 +124,13 @@
                     <div class="form__group horizontal">
                         <div class="form__control">
                             <label for="min-quantity" class="form__input-label">Quantity:</label>
-                            <input type="number" name="min_quantity" id="min-quantity" class="form__input-field"
+                            <input type="number" name="min-quantity" id="min-quantity" class="form__input-field"
                                    placeholder="Min Quantity">
                         </div>
 
                         <div class="form__control">
                             <label for="max-quantity" class="form__input-label">&nbsp;</label>
-                            <input type="number" name="max_quantity" id="max-quantity" class="form__input-field"
+                            <input type="number" name="max-quantity" id="max-quantity" class="form__input-field"
                                    placeholder="Max Quantity">
                         </div>
                     </div>
@@ -163,30 +164,30 @@
 
     <div class="content grid-container">
         <%
-            for (InventoryFull inventory : inventoryList) {
+            for (Inventory inventory : inventoryList) {
         %>
         <div class="card-container card">
             <div class="card__img">
                 <div class="action-container">
                     <%
-                        if (inventory.getPlayerCharacterName() != null && !inventory.getPlayerCharacterName().equals("")) {
+                        if (inventory.getPlayer().getName().getCharacterName() != null && !inventory.getPlayer().getName().getCharacterName().equals("")) {
                     %>
-                    <a href="InventoryRD?mode=d&&type=w&&inventory_id=<% out.print(inventory.getInventoryID()); %>"><span
+                    <a href="${pageContext.request.contextPath}/inventories?mode=d&&type=w&&inventory-id=<%= inventory.getInventoryId() %>"><span
                             class="fa fa-archive action-icon"></span></a>
                     <%
                         }
                     %>
 
-                    <a href="InventoryCU?mode=u&&inventory_id=<% out.print(inventory.getInventoryID()); %>"><span
+                    <a href="${pageContext.request.contextPath}/inventory-cu?mode=u&&inventory-id=<%= inventory.getInventoryId() %>"><span
                             class="fa fa-pencil-alt action-icon"></span></a>
-                    <a href="InventoryRD?mode=d&&inventory_id=<% out.print(inventory.getInventoryID()); %>"><span
+                    <a href="${pageContext.request.contextPath}/inventories?mode=d&&inventory-id=<%= inventory.getInventoryId() %>"><span
                             class="fa fa-trash-alt action-icon"></span></a>
                 </div>
 
                 <%
-                    String imgPath = (inventory.getImgPath() == null || inventory.getImgPath().equalsIgnoreCase("item/")) ? "item/default.jpeg" : inventory.getImgPath();
+                    String imgPath = (NameChecker.isNewImgPath(inventory.getItem().getImgPath(), "item")) ? inventory.getItem().getImgPath() : "item/default.jpeg";
                 %>
-                <img src="uploads/<% out.print(imgPath); %>" alt="Armor image">
+                <img src="uploads/<%= imgPath %>" alt="Armor image">
             </div>
             <div class="card__desc">
                 <span class="card__title">Item Description</span>
@@ -204,37 +205,38 @@
                 <div class="card__details">
                     <div class="card__detail-item">
                         <span class="card__detail-label">name</span>
-                        <span class="card__detail-data"><% out.println(inventory.getItemName()); %></span>
+                        <span class="card__detail-data"><%= inventory.getItem().getName() %></span>
                     </div>
                     <div class="card__detail-item">
                         <span class="card__detail-label">owned by</span>
                         <span class="card__detail-data">
                             <%
-                                String charName = (inventory.getPlayerCharacterName() == null || inventory.getPlayerCharacterName().equalsIgnoreCase("")) ? "Unavailable" : inventory.getPlayerCharacterName();
-                                out.println(charName); %>
+                                String charName = (inventory.getPlayer().getName().getCharacterName() == null || inventory.getPlayer().getName().getCharacterName().equalsIgnoreCase("")) ? "Unavailable" : inventory.getPlayer().getName().getCharacterName();
+                            %>
+                            <%= charName %>
                         </span>
                     </div>
                     <div class="card__detail-item">
                         <span class="card__detail-label">durability</span>
-                        <span class="card__detail-data"><% out.println(inventory.getDurability()); %>%</span>
+                        <span class="card__detail-data"><%= inventory.getDurability() %>%</span>
                     </div>
                     <div class="card__detail-group">
                         <div class="card__detail-item">
                             <span class="card__detail-label">type</span>
                             <span class="card__detail-data">
                                 <%
-                                    String typeName = (inventory.getTypeID() == 0) ? "None" : inventory.getTypeName();
-                                    out.println(typeName);
+                                    String typeName = (inventory.getItem().getType().getTypeId() == 0) ? "None" : inventory.getItem().getType().getName();
                                 %>
+                                <%= typeName %>
                             </span>
                         </div>
                         <div class="card__detail-item">
                             <span class="card__detail-label">rarity</span>
                             <span class="card__detail-data">
                                 <%
-                                    String rarityName = (inventory.getRarityID() == 0) ? "None" : inventory.getRarityName();
-                                    out.println(rarityName);
+                                    String rarityName = (inventory.getItem().getRarity().getRarityId() == 0) ? "None" : inventory.getItem().getRarity().getName();
                                 %>
+                                <%= rarityName %>
                             </span>
                         </div>
                     </div>

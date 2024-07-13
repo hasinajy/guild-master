@@ -31,7 +31,7 @@ public class InventoryCU extends HttpServlet {
             }
 
             this.setAttributes(req);
-            req.getRequestDispatcher("InventoryForm").forward(req, resp);
+            req.getRequestDispatcher("/inventory-form").forward(req, resp);
         } catch (Exception e) {
             ExceptionHandler.handleException(e, resp, true);
         }
@@ -40,7 +40,7 @@ public class InventoryCU extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            String url = "InventoryCU";
+            String url = "inventory-cu";
             int itemId = Integer.parseInt(req.getParameter("item-id"));
             int playerId = Integer.parseInt(req.getParameter("player-id"));
             int durability = Integer.parseInt(req.getParameter("durability"));
@@ -76,6 +76,8 @@ public class InventoryCU extends HttpServlet {
                 transaction.setDate(DateUtils.getCurrentDate());
                 transaction.setItem(item);
                 transaction.setPlayer(player);
+                transaction.setStaff(staff);
+                transaction.setNote("A new deposit");
 
                 transaction.create();
             }

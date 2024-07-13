@@ -1,26 +1,26 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="models.Inventory" %>
-<%@ page import="models.PlayerFull" %>
+<%@ page import="models.Player" %>
 <%@ page import="models.Item" %>
-<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.List" %>
 
 <%
     String sectionTitle = "Inventory Insertion", btnValue = "Insert";
     String mode = request.getParameter("mode");
     Inventory updatedInventory = null;
-    String inventoryID = "", itemID = "", playerID = "", durability = "";
+    String inventoryId = "", itemId = "", playerId = "", durability = "";
 
-    ArrayList<Item> itemList = (ArrayList<Item>) request.getAttribute("item_list");
-    ArrayList<PlayerFull> playerList = (ArrayList<PlayerFull>) request.getAttribute("player_list");
+    List<Item> itemList = (List<Item>) request.getAttribute("item-list");
+    List<Player> playerList = (List<Player>) request.getAttribute("player-list");
 
     if (mode != null && mode.equals("u")) {
         sectionTitle = "Player Update";
         btnValue = "Update";
-        updatedInventory = (Inventory) request.getAttribute("updated_inventory");
+        updatedInventory = (Inventory) request.getAttribute("updated-inventory");
 
-        inventoryID = String.valueOf(updatedInventory.getInventoryID());
-        itemID = String.valueOf(updatedInventory.getItemID());
-        playerID = String.valueOf(updatedInventory.getPlayerID());
+        inventoryId = String.valueOf(updatedInventory.getInventoryId());
+        itemId = String.valueOf(updatedInventory.getItem().getItemId());
+        playerId = String.valueOf(updatedInventory.getPlayer().getPlayerId());
         durability = String.valueOf(updatedInventory.getDurability());
     }
 %>
@@ -51,9 +51,7 @@
 
 <div class="body wrapper">
     <h1 class="page__title">
-        <%
-            out.print(sectionTitle);
-        %>
+        <%= sectionTitle %>
     </h1>
 
     <div class="sep--large">
@@ -70,14 +68,14 @@
     </div>
 
     <div class="entity-form">
-        <form action="InventoryCU" method="post" class="filter-form filter-form--borderless">
+        <form action="${pageContext.request.contextPath}/inventory-cu" method="post" class="filter-form filter-form--borderless">
             <%
                 if (mode != null) {
             %>
             <div class="form__group horizontal large hidden">
                 <div class="form__control">
                     <label for="mode" class="form__input-label">Mode:</label>
-                    <input type="text" name="mode" value="<% out.print(mode); %>" id="mode"
+                    <input type="text" name="mode" value="<%= mode %>" id="mode"
                            class="form__input-field" placeholder="Mode ...">
                 </div>
             </div>
@@ -88,7 +86,7 @@
             <div class="form__group horizontal large hidden">
                 <div class="form__control">
                     <label for="inventory-id" class="form__input-label">Inventory ID:</label>
-                    <input type="text" name="inventory_id" value="<% out.print(inventoryID); %>" id="inventory-id"
+                    <input type="text" name="inventory-id" value="<%= inventoryId %>" id="inventory-id"
                            class="form__input-field" placeholder="Player ID ...">
                 </div>
             </div>
@@ -96,17 +94,17 @@
             <div class="form__group horizontal large">
                 <div class="form__control">
                     <label for="item" class="form__input-label">Item:</label>
-                    <select name="item_id" id="item" class="form__input-field">
+                    <select name="item-id" id="item" class="form__input-field">
                         <%
                             for (Item item : itemList) {
                                 String itemSelect = "";
 
-                                if (mode != null && updatedInventory.getItemID() == item.getItemID()) {
+                                if (mode != null && updatedInventory.getItem().getItemId() == item.getItemId()) {
                                     itemSelect = "selected";
                                 }
                         %>
-                        <option value="<% out.print(item.getItemID()); %>" <% out.print(itemSelect); %>>
-                            <% out.print(item.getName()); %>
+                        <option value="<%= item.getItemId() %>" <%= itemSelect %>>
+                            <%= item.getName() %>
                         </option>
                         <%
                             }
@@ -118,17 +116,17 @@
             <div class="form__group horizontal large">
                 <div class="form__control">
                     <label for="player" class="form__input-label">Player:</label>
-                    <select name="player_id" id="player" class="form__input-field">
+                    <select name="player-id" id="player" class="form__input-field">
                         <%
-                            for (PlayerFull player : playerList) {
+                            for (Player player : playerList) {
                                 String playerSelect = "";
 
-                                if (mode != null && updatedInventory.getPlayerID() == player.getPlayerID()) {
+                                if (mode != null && updatedInventory.getPlayer().getPlayerId() == player.getPlayerId()) {
                                     playerSelect = "selected";
                                 }
                         %>
-                        <option value="<% out.print(player.getPlayerID()); %>" <% out.print(playerSelect); %>>
-                            <% out.print(player.getCharacterName()); %>
+                        <option value="<%= player.getPlayerId() %>" <%= playerSelect %>>
+                            <%= player.getName().getCharacterName() %>
                         </option>
                         <%
                             }
@@ -140,7 +138,7 @@
             <div class="form__group horizontal large">
                 <div class="form__control">
                     <label for="durability" class="form__input-label">Durability:</label>
-                    <input type="text" name="durability" value="<% out.print(durability); %>" id="durability"
+                    <input type="text" name="durability" value="<%= durability %>" id="durability"
                            class="form__input-field" placeholder="Durability ...">
                 </div>
             </div>
@@ -153,7 +151,7 @@
                           transform="translate(-120 -215)" fill="#f2f2f2"/>
                 </svg>
                 <span>
-                        <% out.print(btnValue); %>
+                        <%= btnValue %>
                 </span>
             </button>
         </form>
