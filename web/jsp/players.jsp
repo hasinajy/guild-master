@@ -2,9 +2,11 @@
 <%@ page import="java.util.List" %>
 <%@ page import="models.Player" %>
 <%@ page import="utils.NameChecker" %>
+<%@ page import="models.Faction" %>
 
 <%
     List<Player> playerList = (List<Player>) request.getAttribute("player-list");
+    List<Faction> factionList = (List<Faction>) request.getAttribute("faction-list");
 %>
 
 <!DOCTYPE html>
@@ -71,8 +73,16 @@
     <section class="filter">
         <span class="section__title">Filters:</span>
 
-        <form action="" class="filter-form">
+        <form action="${pageContext.request.contextPath}/players" method="get" class="filter-form">
             <div class="form__group horizontal large">
+                <div class="form__group horizontal large hidden">
+                    <div class="form__control">
+                        <label for="mode" class="form__input-label">Mode:</label>
+                        <input type="text" name="mode" value="s" id="mode"
+                               class="form__input-field" placeholder="Mode ...">
+                    </div>
+                </div>
+
                 <div class="form__control">
                     <label for="username" class="form__input-label">Username:</label>
                     <input type="text" name="username" id="username" class="form__input-field"
@@ -100,10 +110,17 @@
                 </div>
 
                 <div class="form__control">
-                    <label for="faction" class="form__input-label">Faction:</label>
-                    <select name="faction" id="faction" class="form__input-field">
-                        <option value="0">Black Dragon Adventurers</option>
-                        <option value="1">The Royal Fangs</option>
+                    <label for="faction-id" class="form__input-label">Faction:</label>
+                    <select name="faction-id" id="faction-id" class="form__input-field">
+                        <option value="">None</option>
+
+                        <%
+                            for (Faction faction : factionList) {
+                        %>
+                            <option value="<%= faction.getFactionId() %>"><%= faction.getName() %></option>
+                        <%
+                            }
+                        %>
                     </select>
                 </div>
             </div>

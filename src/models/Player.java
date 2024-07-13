@@ -170,16 +170,19 @@ public class Player {
         try {
             QueryCondition queryCondition = new QueryCondition(Player.getJoinQuery(true));
 
-            queryCondition.addCondition(" AND player.username ILIKE ?",
+            queryCondition.addCondition(" AND \"player.username\" ILIKE ?",
                     String.class, "%" + criteria.getUsername() + "%");
-            queryCondition.addCondition(" AND player.character_name ILIKE ?",
+            queryCondition.addCondition(" AND \"player.character_name\" ILIKE ?",
                     String.class, "%" + criteria.getCharacterName() + "%");
-            queryCondition.addCondition(" AND player.level >= ?",
+            queryCondition.addCondition(" AND \"player.level\" >= ?",
                     int.class, criteria.getMinLevel());
-            queryCondition.addCondition(" AND player.level <= ?",
+            queryCondition.addCondition(" AND \"player.level\" <= ?",
                     int.class, criteria.getMaxLevel());
-            queryCondition.addCondition(" AND player.faction_id = ?",
+            queryCondition.addCondition(" AND \"player.faction_id\" = ?",
                     int.class, criteria.getFactionId());
+
+            // Debugging
+            System.out.println(queryCondition.getQuery());
 
             pg.initResources(queryCondition.getQuery());
             pg.setStmtValues(queryCondition.getClassList(), queryCondition.getParameters());
