@@ -22,7 +22,7 @@ public class PlayerRD extends HttpServlet {
             }
 
             this.setAttributes(req);
-            req.getRequestDispatcher("Players").forward(req, resp);
+            req.getRequestDispatcher("/re-players").forward(req, resp);
         } catch (Exception e) {
             ExceptionHandler.handleException(e, resp, true);
         }

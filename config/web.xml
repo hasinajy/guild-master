@@ -43,7 +43,7 @@
 
     <servlet-mapping>
         <servlet-name>PlayerRD</servlet-name>
-        <url-pattern>/player-rd</url-pattern>
+        <url-pattern>/players</url-pattern>
     </servlet-mapping>
 
     <!-- Staff -->
@@ -248,7 +248,7 @@
 
     <servlet-mapping>
         <servlet-name>Players</servlet-name>
-        <url-pattern>/players</url-pattern>
+        <url-pattern>/re-players</url-pattern>
     </servlet-mapping>
 
     <!-- Inventory -->
