@@ -15,18 +15,21 @@ public class Authentication extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
             String username = req.getParameter("username");
-            String password = req.getParameter("pwd");
+            String password = req.getParameter("password");
 
             if (username == null || username.trim().isEmpty() || password == null || password.trim().isEmpty()) {
                 // TODO: Redirect to the authentication page
+                resp.sendRedirect("auth");
             }
 
             Account account = new Account(username, password);
 
             if (account.exists()) {
                 // TODO: Redirect to the dashboard page
+                resp.sendRedirect("inventories");
             } else {
                 // TODO: Redirect to the authentication page
+                resp.sendRedirect("auth");
             }
         } catch (Exception e) {
             ExceptionHandler.handleException(new Exception("An error occurred during authentication", e), Level.SEVERE,
