@@ -14,6 +14,7 @@ import models.Player;
 import models.Staff;
 import models.Transaction;
 import models.TransactionType;
+import utils.AuthenticationSecurity;
 import utils.ExceptionHandler;
 import utils.RequestChecker;
 import utils.UrlUtils;
@@ -23,6 +24,11 @@ public class TransactionCU extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
+            if (!AuthenticationSecurity.isLoggedIn(req)) {
+                resp.sendRedirect("transactions");
+                return;
+            }
+
             if (RequestChecker.isUpdateMode(req)) {
                 int transactionId = Integer.parseInt(req.getParameter("transaction-id"));
                 req.setAttribute("updated-transaction", Transaction.getById(transactionId));
@@ -38,6 +44,11 @@ public class TransactionCU extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
+            if (!AuthenticationSecurity.isLoggedIn(req)) {
+                resp.sendRedirect("transactions");
+                return;
+            }
+
             String url = "transaction-cu";
 
             String transactionDate = req.getParameter("transaction-date");
