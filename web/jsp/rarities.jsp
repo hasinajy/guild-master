@@ -1,9 +1,10 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.List" %>
 <%@ page import="models.Rarity" %>
+<%@ page import="utils.NameChecker" %>
 
 <%
-    ArrayList<Rarity> rarityList = (ArrayList<Rarity>) request.getAttribute("rarity_list");
+    List<Rarity> rarityList = (List<Rarity>) request.getAttribute("rarity-list");
 %>
 
 <!DOCTYPE html>
@@ -45,7 +46,7 @@
 
     </div>
 
-    <a href="RarityForm" class="add-btn">
+    <a href="${pageContext.request.contextPath}/rarity-form" class="add-btn">
         <svg class="add-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
             <path id="add" d="M207.143,312v-7.143H200v-1.714h7.143V296h1.714v7.143H216v1.714h-7.143V312Z"
                   transform="translate(-200 -296)" fill="#f2f2f2"/>
@@ -74,16 +75,16 @@
         <div class="card-container card single">
             <div class="card__img">
                 <div class="action-container">
-                    <a href="RarityCU?mode=u&&rarity_id=<% out.print(rarity.getRarityID()); %>"><span
+                    <a href="${pageContext.request.contextPath}/rarity-cu?mode=u&&rarity-id=<%= rarity.getRarityId() %>"><span
                             class="fa fa-pencil-alt action-icon"></span></a>
-                    <a href="RarityRD?mode=d&&rarity_id=<% out.print(rarity.getRarityID()); %>"><span
+                    <a href="${pageContext.request.contextPath}/rarities?mode=d&&rarity-id=<%= rarity.getRarityId() %>"><span
                             class="fa fa-trash-alt action-icon"></span></a>
                 </div>
 
                 <%
-                    String imgPath = (rarity.getImgPath() == null || rarity.getImgPath().equals("rarity/")) ? "rarity/default.jpeg" : rarity.getImgPath();
+                    String imgPath = (NameChecker.isNewImgPath(rarity.getImgPath(), "rarity")) ? rarity.getImgPath() : "rarity/default.jpeg";
                 %>
-                <img src="uploads/<% out.print(imgPath); %>" alt="Armor image">
+                <img src="uploads/<%= imgPath %>" alt="Armor image">
             </div>
 
             <svg class="sep--small" xmlns="http://www.w3.org/2000/svg" width="84" height="5.657"
@@ -98,7 +99,7 @@
 
             <div class="card__desc">
                 <span class="card__detail-label">
-                    <% out.println(rarity.getName()); %>
+                    <%= rarity.getName() %>
                 </span>
             </div>
         </div>

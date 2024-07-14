@@ -1,20 +1,21 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="models.Type" %>
+<%@ page import="utils.NameChecker" %>
 
 <%
     String sectionTitle = "Type Insertion", btnValue = "Insert";
     String mode = request.getParameter("mode");
     Type updatedType = null;
-    String typeID = "", typeName = "", imgPath = "type/default.jpeg";
+    String typeId = "", typeName = "", imgPath = "type/default.jpeg";
 
     if (mode != null && mode.equals("u")) {
         sectionTitle = "Type Update";
         btnValue = "Update";
-        updatedType = (Type) request.getAttribute("updated_type");
-        typeID = String.valueOf(updatedType.getTypeID());
+        updatedType = (Type) request.getAttribute("updated-type");
+        typeId = String.valueOf(updatedType.getTypeId());
         typeName = updatedType.getName();
 
-        if (updatedType.getImgPath() != null && !updatedType.getImgPath().equals("type/")) {
+        if (NameChecker.isNewImgPath(updatedType.getImgPath(), "type")) {
             imgPath = updatedType.getImgPath();
         }
     }
@@ -45,9 +46,7 @@
 
 <div class="body wrapper">
     <h1 class="page__title">
-        <%
-            out.println(sectionTitle);
-        %>
+        <%= sectionTitle %>
     </h1>
 
     <div class="sep--large">
@@ -64,14 +63,14 @@
     </div>
 
     <div class="entity-form">
-        <form action="TypeCU" method="post" enctype="multipart/form-data" class="filter-form filter-form--borderless">
+        <form action="${pageContext.request.contextPath}/type-cu" method="post" enctype="multipart/form-data" class="filter-form filter-form--borderless">
             <%
                 if (mode != null) {
             %>
             <div class="form__group horizontal large hidden">
                 <div class="form__control">
                     <label for="mode" class="form__input-label">Mode:</label>
-                    <input type="text" name="mode" value="<% out.println(mode); %>" id="mode"
+                    <input type="text" name="mode" value="<%= mode %>" id="mode"
                            class="form__input-field"
                            placeholder="Mode ...">
                 </div>
@@ -83,20 +82,20 @@
             <div class="form__group horizontal large hidden">
                 <div class="form__control">
                     <label for="type-id" class="form__input-label">Type ID:</label>
-                    <input type="text" name="type_id" value="<% out.println(typeID); %>" id="type-id"
+                    <input type="text" name="type-id" value="<%= typeId %>" id="type-id"
                            class="form__input-field"
                            placeholder="Type ID ...">
                 </div>
             </div>
 
             <div class="form__group horizontal large form__input-field form__image-container">
-                <img src="uploads/<% out.print(imgPath); %>" alt="Type image" id="img-display">
+                <img src="uploads/<%= imgPath %>" alt="Type image" id="img-display">
 
                 <div class="form__control">
                     <label for="imageUpload" class="control__label">
                         <span class="fa-solid fa-camera"></span>
                     </label>
-                    <input type="file" name="type_img" id="imageUpload" accept=".jpg,.jpeg,.png"
+                    <input type="file" name="type-img" id="imageUpload" accept=".jpg,.jpeg,.png"
                            class="form__input-field control__input-field" hidden>
                 </div>
             </div>
@@ -104,7 +103,7 @@
             <div class="form__group horizontal large">
                 <div class="form__control">
                     <label for="type-name" class="form__input-label">Type Name:</label>
-                    <input type="text" name="type_name" value="<% out.println(typeName); %>" id="type-name"
+                    <input type="text" name="type-name" value="<%= typeName %>" id="type-name"
                            class="form__input-field"
                            placeholder="Type Name ...">
                 </div>
@@ -118,10 +117,8 @@
                           transform="translate(-120 -215)" fill="#f2f2f2"/>
                 </svg>
                 <span>
-                        <%
-                            out.println(btnValue);
-                        %>
-                    </span>
+                        <%= btnValue %>
+                </span>
             </button>
         </form>
     </div>

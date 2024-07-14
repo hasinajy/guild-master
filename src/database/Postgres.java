@@ -3,29 +3,39 @@ package database;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import utils.ConfigLoader;
 
 public class Postgres {
+    private static final String CONFIG_FILE = "webapps/guild-master/WEB-INF/db-config.xml";
+    // private static final String CONFIG_FILE = "config/db-config.xml";
+    private static Configuration config;
+    private static final Logger logger = Logger.getLogger(Postgres.class.getName());
+    private static Postgres instance = new Postgres();
 
-    private static Postgres instance;
-    private static final String DRIVER_CLASS = "org.postgresql.Driver";
-    private static final String DATABASE_URL = "jdbc:postgresql://localhost:5432/guild_master";
-    private static final String USERNAME = "postgres";
-    private static final String PASSWORD = "root";
-    private Connection connection;
-
-    private Postgres() throws ClassNotFoundException, SQLException {
-        Class.forName(DRIVER_CLASS);
+    static {
+        try {
+            config = ConfigLoader.loadConfiguration(CONFIG_FILE);
+        } catch (Exception e) {
+            logger.log(Level.SEVERE, "Failed to load database configuration", e);
+        }
     }
 
-    public static synchronized Postgres getInstance() throws ClassNotFoundException, SQLException {
+    public static synchronized Postgres getInstance() {
         if (instance == null) {
             instance = new Postgres();
         }
+
         return instance;
     }
 
-    public Connection getConnection() throws SQLException {
-        connection = DriverManager.getConnection(DATABASE_URL, USERNAME, PASSWORD);
-        return connection;
+    public Connection getConnection() throws ClassNotFoundException, SQLException {
+        Class.forName("org.postgresql.Driver");
+        return DriverManager.getConnection(
+                config.getDatabaseUrl(),
+                config.getUsername(),
+                config.getPassword());
     }
 }

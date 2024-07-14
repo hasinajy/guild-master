@@ -2,28 +2,29 @@
 <%@ page import="models.Player" %>
 <%@ page import="models.Gender" %>
 <%@ page import="models.Faction" %>
-<%@ page import="java.util.ArrayList" %>
+<%@ page import="java.util.List" %>
+<%@ page import="utils.NameChecker" %>
 
 <%
     String sectionTitle = "Player Insertion", btnValue = "Insert";
     String mode = request.getParameter("mode");
     Player updatedPlayer = null;
-    String playerID = "", username = "", characterName = "", level = "", factionID = "", imgPath = "player/default.jpeg";
+    String playerId = "", username = "", characterName = "", level = "", factionId = "", imgPath = "player/default.jpeg";
 
-    ArrayList<Gender> genderList = (ArrayList<Gender>) request.getAttribute("gender_list");
-    ArrayList<Faction> factionList = (ArrayList<Faction>) request.getAttribute("faction_list");
+    List<Gender> genderList = (List<Gender>) request.getAttribute("gender-list");
+    List<Faction> factionList = (List<Faction>) request.getAttribute("faction-list");
 
     if (mode != null && mode.equals("u")) {
         sectionTitle = "Player Update";
         btnValue = "Update";
-        updatedPlayer = (Player) request.getAttribute("updated_player");
-        playerID = String.valueOf(updatedPlayer.getPlayerID());
-        username = updatedPlayer.getUsername();
-        characterName = updatedPlayer.getCharacterName();
+        updatedPlayer = (Player) request.getAttribute("updated-player");
+        playerId = String.valueOf(updatedPlayer.getPlayerId());
+        username = updatedPlayer.getName().getUsername();
+        characterName = updatedPlayer.getName().getCharacterName();
         level = String.valueOf(updatedPlayer.getLevel());
-        factionID = String.valueOf(updatedPlayer.getFactionID());
+        factionId = String.valueOf(updatedPlayer.getFaction().getFactionId());
 
-        if (updatedPlayer.getImgPath() != null && !updatedPlayer.getImgPath().equals("player/")) {
+        if (NameChecker.isNewImgPath(updatedPlayer.getImgPath(), "player")) {
             imgPath = updatedPlayer.getImgPath();
         }
     }
@@ -55,9 +56,7 @@
 
 <div class="body wrapper">
     <h1 class="page__title">
-        <%
-            out.print(sectionTitle);
-        %>
+        <%= sectionTitle %>
     </h1>
 
     <div class="sep--large">
@@ -74,14 +73,14 @@
     </div>
 
     <div class="entity-form">
-        <form action="PlayerCU" method="post" enctype="multipart/form-data" class="filter-form filter-form--borderless">
+        <form action="${pageContext.request.contextPath}/player-cu" method="post" enctype="multipart/form-data" class="filter-form filter-form--borderless">
             <%
                 if (mode != null) {
             %>
             <div class="form__group horizontal large hidden">
                 <div class="form__control">
                     <label for="mode" class="form__input-label">Mode:</label>
-                    <input type="text" name="mode" value="<% out.print(mode); %>" id="mode"
+                    <input type="text" name="mode" value="<%= mode %>" id="mode"
                            class="form__input-field" placeholder="Mode ...">
                 </div>
             </div>
@@ -92,19 +91,19 @@
             <div class="form__group horizontal large hidden">
                 <div class="form__control">
                     <label for="player-id" class="form__input-label">Player ID:</label>
-                    <input type="text" name="player_id" value="<% out.print(playerID); %>" id="player-id"
+                    <input type="text" name="player-id" value="<%= playerId %>" id="player-id"
                            class="form__input-field" placeholder="Player ID ...">
                 </div>
             </div>
 
             <div class="form__group horizontal large form__input-field form__image-container">
-                <img src="uploads/<% out.print(imgPath); %>" alt="Player image" id="img-display">
+                <img src="uploads/<%= imgPath %>" alt="Player image" id="img-display">
 
                 <div class="form__control">
                     <label for="imageUpload" class="control__label">
                         <span class="fa-solid fa-camera"></span>
                     </label>
-                    <input type="file" name="player_img" id="imageUpload" accept=".jpg,.jpeg,.png"
+                    <input type="file" name="player-img" id="imageUpload" accept=".jpg,.jpeg,.png"
                            class="form__input-field control__input-field" hidden>
                 </div>
             </div>
@@ -112,7 +111,7 @@
             <div class="form__group horizontal large">
                 <div class="form__control">
                     <label for="username" class="form__input-label">Username:</label>
-                    <input type="text" name="username" value="<% out.print(username); %>" id="username"
+                    <input type="text" name="username" value="<%= username %>" id="username"
                            class="form__input-field" placeholder="Username ...">
                 </div>
             </div>
@@ -120,7 +119,7 @@
             <div class="form__group horizontal large">
                 <div class="form__control">
                     <label for="character-name" class="form__input-label">Character Name:</label>
-                    <input type="text" name="character_name" value="<% out.print(characterName); %>"
+                    <input type="text" name="character-name" value="<%= characterName %>"
                            id="character-name" class="form__input-field" placeholder="Character Name ...">
                 </div>
             </div>
@@ -128,17 +127,17 @@
             <div class="form__group horizontal large">
                 <div class="form__control">
                     <label for="gender" class="form__input-label">Gender:</label>
-                    <select name="gender_id" id="gender" class="form__input-field">
+                    <select name="gender-id" id="gender" class="form__input-field">
                         <%
                             for (Gender gender : genderList) {
                                 String genderSelect = "";
 
-                                if (mode != null && updatedPlayer.getGenderID() == gender.getGenderID()) {
+                                if (mode != null && updatedPlayer.getGender().getGenderId() == gender.getGenderId()) {
                                     genderSelect = "selected";
                                 }
                         %>
-                        <option value="<% out.print(gender.getGenderID()); %>" <% out.print(genderSelect); %>>
-                            <% out.print(gender.getName()); %>
+                        <option value="<%= gender.getGenderId() %>" <%= genderSelect %>>
+                            <%= gender.getName() %>
                         </option>
                         <%
                             }
@@ -150,7 +149,7 @@
             <div class="form__group horizontal large">
                 <div class="form__control">
                     <label for="level" class="form__input-label">Level:</label>
-                    <input type="text" name="level" value="<% out.print(level); %>" min="1" max="100" id="level"
+                    <input type="text" name="level" value="<%= level %>" min="1" max="100" id="level"
                            class="form__input-field" placeholder="Level ...">
                 </div>
             </div>
@@ -158,11 +157,11 @@
             <div class="form__group horizontal large">
                 <div class="form__control">
                     <label for="faction-id" class="form__input-label">Faction ID:</label>
-                    <select name="faction_id" id="faction-id" class="form__input-field">
+                    <select name="faction-id" id="faction-id" class="form__input-field">
                         <%
-                            if (mode != null && updatedPlayer.getFactionID() == 0) {
+                            if (mode != null && updatedPlayer.getFaction().getFactionId() == 0) {
                         %>
-                        <option value="<% out.print(updatedPlayer.getFactionID()); %>">
+                        <option value="<%= updatedPlayer.getFaction().getFactionId() %>">
                             None
                         </option>
                         <%
@@ -173,12 +172,12 @@
                             for (Faction faction : factionList) {
                                 String factionSelect = "";
 
-                                if (mode != null && updatedPlayer.getFactionID() == faction.getFactionID()) {
+                                if (mode != null && updatedPlayer.getFaction().getFactionId() == faction.getFactionId()) {
                                     factionSelect = "selected";
                                 }
                         %>
-                        <option value="<% out.print(faction.getFactionID()); %>" <% out.print(factionSelect); %>>
-                            <% out.print(faction.getName()); %>
+                        <option value="<%= faction.getFactionId() %>" <%= factionSelect %>>
+                            <%= faction.getName() %>
                         </option>
                         <%
                             }
@@ -195,7 +194,7 @@
                           transform="translate(-120 -215)" fill="#f2f2f2"/>
                 </svg>
                 <span>
-                        <% out.print(btnValue); %>
+                        <%= btnValue %>
                 </span>
             </button>
         </form>

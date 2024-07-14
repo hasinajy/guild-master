@@ -1,38 +1,36 @@
 package models;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
 
-import database.Postgres;
+import database.PostgresResources;
 
 public class Gender {
-    private int genderID;
+    private int genderId;
     private String name;
 
-    // Constructors
+    /* ------------------------------ Constructors ------------------------------ */
     public Gender() {
     }
 
-    public Gender(int genderID) {
-        this.genderID = genderID;
+    public Gender(int genderId) {
+        this.genderId = genderId;
         this.name = "Default Gender";
     }
 
-    public Gender(int genderID, String name) {
-        this.genderID = genderID;
+    public Gender(int genderId, String name) {
+        this.genderId = genderId;
         this.name = name;
     }
 
-    // Getters & Setters
-    public int getGenderID() {
-        return genderID;
+    /* --------------------------- Getters and setters -------------------------- */
+    public int getGenderId() {
+        return genderId;
     }
 
-    public void setGenderID(int genderID) {
-        this.genderID = genderID;
+    public void setGenderId(int genderId) {
+        this.genderId = genderId;
     }
 
     public String getName() {
@@ -43,44 +41,46 @@ public class Gender {
         this.name = name;
     }
 
-    // Class methods
-    public static ArrayList<Gender> getAll() throws ClassNotFoundException, SQLException {
-        ArrayList<Gender> data = new ArrayList<>();
+    /* ---------------------------- Database methods ---------------------------- */
+    // Utility methods
+    private static Gender getRowInstance(PostgresResources pg) throws SQLException {
+        Gender gender = new Gender();
 
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
+        gender.setGenderId(pg.getInt("gender_id"));
+        gender.setName(pg.getString("name"));
+
+        return gender;
+    }
+
+    private static List<Gender> getTableInstance(PostgresResources pg) throws SQLException {
+        List<Gender> genderList = new ArrayList<>();
+
+        while (pg.next()) {
+            genderList.add(Gender.getRowInstance(pg));
+        }
+
+        return genderList;
+    }
+
+    // Read
+    public static List<Gender> getAll() throws ClassNotFoundException, SQLException {
+        List<Gender> data = new ArrayList<>();
+        PostgresResources pg = new PostgresResources();
 
         try {
-            String query = "SELECT * FROM gender";
+            String query = "SELECT gender_id, name FROM gender";
 
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            rs = stmt.executeQuery();
+            pg.initResources(query);
+            pg.executeQuery(false);
 
-            while (rs.next()) {
-                int genderID = rs.getInt("gender_id");
-                String name = rs.getString("name");
-
-                data.add(new Gender(genderID, name));
-            }
+           data = Gender.getTableInstance(pg);
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (rs != null)
-                rs.close();
-
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
 
         return data;
     }
-
 }

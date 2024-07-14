@@ -1,38 +1,33 @@
 package models;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
+
+import database.PostgresResources;
 
 public class Staff {
-    private int staffID;
+    private int staffId;
     private String username;
     private String characterName;
 
-    // Constructors
+    /* ------------------------------ Constructors ------------------------------ */
     public Staff() {
     }
 
-    public Staff(int staffID) {
-        this.staffID = staffID;
-        this.username = "Default Staff";
+    public Staff(int staffId, String username, String characterName) {
+        this.setStaffId(staffId);
+        this.setUsername(username);
+        this.setCharacterName(characterName);
     }
 
-    public Staff(int staffID, String username, String characterName) {
-        this.staffID = staffID;
-        this.username = username;
-        this.characterName = characterName;
+    /* --------------------------- Getters and setters -------------------------- */
+    public int getStaffId() {
+        return staffId;
     }
 
-    // Getters & Setters
-    public int getStaffID() {
-        return staffID;
-    }
-
-    public void setStaffID(int staffID) {
-        this.staffID = staffID;
+    public void setStaffId(int staffId) {
+        this.staffId = staffId;
     }
 
     public String getUsername() {
@@ -51,113 +46,63 @@ public class Staff {
         this.characterName = characterName;
     }
 
-    // User methods
-    public ArrayList<Faction> getAll() {
-        ArrayList<Faction> data = new ArrayList<>();
-
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
+    /* ---------------------------- Database methods ---------------------------- */
+    // Create
+    public void create() throws SQLException {
+        PostgresResources pg = new PostgresResources();
 
         try {
-
+            // TODO: Implement the create method of the Staff model
         } catch (Exception e) {
-            // Database operation error messages here
+            pg.rollback();
+            throw e;
         } finally {
-            try {
+            pg.closeResources();
+        }
+    }
 
-                if (conn != null)
-                    conn.close();
+    // Read
+    public List<Faction> getAll() throws SQLException {
+        List<Faction> data = new ArrayList<>();
+        PostgresResources pg = new PostgresResources();
 
-                if (stmt != null)
-                    stmt.close();
-
-                if (rs != null)
-                    rs.close();
-            } catch (SQLException e) {
-                // Closing error messages here
-            }
+        try {
+            // TODO: Implement the getAll method of the Staff model
+        } catch (Exception e) {
+            pg.rollback();
+            throw e;
+        } finally {
+            pg.closeResources();
         }
 
         return data;
     }
 
-    public void delete() {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
+    // Update
+    public void update() throws SQLException {
+        PostgresResources pg = new PostgresResources();
 
         try {
-
+            // TODO: Implement the udpate method of the Staff model
         } catch (Exception e) {
-            // Database operation error messages here
+            pg.rollback();
+            throw e;
         } finally {
-            try {
-
-                if (conn != null)
-                    conn.close();
-
-                if (stmt != null)
-                    stmt.close();
-
-                if (rs != null)
-                    rs.close();
-            } catch (SQLException e) {
-                // Closing error messages here
-            }
+            pg.closeResources();
         }
     }
 
-    public void create() {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
+    // Delete
+    public void delete() throws SQLException {
+        PostgresResources pg = new PostgresResources();
 
         try {
-
+            // TODO: Implement the delete method of the Staff model
         } catch (Exception e) {
-            // Database operation error messages here
+            pg.rollback();
+            throw e;
         } finally {
-            try {
-
-                if (conn != null)
-                    conn.close();
-
-                if (stmt != null)
-                    stmt.close();
-
-                if (rs != null)
-                    rs.close();
-            } catch (SQLException e) {
-                // Closing error messages here
-            }
+            pg.closeResources();
         }
     }
-
-    public void update() {
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-
-        try {
-
-        } catch (Exception e) {
-            // Database operation error messages here
-        } finally {
-            try {
-
-                if (conn != null)
-                    conn.close();
-
-                if (stmt != null)
-                    stmt.close();
-
-                if (rs != null)
-                    rs.close();
-            } catch (SQLException e) {
-                // Closing error messages here
-            }
-        }
-    }
-
 }

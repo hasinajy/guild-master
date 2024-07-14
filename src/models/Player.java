@@ -1,74 +1,60 @@
 package models;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Types;
+import java.util.ArrayList;
+import java.util.List;
 
-import database.Postgres;
+import database.PostgresResources;
+import utils.NameChecker;
 
 public class Player {
-    private int playerID;
-    private String username;
-    private String characterName;
-    private int genderID;
+    private int playerId;
     private int level;
-    private int factionID;
     private String description;
     private String imgPath;
+    private Name name;
+    private Gender gender;
+    private Faction faction;
 
-    // Constructors
+    // Queries
+    private static final String CREATE_QUERY = "INSERT INTO player(username, character_name, gender_id, level, faction_id, description, img_path) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    private static final String READ_QUERY = "SELECT\r\n" + //
+            "    player.player_id AS \"player.player_id\",\r\n" + //
+            "    player.username AS \"player.username\",\r\n" + //
+            "    player.character_name AS \"player.character_name\",\r\n" + //
+            "    player.gender_id AS \"player.gender_id\",\r\n" + //
+            "    player.level AS \"player.level\",\r\n" + //
+            "    player.faction_id AS \"player.faction_id\",\r\n" + //
+            "    player.description AS \"player.description\",\r\n" + //
+            "    player.img_path AS \"player.img_path\",\r\n" + //
+            "    player.is_deleted AS \"player.is_deleted\"\r\n" + //
+            "FROM\r\n" + //
+            "    player";
+    private static final String DELETE_QUERY = "UPDATE player SET is_deleted = true WHERE player_id = ?";
+    private static final String JOIN_QUERY = "SELECT * FROM v_player";
+
+    /* ------------------------------ Constructors ------------------------------ */
     public Player() {
     }
 
-    public Player(int playerID) {
-        this.playerID = playerID;
-    }
-
-    public Player(int playerID, String username, String characterName, int genderID, int level, int factionID,
-            String description, String imgPath) {
-        this.playerID = playerID;
-        this.username = username;
-        this.characterName = characterName;
-        this.genderID = genderID;
-        this.level = level;
-        this.setFactionID(factionID);
+    public Player(int playerId, int level, String description, String imgPath, Name name, Gender gender,
+            Faction faction) {
+        this.setPlayerId(playerId);
+        this.setLevel(level);
         this.setDescription(description);
         this.setImgPath(imgPath);
+        this.setName(name);
+        this.setGender(gender);
+        this.setFaction(faction);
     }
 
-    // Getters & Setters
-    public int getPlayerID() {
-        return playerID;
+    /* --------------------------- Getters and setters -------------------------- */
+    public int getPlayerId() {
+        return playerId;
     }
 
-    public void setPlayerID(int playerID) {
-        this.playerID = playerID;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getCharacterName() {
-        return characterName;
-    }
-
-    public void setCharacterName(String characterName) {
-        this.characterName = characterName;
-    }
-
-    public int getGenderID() {
-        return genderID;
-    }
-
-    public void setGenderID(int genderID) {
-        this.genderID = genderID;
+    public void setPlayerId(int playerId) {
+        this.playerId = playerId;
     }
 
     public int getLevel() {
@@ -79,16 +65,8 @@ public class Player {
         this.level = level;
     }
 
-    public int getFactionID() {
-        return factionID;
-    }
-
-    public void setFactionID(int factionID) {
-        this.factionID = factionID;
-    }
-
     public String getDescription() {
-        return this.description;
+        return description;
     }
 
     public void setDescription(String description) {
@@ -96,183 +74,353 @@ public class Player {
     }
 
     public String getImgPath() {
-        return this.imgPath;
+        return imgPath;
     }
 
     public void setImgPath(String imgPath) {
         this.imgPath = imgPath;
     }
 
-    // User methods
-    public static Player getByID(int playerID) throws ClassNotFoundException, SQLException {
-        Player player = null;
+    public Name getName() {
+        return name;
+    }
 
-        Connection conn = null;
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
+    public void setName(Name name) {
+        this.name = name;
+    }
+
+    public Gender getGender() {
+        return gender;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
+
+    public Faction getFaction() {
+        return faction;
+    }
+
+    public void setFaction(Faction faction) {
+        this.faction = faction;
+    }
+
+    /* ---------------------------- Database methods ---------------------------- */
+    // Create
+    public void create() throws ClassNotFoundException, SQLException {
+        PostgresResources pg = new PostgresResources();
 
         try {
-            String query = "SELECT * FROM player WHERE player_id = ?";
-
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setInt(1, playerID);
-            rs = stmt.executeQuery();
-
-            while (rs.next()) {
-                String username = rs.getString("username");
-                String characterName = rs.getString("character_name");
-                int genderID = rs.getInt("gender_id");
-                int level = rs.getInt("level");
-                int factionID = rs.getInt("faction_id");
-                String description = rs.getString("description");
-                String imgPath = rs.getString("img_path");
-
-                player = new Player(playerID, username, characterName, genderID, level, factionID, description,
-                        imgPath);
-            }
+            pg.initResources(Player.getCreateQuery());
+            pg.setStmtValues(Player.getCreateClassList(), this.getCreateValues());
+            pg.executeQuery(true);
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (rs != null)
-                rs.close();
+            pg.closeResources();
+        }
+    }
 
-            if (stmt != null)
-                stmt.close();
+    // Read
+    public static Player getById(int playerId) throws ClassNotFoundException, SQLException {
+        Player player = null;
+        PostgresResources pg = new PostgresResources();
 
-            if (conn != null)
-                conn.close();
+        try {
+            pg.initResources(Player.getReadQuery(true));
+            pg.setStmtValues(int.class, new Object[] { playerId });
+            pg.executeQuery(false);
+
+            player = Player.getRowInstance(pg);
+        } catch (Exception e) {
+            pg.rollback();
+            throw e;
+        } finally {
+            pg.closeResources();
         }
 
         return player;
     }
 
-    public void delete() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
+    public static List<Player> getAll() throws ClassNotFoundException, SQLException {
+        List<Player> playerList = new ArrayList<>();
+        PostgresResources pg = new PostgresResources();
 
         try {
-            String query = "UPDATE\r\n" + //
-                    "    player\r\n" + //
-                    "SET\r\n" + //
-                    "    is_deleted = true\r\n" + //
-                    "WHERE\r\n" + //
-                    "    player_id = ?;";
+            pg.initResources(Player.getJoinQuery(false));
+            pg.executeQuery(false);
 
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setInt(1, this.getPlayerID());
-            stmt.executeUpdate();
+            playerList = Player.getJoinTableInstance(pg);
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
+
+        return playerList;
     }
 
-    public void create() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
+    public static List<Player> searchPlayers(PlayerSearchCriteria criteria)
+            throws ClassNotFoundException, SQLException {
+        List<Player> playerList = new ArrayList<>();
+        PostgresResources pg = new PostgresResources();
 
         try {
-            String query = "INSERT INTO player(username, character_name, gender_id, level, faction_id, description, img_path)"
-                    + " VALUES (?, ?, ?, ?, ?, ?, ?)";
+            QueryCondition queryCondition = new QueryCondition(Player.getJoinQuery(true));
 
-            conn = Postgres.getInstance().getConnection();
-            stmt = conn.prepareStatement(query);
-            stmt.setString(1, this.username);
-            stmt.setString(2, this.characterName);
-            stmt.setInt(3, this.genderID);
-            stmt.setInt(4, this.level);
-            stmt.setInt(5, this.factionID);
-            stmt.setString(6, this.description);
-            stmt.setString(7, this.getImgPath());
-            stmt.executeUpdate();
+            queryCondition.addCondition(" AND \"player.username\" ILIKE ?",
+                    String.class, "%" + criteria.getUsername() + "%");
+            queryCondition.addCondition(" AND \"player.character_name\" ILIKE ?",
+                    String.class, "%" + criteria.getCharacterName() + "%");
+            queryCondition.addCondition(" AND \"player.level\" >= ?",
+                    int.class, criteria.getMinLevel());
+            queryCondition.addCondition(" AND \"player.level\" <= ?",
+                    int.class, criteria.getMaxLevel());
+            queryCondition.addCondition(" AND \"player.faction_id\" = ?",
+                    int.class, criteria.getFactionId());
+
+            pg.initResources(queryCondition.getQuery());
+            pg.setStmtValues(queryCondition.getClassList(), queryCondition.getParameters());
+            pg.executeQuery(false);
+
+            playerList = Player.getJoinTableInstance(pg);
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
+
+        return playerList;
     }
 
+    // Update
     public void update() throws ClassNotFoundException, SQLException {
-        Connection conn = null;
-        PreparedStatement stmt = null;
+        PostgresResources pg = new PostgresResources();
 
         try {
-            conn = Postgres.getInstance().getConnection();
+            // TODO: Check if factionId can be null
+            // TODO: Extract methods for classList and values
 
-            if (this.getImgPath().equals("player/")) {
-                String query = "UPDATE player SET"
-                        + " username = ?, character_name = ?, gender_id = ?, level = ?, faction_id = ?, description = ?"
-                        + " WHERE player_id = ?";
+            String query = null;
+            Class<?>[] classList = null;
+            Object[] values = null;
 
-                stmt = conn.prepareStatement(query);
-                stmt.setString(1, this.getUsername());
-                stmt.setString(2, this.getCharacterName());
-                stmt.setInt(3, this.getGenderID());
-                stmt.setInt(4, this.getLevel());
+            if (NameChecker.isNewImgPath(this.getImgPath(), "player")) {
+                query = "UPDATE player SET username = ?, character_name = ?, gender_id = ?, level = ?, faction_id = ?, description = ?, img_path = ? WHERE player_id = ?";
 
-                if (this.getFactionID() == 0) {
-                    stmt.setNull(5, Types.INTEGER);
-                } else {
-                    stmt.setInt(5, this.getFactionID());
-                }
+                classList = new Class[] {
+                        String.class,
+                        String.class,
+                        int.class,
+                        int.class,
+                        int.class,
+                        String.class,
+                        String.class,
+                        int.class
+                };
 
-                stmt.setString(6, this.getDescription());
-                stmt.setInt(7, this.playerID);
+                values = new Object[] {
+                        this.getName().getUsername(),
+                        this.getName().getCharacterName(),
+                        this.getGender().getGenderId(),
+                        this.getLevel(),
+                        this.getFaction().getFactionId(),
+                        this.getDescription(),
+                        this.getImgPath(),
+                        this.getPlayerId()
+                };
             } else {
-                String query = "UPDATE player SET"
-                        + " username = ?, character_name = ?, gender_id = ?, level = ?, faction_id = ?, description = ?, img_path = ?"
-                        + " WHERE player_id = ?";
+                query = "UPDATE player SET username = ?, character_name = ?, gender_id = ?, level = ?, faction_id = ?, description = ? WHERE player_id = ?";
 
-                stmt = conn.prepareStatement(query);
-                stmt.setString(1, this.getUsername());
-                stmt.setString(2, this.getCharacterName());
-                stmt.setInt(3, this.getGenderID());
-                stmt.setInt(4, this.getLevel());
+                classList = new Class[] {
+                        String.class,
+                        String.class,
+                        int.class,
+                        int.class,
+                        int.class,
+                        String.class,
+                        int.class
+                };
 
-                if (this.getFactionID() == 0) {
-                    stmt.setNull(5, Types.INTEGER);
-                } else {
-                    stmt.setInt(5, this.getFactionID());
-                }
+                values = new Object[] {
+                        this.getName().getUsername(),
+                        this.getName().getCharacterName(),
+                        this.getGender().getGenderId(),
+                        this.getLevel(),
+                        this.getFaction().getFactionId(),
+                        this.getDescription(),
+                        this.getPlayerId()
+                };
 
-                stmt.setString(6, this.getDescription());
-                stmt.setString(7, this.getImgPath());
-                stmt.setInt(8, this.playerID);
             }
 
-            stmt.executeUpdate();
+            pg.initResources(query);
+            pg.setStmtValues(classList, values);
+            pg.executeQuery(true);
         } catch (Exception e) {
-            if (conn != null) {
-                conn.rollback();
-            }
+            pg.rollback();
             throw e;
         } finally {
-            if (stmt != null)
-                stmt.close();
-
-            if (conn != null)
-                conn.close();
+            pg.closeResources();
         }
     }
 
+    public void update(int playerId) throws ClassNotFoundException, SQLException {
+        this.setPlayerId(playerId);
+        this.update();
+    }
+
+    // Delete
+    public void delete() throws ClassNotFoundException, SQLException {
+        PostgresResources pg = new PostgresResources();
+
+        try {
+            pg.initResources(Player.getDeleteQuery());
+            pg.setStmtValues(int.class, new Object[] { this.getPlayerId() });
+            pg.executeQuery(true);
+        } catch (Exception e) {
+            pg.rollback();
+            throw e;
+        } finally {
+            pg.closeResources();
+        }
+    }
+
+    public static void delete(int playerId) throws ClassNotFoundException, SQLException {
+        Player player = new Player();
+        player.setPlayerId(playerId);
+        player.delete();
+    }
+
+    /* ----------------------------- Utility methods ---------------------------- */
+    // Instantiation methods
+    protected static Player createPlayerFromResultSet(PostgresResources pg) throws SQLException {
+        Player player = new Player();
+
+        Name name = new Name();
+        name.setUsername(pg.getString("player.username"));
+        name.setCharacterName(pg.getString("player.character_name"));
+
+        Gender gender = new Gender();
+        gender.setGenderId(pg.getInt("player.gender_id"));
+
+        Faction faction = new Faction();
+        faction.setFactionId(pg.getInt("player.faction_id"));
+
+        player.setPlayerId(pg.getInt("player.player_id"));
+        player.setName(name);
+        player.setGender(gender);
+        player.setLevel(pg.getInt("player.level"));
+        player.setFaction(faction);
+        player.setDescription(pg.getString("player.description"));
+        player.setImgPath(pg.getString("player.img_path"));
+
+        return player;
+    }
+
+    protected static Player createPlayerFromJoin(PostgresResources pg) throws SQLException {
+        Player player = new Player();
+
+        Name name = new Name();
+        name.setUsername(pg.getString("player.username"));
+        name.setCharacterName(pg.getString("player.character_name"));
+
+        Gender gender = new Gender();
+        gender.setGenderId(pg.getInt("player.gender_id"));
+        gender.setName(pg.getString("gender.name"));
+
+        Faction faction = new Faction();
+        faction.setFactionId(pg.getInt("player.faction_id"));
+        faction.setName(pg.getString("faction.name"));
+
+        player.setPlayerId(pg.getInt("player.player_id"));
+        player.setName(name);
+        player.setGender(gender);
+        player.setLevel(pg.getInt("player.level"));
+        player.setFaction(faction);
+        player.setDescription(pg.getString("player.description"));
+        player.setImgPath(pg.getString("player.img_path"));
+
+        return player;
+    }
+
+    private static Player getRowInstance(PostgresResources pg) throws SQLException {
+        Player player = null;
+
+        if (pg.next()) {
+            player = Player.createPlayerFromResultSet(pg);
+        }
+
+        return player;
+    }
+
+    private static List<Player> getJoinTableInstance(PostgresResources pg) throws SQLException {
+        List<Player> playerList = new ArrayList<>();
+
+        while (pg.next()) {
+            Player player = Player.createPlayerFromJoin(pg);
+            playerList.add(player);
+        }
+
+        return playerList;
+    }
+
+    // Create
+    private static String getCreateQuery() {
+        return Player.CREATE_QUERY;
+    }
+
+    private static Class<?>[] getCreateClassList() {
+        return new Class[] {
+                String.class,
+                String.class,
+                int.class,
+                int.class,
+                int.class,
+                String.class,
+                String.class
+        };
+    }
+
+    private Object[] getCreateValues() {
+        return new Object[] {
+                this.getName().getUsername(),
+                this.getName().getCharacterName(),
+                this.getGender().getGenderId(),
+                this.getLevel(),
+                this.getFaction().getFactionId(),
+                this.getDescription(),
+                this.getImgPath()
+        };
+    }
+
+    // Read
+    private static String getReadQuery(boolean hasWhere) {
+        StringBuilder sb = new StringBuilder(Player.READ_QUERY);
+
+        if (hasWhere) {
+            sb.append(" WHERE player_id = ?");
+        }
+
+        return sb.toString();
+    }
+
+    // Delete
+    private static String getDeleteQuery() {
+        return Player.DELETE_QUERY;
+    }
+
+    // Join
+    private static String getJoinQuery(boolean hasWhere) {
+        StringBuilder sb = new StringBuilder(Player.JOIN_QUERY);
+
+        if (hasWhere) {
+            sb.append(" WHERE 1 = 1");
+        }
+
+        return sb.toString();
+    }
 }
