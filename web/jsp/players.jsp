@@ -48,6 +48,11 @@
 
     </div>
 
+    <%
+        String username = (String) session.getAttribute("username");
+
+        if (username != null && !username.isEmpty()) {
+    %>
     <a href="${pageContext.request.contextPath}/player-cu" class="add-btn">
         <svg class="add-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
             <path id="add" d="M207.143,312v-7.143H200v-1.714h7.143V296h1.714v7.143H216v1.714h-7.143V312Z"
@@ -69,6 +74,9 @@
         </svg>
 
     </div>
+    <%
+        }
+    %>
 
     <section class="filter">
         <span class="section__title">Filters:</span>
@@ -117,7 +125,8 @@
                         <%
                             for (Faction faction : factionList) {
                         %>
-                            <option value="<%= faction.getFactionId() %>"><%= faction.getName() %></option>
+                        <option value="<%= faction.getFactionId() %>"><%= faction.getName() %>
+                        </option>
                         <%
                             }
                         %>
@@ -166,12 +175,18 @@
         %>
         <div class="card-container card">
             <div class="<%= imgClass %>">
+                <%
+                    if (username != null && !username.isEmpty()) {
+                %>
                 <div class="action-container">
                     <a href="${pageContext.request.contextPath}/player-cu?mode=u&&player-id=<%= player.getPlayerId() %>"><span
                             class="fa fa-pencil-alt action-icon"></span></a>
                     <a href="${pageContext.request.contextPath}/players?mode=d&&player-id=<%= player.getPlayerId() %>"><span
                             class="fa fa-trash-alt action-icon"></span></a>
                 </div>
+                <%
+                    }
+                %>
 
                 <%
                     String imgPath = (NameChecker.isNewImgPath(player.getImgPath(), "player")) ? player.getImgPath() : "player/default.jpeg";
