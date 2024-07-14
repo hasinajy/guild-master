@@ -25,6 +25,7 @@ public class PlayerCU extends HttpServlet {
         try {
             if (!AuthenticationSecurity.isLoggedIn(req)) {
                 resp.sendRedirect("players");
+                return;
             }
 
             if (RequestChecker.isUpdateMode(req)) {
@@ -44,6 +45,7 @@ public class PlayerCU extends HttpServlet {
         try {
             if (!AuthenticationSecurity.isLoggedIn(req)) {
                 resp.sendRedirect("players");
+                return;
             }
 
             String url = "player-cu";

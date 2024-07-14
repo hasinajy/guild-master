@@ -15,6 +15,7 @@ import models.Staff;
 import models.Transaction;
 import models.TransactionType;
 import models.Type;
+import utils.AuthenticationSecurity;
 import utils.DateUtils;
 import utils.ExceptionHandler;
 import utils.RequestChecker;
@@ -25,6 +26,11 @@ public class InventoryCU extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
+            if (!AuthenticationSecurity.isLoggedIn(req)) {
+                resp.sendRedirect("inventories");
+                return;
+            }
+
             if (RequestChecker.isUpdateMode(req)) {
                 int inventoryId = Integer.parseInt(req.getParameter("inventory-id"));
                 req.setAttribute("updated-inventory", Inventory.getById(inventoryId));
@@ -40,6 +46,11 @@ public class InventoryCU extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
+            if (!AuthenticationSecurity.isLoggedIn(req)) {
+                resp.sendRedirect("inventories");
+                return;
+            }
+
             String url = "inventory-cu";
             int itemId = Integer.parseInt(req.getParameter("item-id"));
             int playerId = Integer.parseInt(req.getParameter("player-id"));

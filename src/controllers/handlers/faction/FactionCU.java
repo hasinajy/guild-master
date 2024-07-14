@@ -20,6 +20,7 @@ public class FactionCU extends HttpServlet {
         try {
             if (!AuthenticationSecurity.isLoggedIn(req)) {
                 resp.sendRedirect("factions");
+                return;
             }
 
             if (RequestChecker.isUpdateMode(req)) {
@@ -38,6 +39,7 @@ public class FactionCU extends HttpServlet {
         try {
             if (!AuthenticationSecurity.isLoggedIn(req)) {
                 resp.sendRedirect("factions");
+                return;
             }
 
             String url = "faction-cu";

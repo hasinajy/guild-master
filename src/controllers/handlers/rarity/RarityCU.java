@@ -21,6 +21,7 @@ public class RarityCU extends HttpServlet {
         try {
             if (!AuthenticationSecurity.isLoggedIn(req)) {
                 resp.sendRedirect("rarities");
+                return;
             }
 
             if (RequestChecker.isUpdateMode(req)) {
@@ -39,6 +40,7 @@ public class RarityCU extends HttpServlet {
         try {
             if (!AuthenticationSecurity.isLoggedIn(req)) {
                 resp.sendRedirect("rarities");
+                return;
             }
 
             String url = "rarity-cu";

@@ -20,6 +20,7 @@ public class TypeCU extends HttpServlet {
         try {
             if (!AuthenticationSecurity.isLoggedIn(req)) {
                 resp.sendRedirect("types");
+                return;
             }
 
             if (RequestChecker.isUpdateMode(req)) {
@@ -38,6 +39,7 @@ public class TypeCU extends HttpServlet {
         try {
             if (!AuthenticationSecurity.isLoggedIn(req)) {
                 resp.sendRedirect("types");
+                return;
             }
 
             String url = "type-cu";
