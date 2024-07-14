@@ -373,4 +373,15 @@
         <servlet-name>AuthenticationHandler</servlet-name>
         <url-pattern>/auth-handler</url-pattern>
     </servlet-mapping>
+
+    <!-- Authentication -->
+    <servlet>
+        <servlet-name>Logout</servlet-name>
+        <servlet-class>controllers.handlers.auth.Logout</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Logout</servlet-name>
+        <url-pattern>/logout</url-pattern>
+    </servlet-mapping>
 </web-app>

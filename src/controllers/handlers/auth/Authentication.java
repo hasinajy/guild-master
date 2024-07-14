@@ -19,21 +19,17 @@ public class Authentication extends HttpServlet {
             String password = req.getParameter("password");
 
             if (username == null || username.trim().isEmpty() || password == null || password.trim().isEmpty()) {
-                // TODO: Redirect to the authentication page
                 resp.sendRedirect("auth");
             }
 
             Account account = new Account(username, password);
 
             if (account.exists()) {
-                // TODO: Redirect to the dashboard page
-
                 HttpSession session = req.getSession();
                 session.setAttribute("username", username);
 
-                resp.sendRedirect("inventories");
+                resp.sendRedirect("dashboard");
             } else {
-                // TODO: Redirect to the authentication page
                 resp.sendRedirect("auth");
             }
         } catch (Exception e) {
