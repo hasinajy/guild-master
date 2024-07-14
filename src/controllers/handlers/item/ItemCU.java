@@ -11,6 +11,7 @@ import jakarta.servlet.annotation.MultipartConfig;
 import models.Item;
 import models.Rarity;
 import models.Type;
+import utils.AuthenticationSecurity;
 import utils.ExceptionHandler;
 import utils.ImageProcessor;
 import utils.RequestChecker;
@@ -21,6 +22,11 @@ public class ItemCU extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
+            if (!AuthenticationSecurity.isLoggedIn(req)) {
+                resp.sendRedirect("items");
+                return;
+            }
+
             if (RequestChecker.isUpdateMode(req)) {
                 int itemId = Integer.parseInt(req.getParameter("item-id"));
                 req.setAttribute("updated-item", Item.getById(itemId));
@@ -36,6 +42,11 @@ public class ItemCU extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
+            if (!AuthenticationSecurity.isLoggedIn(req)) {
+                resp.sendRedirect("items");
+                return;
+            }
+
             String url = "item-cu";
             String name = req.getParameter("item-name");
             String imgPath = ImageProcessor.processImage(this, req, "item");
