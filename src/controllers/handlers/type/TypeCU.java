@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import models.Type;
+import utils.AuthenticationSecurity;
 import utils.ExceptionHandler;
 import utils.ImageProcessor;
 import utils.RequestChecker;
@@ -17,6 +18,10 @@ public class TypeCU extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
+            if (!AuthenticationSecurity.isLoggedIn(req)) {
+                resp.sendRedirect("types");
+            }
+
             if (RequestChecker.isUpdateMode(req)) {
                 int typeId = Integer.parseInt(req.getParameter("type-id"));
                 req.setAttribute("updated-type", Type.getById(typeId));
@@ -31,6 +36,10 @@ public class TypeCU extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
+            if (!AuthenticationSecurity.isLoggedIn(req)) {
+                resp.sendRedirect("types");
+            }
+
             String url = "type-cu";
             String name = req.getParameter("type-name");
             String imgPath = ImageProcessor.processImage(this, req, "type");
