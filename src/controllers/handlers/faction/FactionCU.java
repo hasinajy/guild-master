@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import models.Faction;
+import utils.AuthenticationSecurity;
 import utils.ExceptionHandler;
 import utils.ImageProcessor;
 import utils.RequestChecker;
@@ -17,6 +18,10 @@ public class FactionCU extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
+            if (!AuthenticationSecurity.isLoggedIn(req)) {
+                resp.sendRedirect("factions");
+            }
+
             if (RequestChecker.isUpdateMode(req)) {
                 int factionId = Integer.parseInt(req.getParameter("faction-id"));
                 req.setAttribute("updated-faction", Faction.getById(factionId));
@@ -31,6 +36,10 @@ public class FactionCU extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
+            if (!AuthenticationSecurity.isLoggedIn(req)) {
+                resp.sendRedirect("factions");
+            }
+
             String url = "faction-cu";
             String name = req.getParameter("faction-name");
             String imgPath = ImageProcessor.processImage(this, req, "faction");
