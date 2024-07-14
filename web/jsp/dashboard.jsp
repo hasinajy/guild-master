@@ -1,4 +1,9 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ page import="models.Dashboard" %>
+
+<%
+    Dashboard dashboard = (Dashboard) request.getAttribute("dashboard-data");
+%>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -24,18 +29,18 @@
             <div class="stat-group">
                 <div class="solo-stat">
                     <span class="stat__label">Players Count</span>
-                    <span class="stat__data">72,867 players</span>
+                    <span class="stat__data"><%= dashboard.getPlayersCount() %> players</span>
                 </div>
 
                 <div class="solo-stat">
                     <span class="stat__label">Stored Items</span>
-                    <span class="stat__data">245,622 items</span>
+                    <span class="stat__data"><%= dashboard.getStoredItems() %> items</span>
                 </div>
             </div>
 
             <div class="solo-stat">
                 <span class="stat__label">Transactions Count</span>
-                <span class="stat__data">100,432 transactions</span>
+                <span class="stat__data"><%= dashboard.getTransactionsCount() %> transactions</span>
             </div>
         </div>
     </div>
