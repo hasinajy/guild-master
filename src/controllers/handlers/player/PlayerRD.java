@@ -10,6 +10,7 @@ import jakarta.servlet.ServletException;
 import models.Faction;
 import models.Player;
 import models.PlayerSearchCriteria;
+import utils.AuthenticationSecurity;
 import utils.ExceptionHandler;
 import utils.RequestChecker;
 
@@ -17,7 +18,7 @@ public class PlayerRD extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            if (RequestChecker.isDeleteMode(req)) {
+            if (RequestChecker.isDeleteMode(req) && AuthenticationSecurity.isLoggedIn(req)) {
                 int playerId = Integer.parseInt(req.getParameter("player-id"));
                 Player.delete(playerId);
             }

@@ -263,16 +263,16 @@
     </servlet-mapping>
 
     <!-- Form Mapping -->
-        <!-- Transaction form -->
-        <servlet>
-            <servlet-name>TransactionForm</servlet-name>
-            <servlet-class>controllers.redirections.forms.TransactionFormRedirection</servlet-class>
-        </servlet>
-    
-        <servlet-mapping>
-            <servlet-name>TransactionForm</servlet-name>
-            <url-pattern>/transaction-form</url-pattern>
-        </servlet-mapping>
+    <!-- Transaction form -->
+    <servlet>
+        <servlet-name>TransactionForm</servlet-name>
+        <servlet-class>controllers.redirections.forms.TransactionFormRedirection</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>TransactionForm</servlet-name>
+        <url-pattern>/transaction-form</url-pattern>
+    </servlet-mapping>
 
     <!-- Faction form -->
     <servlet>
@@ -339,5 +339,27 @@
     <servlet-mapping>
         <servlet-name>ItemForm</servlet-name>
         <url-pattern>/item-form</url-pattern>
+    </servlet-mapping>
+
+    <!-- Authentication -->
+    <servlet>
+        <servlet-name>Authentication</servlet-name>
+        <servlet-class>controllers.redirections.auth.Authentication</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>Authentication</servlet-name>
+        <url-pattern>/auth</url-pattern>
+    </servlet-mapping>
+
+    <!-- Authentication -->
+    <servlet>
+        <servlet-name>AuthenticationHandler</servlet-name>
+        <servlet-class>controllers.handlers.auth.Authentication</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>AuthenticationHandler</servlet-name>
+        <url-pattern>/auth-handler</url-pattern>
     </servlet-mapping>
 </web-app>

@@ -46,6 +46,11 @@
 
     </div>
 
+    <%
+        String username = (String) session.getAttribute("username");
+
+        if (username != null && !username.isEmpty()) {
+    %>
     <a href="${pageContext.request.contextPath}/type-form" class="add-btn">
         <svg class="add-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
             <path id="add" d="M207.143,312v-7.143H200v-1.714h7.143V296h1.714v7.143H216v1.714h-7.143V312Z"
@@ -67,6 +72,9 @@
         </svg>
 
     </div>
+    <%
+        }
+    %>
 
     <div class="content grid-container">
         <%
@@ -74,12 +82,18 @@
         %>
         <div class="card-container card single">
             <div class="card__img">
+                <%
+                    if (username != null && !username.isEmpty()) {
+                %>
                 <div class="action-container">
                     <a href="${pageContext.request.contextPath}/type-cu?mode=u&&type-id=<%= type.getTypeId() %>"><span
                             class="fa fa-pencil-alt action-icon"></span></a>
                     <a href="${pageContext.request.contextPath}/types?mode=d&&type-id=<%= type.getTypeId() %>"><span
                             class="fa fa-trash-alt action-icon"></span></a>
                 </div>
+                <%
+                    }
+                %>
 
                 <%
                     String imgPath = (NameChecker.isNewImgPath(type.getImgPath(), "type")) ? type.getImgPath() : "type/default.jpeg";
