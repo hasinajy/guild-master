@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import models.Account;
 import utils.ExceptionHandler;
 
@@ -26,6 +27,10 @@ public class Authentication extends HttpServlet {
 
             if (account.exists()) {
                 // TODO: Redirect to the dashboard page
+
+                HttpSession session = req.getSession();
+                session.setAttribute("username", username);
+
                 resp.sendRedirect("inventories");
             } else {
                 // TODO: Redirect to the authentication page

@@ -46,27 +46,35 @@
 
     </div>
 
-    <a href="${pageContext.request.contextPath}/rarity-form" class="add-btn">
-        <svg class="add-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-            <path id="add" d="M207.143,312v-7.143H200v-1.714h7.143V296h1.714v7.143H216v1.714h-7.143V312Z"
-                  transform="translate(-200 -296)" fill="#f2f2f2"/>
-        </svg>
+    <%
+        String username = (String) session.getAttribute("username");
 
-        <span>Add Rarity</span>
-    </a>
+        if (username != null && !username.isEmpty()) {
+            %>
+            <a href="${pageContext.request.contextPath}/rarity-form" class="add-btn">
+                <svg class="add-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+                    <path id="add" d="M207.143,312v-7.143H200v-1.714h7.143V296h1.714v7.143H216v1.714h-7.143V312Z"
+                          transform="translate(-200 -296)" fill="#f2f2f2"/>
+                </svg>
 
-    <div class="sep--small">
-        <svg class="sep--small" xmlns="http://www.w3.org/2000/svg" width="455" height="22.627"
-             viewBox="0 0 455 22.627">
-            <rect id="Rectangle_3" data-name="Rectangle 3" width="16" height="16"
-                  transform="translate(227.5) rotate(45)" fill="#4c4c4c"/>
-            <line id="Line_1" data-name="Line 1" x2="200" transform="translate(255 11.314)" fill="none"
-                  stroke="#4c4c4c" stroke-width="1"/>
-            <line id="Line_4" data-name="Line 4" x2="200" transform="translate(0 11.314)" fill="none"
-                  stroke="#4c4c4c" stroke-width="1"/>
-        </svg>
+                <span>Add Rarity</span>
+            </a>
 
-    </div>
+            <div class="sep--small">
+                <svg class="sep--small" xmlns="http://www.w3.org/2000/svg" width="455" height="22.627"
+                     viewBox="0 0 455 22.627">
+                    <rect id="Rectangle_3" data-name="Rectangle 3" width="16" height="16"
+                          transform="translate(227.5) rotate(45)" fill="#4c4c4c"/>
+                    <line id="Line_1" data-name="Line 1" x2="200" transform="translate(255 11.314)" fill="none"
+                          stroke="#4c4c4c" stroke-width="1"/>
+                    <line id="Line_4" data-name="Line 4" x2="200" transform="translate(0 11.314)" fill="none"
+                          stroke="#4c4c4c" stroke-width="1"/>
+                </svg>
+
+            </div>
+    <%
+        }
+    %>
 
     <div class="content grid-container">
         <%
@@ -74,12 +82,18 @@
         %>
         <div class="card-container card single">
             <div class="card__img">
-                <div class="action-container">
-                    <a href="${pageContext.request.contextPath}/rarity-cu?mode=u&&rarity-id=<%= rarity.getRarityId() %>"><span
-                            class="fa fa-pencil-alt action-icon"></span></a>
-                    <a href="${pageContext.request.contextPath}/rarities?mode=d&&rarity-id=<%= rarity.getRarityId() %>"><span
-                            class="fa fa-trash-alt action-icon"></span></a>
-                </div>
+                <%
+                    if (username != null && !username.isEmpty()) {
+                        %>
+                        <div class="action-container">
+                            <a href="${pageContext.request.contextPath}/rarity-cu?mode=u&&rarity-id=<%= rarity.getRarityId() %>"><span
+                                    class="fa fa-pencil-alt action-icon"></span></a>
+                            <a href="${pageContext.request.contextPath}/rarities?mode=d&&rarity-id=<%= rarity.getRarityId() %>"><span
+                                    class="fa fa-trash-alt action-icon"></span></a>
+                        </div>
+                <%
+                    }
+                %>
 
                 <%
                     String imgPath = (NameChecker.isNewImgPath(rarity.getImgPath(), "rarity")) ? rarity.getImgPath() : "rarity/default.jpeg";
