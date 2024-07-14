@@ -177,7 +177,7 @@
     <!-- Dashboard -->
     <servlet>
         <servlet-name>Dashboard</servlet-name>
-        <servlet-class>controllers.handlers.redirections.DashboardRedirection</servlet-class>
+        <servlet-class>controllers.redirections.DashboardRedirection</servlet-class>
     </servlet>
 
     <servlet-mapping>

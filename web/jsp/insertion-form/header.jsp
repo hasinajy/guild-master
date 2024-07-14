@@ -1,5 +1,5 @@
     <header class="header">
-        <a href="Dashboard" class="dropdown__link">
+        <a href="${pageContext.request.contextPath}/dashboard" class="dropdown__link">
             <h1 class="header__logo">Guild Master</h1>
         </a>
 
