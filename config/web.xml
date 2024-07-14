@@ -177,12 +177,23 @@
     <!-- Dashboard -->
     <servlet>
         <servlet-name>Dashboard</servlet-name>
-        <servlet-class>controllers.redirections.DashboardRedirection</servlet-class>
+        <servlet-class>controllers.handlers.dashboard.DashboardRD</servlet-class>
     </servlet>
 
     <servlet-mapping>
         <servlet-name>Dashboard</servlet-name>
         <url-pattern>/dashboard</url-pattern>
+    </servlet-mapping>
+
+    <!-- Dashboard -->
+    <servlet>
+        <servlet-name>DashboardRedirection</servlet-name>
+        <servlet-class>controllers.redirections.DashboardRedirection</servlet-class>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>DashboardRedirection</servlet-name>
+        <url-pattern>/re-dashboard</url-pattern>
     </servlet-mapping>
 
     <!-- Faction -->
