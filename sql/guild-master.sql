@@ -1,6 +1,8 @@
 CREATE DATABASE guild_master;
 
-USE guild_master;
+\c guild_master;
+
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
 
 CREATE TABLE
     gender (
@@ -96,6 +98,13 @@ CREATE TABLE
         FOREIGN KEY (item_id) REFERENCES item (item_id),
         FOREIGN KEY (player_id) REFERENCES player (player_id),
         FOREIGN KEY (staff_id) REFERENCES staff (staff_id)
+    );
+
+CREATE TABLE
+    account (
+        user_id SERIAL PRIMARY KEY,
+        username VARCHAR(32) NOT NULL,
+        password VARCHAR(48) NOT NULL
     );
 
 -- Item view
