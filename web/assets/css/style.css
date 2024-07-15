@@ -122,16 +122,19 @@ body {
 }
 
 /* Authentication button */
-#auth-btn {
-  width: 100px;
-  margin-left: 1.5rem;
-  padding: .5rem;
-  border: none;
-  border-radius: 2px;
+*#auth-btn {
+  width: 100px !important;
+  margin-left: 1.5rem !important;
+  padding: .5rem !important;
+  border: none !important;
+  border-radius: 2px !important;
+  background-color: hsl(200 60% 25% / 1);
 
-  color: var(--copy--white);
-  font-weight: bold;
-  text-align: center;
-  text-decoration: underline;
-  text-transform: uppercase;
+  color: var(--copy--muted) !important;
+  font-weight: bold !important;
+  text-align: center !important;
+}
+
+#auth-btn a {
+  color: var(--copy--white) !important;
 }

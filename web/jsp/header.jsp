@@ -70,11 +70,11 @@
 
             if (username != null && !username.trim().isEmpty()) {
         %>
-        <a href="${pageContext.request.contextPath}/logout" id="auth-btn">Log Out</a>
+        <span id="auth-btn"><a href="${pageContext.request.contextPath}/logout">Log Out</a></span>
         <%
         } else {
         %>
-        <a href="${pageContext.request.contextPath}/auth" id="auth-btn">Log In</a>
+        <span id="auth-btn"><a href="${pageContext.request.contextPath}/auth">Log In</a></span>
         <%
             }
         %>

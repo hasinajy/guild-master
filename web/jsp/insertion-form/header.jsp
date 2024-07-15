@@ -56,5 +56,19 @@
                     </ul>
                 </li>
             </ul>
+
+            <%
+            String username = (String) session.getAttribute("username");
+
+            if (username != null && !username.trim().isEmpty()) {
+        %>
+        <span id="auth-btn"><a href="${pageContext.request.contextPath}/logout">Log Out</a></span>
+        <%
+        } else {
+        %>
+        <span id="auth-btn"><a href="${pageContext.request.contextPath}/auth">Log In</a></span>
+        <%
+            }
+        %>
         </nav>
     </header>
