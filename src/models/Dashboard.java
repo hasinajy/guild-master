@@ -3,8 +3,6 @@ package models;
 import java.sql.SQLException;
 import java.util.List;
 
-import database.PostgresResources;
-
 public class Dashboard {
     private int playersCount;
     private int storedItems;
