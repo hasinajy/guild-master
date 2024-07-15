@@ -1,7 +1,5 @@
 package models;
 
-import org.junit.Ignore;
-
 import jakarta.servlet.http.HttpServletRequest;
 
 public class InventorySearchCriteria {
