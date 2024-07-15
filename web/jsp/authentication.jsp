@@ -43,15 +43,15 @@
 
         .login-container form button {
             padding: 10px;
-            background-color: #28a745;
-            color: #fff;
+            background-color: #213f52;
+            color: #aaaaaa;
             border: none;
             border-radius: 4px;
             cursor: pointer;
         }
 
         .login-container form button:hover {
-            background-color: #218838;
+            background-color: hsl(200 60% 25% / 1);
         }
     </style>
 </head>
