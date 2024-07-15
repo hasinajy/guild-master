@@ -46,13 +46,18 @@
 
     </div>
 
-    <a href="${pageContext.request.contextPath}/item-cu" class="add-btn">
-            <svg class="add-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-                <path id="add" d="M207.143,312v-7.143H200v-1.714h7.143V296h1.714v7.143H216v1.714h-7.143V312Z"
-                      transform="translate(-200 -296)" fill="#f2f2f2"/>
-            </svg>
+    <%
+    String username = (String) session.getAttribute("username");
 
-            <span>Add Item</span>
+    if (username != null && !username.isEmpty()) {
+    %>
+    <a href="${pageContext.request.contextPath}/item-cu" class="add-btn">
+        <svg class="add-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+            <path id="add" d="M207.143,312v-7.143H200v-1.714h7.143V296h1.714v7.143H216v1.714h-7.143V312Z"
+                  transform="translate(-200 -296)" fill="#f2f2f2"/>
+        </svg>
+
+        <span>Add Item</span>
     </a>
 
     <div class="sep--small">
@@ -67,6 +72,9 @@
         </svg>
 
     </div>
+    <%
+        }
+    %>
 
     <section class="filter">
         <span class="section__title">Filter:</span>
@@ -115,19 +123,70 @@
 
     <div class="content grid-container">
         <%
-            for (Item item : itemList) {
+            for
+            (
+            Item
+            item
+            :
+            itemList
+            )
+            {
         %>
         <div class="card-container card">
             <div class="card__img">
+                <%
+                    if
+                    (
+                    username
+                    !=
+                    null
+                    &&
+                    !
+                    username
+                    .
+                    isEmpty
+                    (
+                    )
+                    )
+                    {
+                %>
                 <div class="action-container">
                     <a href="${pageContext.request.contextPath}/item-cu?mode=u&&item-id=<%= item.getItemId() %>"><span
                             class="fa fa-pencil-alt action-icon"></span></a>
                     <a href="${pageContext.request.contextPath}/items?mode=d&&item-id=<%= item.getItemId() %>"><span
                             class="fa fa-trash-alt action-icon"></span></a>
                 </div>
+                <%
+                    }
+                %>
 
                 <%
-                    String imgPath = (NameChecker.isNewImgPath(item.getImgPath(), "item")) ? item.getImgPath() : "item/default.jpeg";
+                    String
+                    imgPath
+                    =
+                    (
+                    NameChecker
+                    .
+                    isNewImgPath
+                    (
+                    item
+                    .
+                    getImgPath
+                    (
+                    )
+                    ,
+                    "item"
+                    )
+                    )
+                    ?
+                    item
+                    .
+                    getImgPath
+                    (
+                    )
+                    :
+                    "item/default.jpeg"
+                    ;
                 %>
 
                 <img src="uploads/<%= imgPath %>" alt="Armor">
@@ -148,17 +207,81 @@
                 <div class="card__details">
                     <div class="card__detail-item">
                         <span class="card__detail-label">name</span>
-                        <span class="card__detail-data"><%= (item.getItemId() == 0) ? "None" : item.getName() %></span>
+                        <span class="card__detail-data"><%= (
+                            item
+                            .
+                            getItemId
+                            (
+                            )
+                            ==
+                            0
+                            )
+                            ?
+                            "None"
+                            :
+                            item
+                            .
+                            getName
+                            (
+                            ) %></span>
                     </div>
 
                     <div class="card__detail-group">
                         <div class="card__detail-item">
                             <span class="card__detail-label">type</span>
-                            <span class="card__detail-data"><%= (item.getType().getTypeId() == 0) ? "None" : item.getType().getName() %></span>
+                            <span class="card__detail-data"><%= (
+                                item
+                                .
+                                getType
+                                (
+                                )
+                                .
+                                getTypeId
+                                (
+                                )
+                                ==
+                                0
+                                )
+                                ?
+                                "None"
+                                :
+                                item
+                                .
+                                getType
+                                (
+                                )
+                                .
+                                getName
+                                (
+                                ) %></span>
                         </div>
                         <div class="card__detail-item">
                             <span class="card__detail-label">rarity</span>
-                            <span class="card__detail-data"><%= (item.getRarity().getRarityId() == 0) ? "None" : item.getRarity().getName() %></span>
+                            <span class="card__detail-data"><%= (
+                                item
+                                .
+                                getRarity
+                                (
+                                )
+                                .
+                                getRarityId
+                                (
+                                )
+                                ==
+                                0
+                                )
+                                ?
+                                "None"
+                                :
+                                item
+                                .
+                                getRarity
+                                (
+                                )
+                                .
+                                getName
+                                (
+                                ) %></span>
                         </div>
                     </div>
                 </div>

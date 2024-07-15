@@ -52,6 +52,11 @@
 
     </div>
 
+    <%
+        String username = (String) session.getAttribute("username");
+
+        if (username != null && !username.isEmpty()) {
+    %>
     <a href="${pageContext.request.contextPath}/inventory-cu" class="add-btn">
         <svg class="add-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
             <path id="add" d="M207.143,312v-7.143H200v-1.714h7.143V296h1.714v7.143H216v1.714h-7.143V312Z"
@@ -73,6 +78,9 @@
         </svg>
 
     </div>
+    <%
+        }
+    %>
 
     <section class="filter">
         <span class="section__title">Filters:</span>
@@ -96,7 +104,8 @@
                             <%
                                 for (Item item : itemList) {
                             %>
-                            <option value="<%= item.getItemId() %>"><%= item.getName() %></option>
+                            <option value="<%= item.getItemId() %>"><%= item.getName() %>
+                            </option>
                             <%
                                 }
                             %>
@@ -133,7 +142,8 @@
                             <%
                                 for (Type type : typeList) {
                             %>
-                            <option value="<%= type.getTypeId() %>"><%= type.getName() %></option>
+                            <option value="<%= type.getTypeId() %>"><%= type.getName() %>
+                            </option>
                             <%
                                 }
                             %>
@@ -148,7 +158,8 @@
                             <%
                                 for (Rarity rarity : rarityList) {
                             %>
-                            <option value="<%= rarity.getRarityId() %>"><%= rarity.getName() %></option>
+                            <option value="<%= rarity.getRarityId() %>"><%= rarity.getName() %>
+                            </option>
                             <%
                                 }
                             %>
@@ -188,6 +199,9 @@
         %>
         <div class="card-container card">
             <div class="card__img">
+                <%
+                    if (username != null && !username.isEmpty()) {
+                %>
                 <div class="action-container">
                     <%
                         if (inventory.getPlayer().getName().getCharacterName() != null && !inventory.getPlayer().getName().getCharacterName().equals("")) {
@@ -203,6 +217,9 @@
                     <a href="${pageContext.request.contextPath}/inventories?mode=d&&inventory-id=<%= inventory.getInventoryId() %>"><span
                             class="fa fa-trash-alt action-icon"></span></a>
                 </div>
+                <%
+                    }
+                %>
 
                 <%
                     String imgPath = (NameChecker.isNewImgPath(inventory.getItem().getImgPath(), "item")) ? inventory.getItem().getImgPath() : "item/default.jpeg";

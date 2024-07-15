@@ -309,3 +309,16 @@ VALUES
     (2, 12, 3, 1, '', '2023-05-02'),
     (2, 7, 4, 1, '', '2024-01-25'),
     (2, 4, 5, 1, '', '2024-02-10');
+
+-- Account
+INSERT INTO
+    account (username, password)
+VALUES
+    (
+        'iAm_batman',
+        encode (digest ('guild-master-admin', 'sha1'), 'hex')
+    ),
+    (
+        'iAm_joker',
+        encode (digest ('guild-master-admin', 'sha1'), 'hex')
+    );

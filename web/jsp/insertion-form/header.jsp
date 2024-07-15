@@ -1,5 +1,5 @@
     <header class="header">
-        <a href="Dashboard" class="dropdown__link">
+        <a href="${pageContext.request.contextPath}/dashboard" class="dropdown__link">
             <h1 class="header__logo">Guild Master</h1>
         </a>
 
@@ -56,5 +56,19 @@
                     </ul>
                 </li>
             </ul>
+
+            <%
+            String username = (String) session.getAttribute("username");
+
+            if (username != null && !username.trim().isEmpty()) {
+        %>
+        <span id="auth-btn"><a href="${pageContext.request.contextPath}/logout">Log Out</a></span>
+        <%
+        } else {
+        %>
+        <span id="auth-btn"><a href="${pageContext.request.contextPath}/auth">Log In</a></span>
+        <%
+            }
+        %>
         </nav>
     </header>

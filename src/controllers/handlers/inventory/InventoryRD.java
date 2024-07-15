@@ -14,6 +14,7 @@ import models.Item;
 import models.Rarity;
 import models.Transaction;
 import models.Type;
+import utils.AuthenticationSecurity;
 import utils.ExceptionHandler;
 import utils.RequestChecker;
 
@@ -21,7 +22,7 @@ public class InventoryRD extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
-            if (RequestChecker.isDeleteMode(req)) {
+            if (RequestChecker.isDeleteMode(req) && AuthenticationSecurity.isLoggedIn(req)) {
                 int inventoryId = Integer.parseInt(req.getParameter("inventory-id"));
 
                 if (RequestChecker.isWithdrawMode(req)) {

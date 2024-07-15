@@ -120,3 +120,21 @@ body {
   margin-right: auto;
   margin-left: auto;
 }
+
+/* Authentication button */
+*#auth-btn {
+  width: 100px !important;
+  margin-left: 1.5rem !important;
+  padding: .5rem !important;
+  border: none !important;
+  border-radius: 2px !important;
+  background-color: hsl(200 60% 25% / 1);
+
+  color: var(--copy--muted) !important;
+  font-weight: bold !important;
+  text-align: center !important;
+}
+
+#auth-btn a {
+  color: var(--copy--white) !important;
+}

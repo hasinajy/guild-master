@@ -47,14 +47,19 @@
 
     </div>
 
-    <a href="${pageContext.request.contextPath}/transaction-cu" class="add-btn btn">
-            <svg class="add-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
-                <path id="add" d="M207.143,312v-7.143H200v-1.714h7.143V296h1.714v7.143H216v1.714h-7.143V312Z"
-                      transform="translate(-200 -296)" fill="#f2f2f2"/>
-            </svg>
+    <%
+        String username = (String) session.getAttribute("username");
 
-            <span>Add Transaction</span>
-        </a>
+        if (username != null && !username.isEmpty()) {
+    %>
+    <a href="${pageContext.request.contextPath}/transaction-cu" class="add-btn btn">
+        <svg class="add-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+            <path id="add" d="M207.143,312v-7.143H200v-1.714h7.143V296h1.714v7.143H216v1.714h-7.143V312Z"
+                  transform="translate(-200 -296)" fill="#f2f2f2"/>
+        </svg>
+
+        <span>Add Transaction</span>
+    </a>
 
     <div class="sep--small">
         <svg class="sep--small" xmlns="http://www.w3.org/2000/svg" width="455" height="22.627"
@@ -68,6 +73,9 @@
         </svg>
 
     </div>
+    <%
+        }
+    %>
 
     <section class="filter">
         <span class="section__title">Filters:</span>
@@ -90,7 +98,8 @@
                         <%
                             for (TransactionType transactionType : transactionTypeList) {
                         %>
-                        <option value="<%= transactionType.getTransactionTypeId() %>"><%= transactionType.getName() %></option>
+                        <option value="<%= transactionType.getTransactionTypeId() %>"><%= transactionType.getName() %>
+                        </option>
                         <%
                             }
                         %>
@@ -117,7 +126,8 @@
                         <%
                             for (Item item : itemList) {
                         %>
-                        <option value="<%= item.getItemId() %>"><%= item.getName() %></option>
+                        <option value="<%= item.getItemId() %>"><%= item.getName() %>
+                        </option>
                         <%
                             }
                         %>
@@ -169,11 +179,16 @@
                 for (Transaction transaction : transactionList) {
             %>
             <tr>
-                <td class="transaction__type"><%= transaction.getTransactionType().getName() %></td>
-                <td class="transaction__date"><%= transaction.getDate().toString() %></td>
-                <td class="transaction__item"><%= transaction.getItem().getName() %></td>
-                <td class="transaction__owner"><%= transaction.getPlayer().getName().getCharacterName() %></td>
-                <td class="transaction__staff"><%= transaction.getStaff().getCharacterName() %></td>
+                <td class="transaction__type"><%= transaction.getTransactionType().getName() %>
+                </td>
+                <td class="transaction__date"><%= transaction.getDate().toString() %>
+                </td>
+                <td class="transaction__item"><%= transaction.getItem().getName() %>
+                </td>
+                <td class="transaction__owner"><%= transaction.getPlayer().getName().getCharacterName() %>
+                </td>
+                <td class="transaction__staff"><%= transaction.getStaff().getCharacterName() %>
+                </td>
             </tr>
             <%
                 }

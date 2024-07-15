@@ -10,6 +10,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import models.Faction;
 import models.Player;
+import utils.AuthenticationSecurity;
 import utils.ExceptionHandler;
 import utils.ImageProcessor;
 import utils.RequestChecker;
@@ -22,6 +23,11 @@ public class PlayerCU extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
+            if (!AuthenticationSecurity.isLoggedIn(req)) {
+                resp.sendRedirect("players");
+                return;
+            }
+
             if (RequestChecker.isUpdateMode(req)) {
                 int playerId = Integer.parseInt(req.getParameter("player-id"));
                 req.setAttribute("updated-player", Player.getById(playerId));
@@ -37,6 +43,11 @@ public class PlayerCU extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
+            if (!AuthenticationSecurity.isLoggedIn(req)) {
+                resp.sendRedirect("players");
+                return;
+            }
+
             String url = "player-cu";
             String username = req.getParameter("username");
             String characterName = req.getParameter("character-name");

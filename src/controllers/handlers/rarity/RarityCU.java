@@ -1,12 +1,14 @@
 package controllers.handlers.rarity;
 
 import java.io.IOException;
+
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import models.Rarity;
+import utils.AuthenticationSecurity;
 import utils.ExceptionHandler;
 import utils.ImageProcessor;
 import utils.RequestChecker;
@@ -17,6 +19,11 @@ public class RarityCU extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
+            if (!AuthenticationSecurity.isLoggedIn(req)) {
+                resp.sendRedirect("rarities");
+                return;
+            }
+
             if (RequestChecker.isUpdateMode(req)) {
                 int rarityId = Integer.parseInt(req.getParameter("rarity-id"));
                 req.setAttribute("updated-rarity", Rarity.getById(rarityId));
@@ -31,6 +38,11 @@ public class RarityCU extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         try {
+            if (!AuthenticationSecurity.isLoggedIn(req)) {
+                resp.sendRedirect("rarities");
+                return;
+            }
+
             String url = "rarity-cu";
             String name = req.getParameter("rarity-name");
             String imgPath = ImageProcessor.processImage(this, req, "rarity");
