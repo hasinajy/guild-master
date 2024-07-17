@@ -191,11 +191,16 @@ public class Transaction {
             pg.executeQuery(true);
 
             if (this.getTransactionType().getTransactionTypeId() == 2) {
-                // TODO: Add inventory row after deposit
                 Inventory inventory = new Inventory(0, 100, 1, this.getItem(), this.getPlayer());
                 inventory.create();
             } else {
                 // TODO: Remove inventory row after withdrawal
+                String query = "DELETE FROM inventory WHERE item_id = ? AND player_id = ?";
+
+                pg.initResources(query);
+                pg.setStmtValues(int.class,
+                        new Object[] { this.getItem().getItemId(), this.getPlayer().getPlayerId() });
+                pg.executeQuery(true);
             }
         } catch (Exception e) {
             pg.rollback();
