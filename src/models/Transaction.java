@@ -192,6 +192,8 @@ public class Transaction {
 
             if (this.getTransactionType().getTransactionTypeId() == 2) {
                 // TODO: Add inventory row after deposit
+                Inventory inventory = new Inventory(0, 100, 1, this.getItem(), this.getPlayer());
+                inventory.create();
             } else {
                 // TODO: Remove inventory row after withdrawal
             }
