@@ -32,3 +32,12 @@ The directory `deployment/` contains a script to deploy the project to `Apache T
 The project depends on `Font Awesome` to work. Download Font Awesome from the [this link](https://www.fontawesome.com/download).
 
 Once downloaded, place the assets in `web/assets/` under the name `fontawesome`.
+
+## Contributing
+Contributions are welcome. Just fork the project and make a PR if you have an idea of improvement.
+
+## License
+The project is licensed under the [MIT License](./LICENSE.md). Refer to the mentioned file for more information.
+
+## Author
+Hasina JY
