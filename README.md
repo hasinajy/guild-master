@@ -8,3 +8,17 @@
 * Factions
 * Rarities
 * Types
+
+## Technologies
+The purpose of the project is to learn to **make CRUD systems** from scratch. No framework was used during development.<br>
+**Front-end**
+* HTML
+* CSS
+* JavaScript
+
+**Vendors**
+* Fontawesome
+
+**Back-end**
+* Java
+* Jakarta EE
