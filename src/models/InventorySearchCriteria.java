@@ -1,7 +1,5 @@
 package models;
 
-import org.junit.Ignore;
-
 import jakarta.servlet.http.HttpServletRequest;
 
 public class InventorySearchCriteria {
@@ -14,12 +12,12 @@ public class InventorySearchCriteria {
 
     /* ------------------------------ Constructors ------------------------------ */
     public InventorySearchCriteria() {
-        this.setItemId(null);
+        this.setItemId((Integer) null);
         this.setCharacterName(null);
-        this.setMinDurability(null);
-        this.setMaxDurability(null);
-        this.setTypeId(null);
-        this.setRarityId(null);
+        this.setMinDurability((Integer) null);
+        this.setMaxDurability((Integer) null);
+        this.setTypeId((Integer) null);
+        this.setRarityId((Integer) null);
     }
 
     /* --------------------------- Getters and setters -------------------------- */
@@ -29,6 +27,14 @@ public class InventorySearchCriteria {
 
     public void setItemId(Integer itemId) {
         this.itemId = itemId;
+    }
+
+    public void setItemId(String itemId) {
+        try {
+            this.setItemId(Integer.parseInt(itemId));
+        } catch (NumberFormatException e) {
+            this.setItemId((Integer) null);
+        }
     }
 
     public String getCharacterName() {
@@ -47,12 +53,28 @@ public class InventorySearchCriteria {
         this.minDurability = minDurability;
     }
 
+    public void setMinDurability(String minDurability) {
+        try {
+            this.setMinDurability(Integer.parseInt(minDurability));
+        } catch (NumberFormatException e) {
+            this.setMinDurability((Integer) null);
+        }
+    }
+
     public Integer getMaxDurability() {
         return maxDurability;
     }
 
     public void setMaxDurability(Integer maxDurability) {
         this.maxDurability = maxDurability;
+    }
+
+    public void setMaxDurability(String maxDurability) {
+        try {
+            this.setMinDurability(Integer.parseInt(maxDurability));
+        } catch (NumberFormatException e) {
+            this.setMinDurability((Integer) null);
+        }
     }
 
     public Integer getTypeId() {
@@ -63,12 +85,28 @@ public class InventorySearchCriteria {
         this.typeId = typeId;
     }
 
+    public void setTypeId(String typeId) {
+        try {
+            this.setTypeId(Integer.parseInt(typeId));
+        } catch (NumberFormatException e) {
+            this.setTypeId((Integer) null);
+        }
+    }
+
     public Integer getRarityId() {
         return rarityId;
     }
 
     public void setRarityId(Integer rarityId) {
         this.rarityId = rarityId;
+    }
+
+    public void setRarityId(String rarityId) {
+        try {
+            this.setRarityId(Integer.parseInt(rarityId));
+        } catch (NumberFormatException e) {
+            this.setRarityId((Integer) null);
+        }
     }
 
     /* ------------------------------ Class methods ----------------------------- */
@@ -82,70 +120,34 @@ public class InventorySearchCriteria {
         String typeIdParam = req.getParameter("type-id");
         String rarityIdParam = req.getParameter("rarity-id");
 
-        if (itemIdParam != null && !itemIdParam.isEmpty()) {
-            Integer itemId;
-
-            try {
-                itemId = Integer.parseInt(itemIdParam);
-            } catch (NumberFormatException e) {
-                itemId = null;
-            }
-
-            criteria.setItemId(itemId);
+        if (isValidParameter(itemIdParam)) {
+            criteria.setItemId(itemIdParam);
         }
 
-        if (characterNameParam != null && !characterNameParam.isEmpty()) {
+        if (isValidParameter(characterNameParam)) {
             criteria.setCharacterName(characterNameParam);
         }
 
-        if (minDurabilityParam != null && !minDurabilityParam.isEmpty()) {
-            Integer minDurability;
-
-            try {
-                minDurability = Integer.parseInt(minDurabilityParam);
-            } catch (NumberFormatException e) {
-                minDurability = null;
-            }
-
-            criteria.setMinDurability(minDurability);
+        if (isValidParameter(minDurabilityParam)) {
+            criteria.setMinDurability(minDurabilityParam);
         }
 
-        if (maxDurabilityParam != null && !maxDurabilityParam.isEmpty()) {
-            Integer maxDurability;
-
-            try {
-                maxDurability = Integer.parseInt(maxDurabilityParam);
-            } catch (NumberFormatException e) {
-                maxDurability = null;
-            }
-
-            criteria.setMaxDurability(maxDurability);
+        if (isValidParameter(maxDurabilityParam)) {
+            criteria.setMaxDurability(maxDurabilityParam);
         }
 
-        if (typeIdParam != null && !typeIdParam.isEmpty()) {
-            Integer typeId;
-
-            try {
-                typeId = Integer.parseInt(typeIdParam);
-            } catch (NumberFormatException e) {
-                typeId = null;
-            }
-
-            criteria.setItemId(typeId);
+        if (isValidParameter(typeIdParam)) {
+            criteria.setTypeId(typeIdParam);
         }
 
-        if (rarityIdParam != null && !rarityIdParam.isEmpty()) {
-            Integer rarityId;
-
-            try {
-                rarityId = Integer.parseInt(rarityIdParam);
-            } catch (NumberFormatException e) {
-                rarityId = null;
-            }
-
-            criteria.setItemId(rarityId);
+        if (isValidParameter(rarityIdParam)) {
+            criteria.setRarityId(rarityIdParam);
         }
 
         return criteria;
+    }
+
+    private static boolean isValidParameter(String param) {
+        return (param != null && !param.trim().isEmpty());
     }
 }

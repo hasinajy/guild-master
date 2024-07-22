@@ -6,7 +6,6 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.SQLFeatureNotSupportedException;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.time.LocalDate;
@@ -78,31 +77,31 @@ public class PostgresResources {
     }
 
     private void setStmtValue(Class<?> clazz, int index, Object value) throws SQLException {
-        if (clazz == int.class || clazz == Integer.class) {
+        if (isInteger(clazz)) {
             this.getStmt().setInt(index, (int) value);
-        } else if (clazz == float.class || clazz == Float.class) {
+        } else if (iSFloat(clazz)) {
             this.getStmt().setFloat(index, (float) value);
-        } else if (clazz == double.class || clazz == Double.class) {
+        } else if (isDouble(clazz)) {
             this.getStmt().setDouble(index, (double) value);
-        } else if (clazz == long.class || clazz == Long.class) {
+        } else if (isLong(clazz)) {
             this.getStmt().setLong(index, (long) value);
-        } else if (clazz == boolean.class || clazz == Boolean.class) {
+        } else if (isBoolean(clazz)) {
             this.getStmt().setBoolean(index, (boolean) value);
-        } else if (clazz == String.class) {
+        } else if (isString(clazz)) {
             this.getStmt().setString(index, (String) value);
-        } else if (clazz == Date.class) {
+        } else if (isDate(clazz)) {
             this.getStmt().setDate(index, (Date) value);
-        } else if (clazz == Timestamp.class) {
+        } else if (isTimestamp(clazz)) {
             this.getStmt().setTimestamp(index, (Timestamp) value);
-        } else if (clazz == Time.class) {
+        } else if (isTime(clazz)) {
             this.getStmt().setTime(index, (Time) value);
-        } else if (clazz == BigDecimal.class) {
+        } else if (isBigDecimal(clazz)) {
             this.getStmt().setBigDecimal(index, (BigDecimal) value);
-        } else if (clazz == LocalDate.class) {
+        } else if (isLocalDate(clazz)) {
             this.getStmt().setDate(index, Date.valueOf((LocalDate) value));
-        } else if (clazz == LocalTime.class) {
+        } else if (isLocalTime(clazz)) {
             this.getStmt().setTime(index, Time.valueOf((LocalTime) value));
-        } else if (clazz == LocalDateTime.class) {
+        } else if (isLocalDateTime(clazz)) {
             this.getStmt().setTimestamp(index, Timestamp.valueOf((LocalDateTime) value));
         } else {
             throw new SQLException("Unsupported data type: " + clazz.getName());
@@ -173,5 +172,58 @@ public class PostgresResources {
 
     public Date getDate(String columnName) throws SQLException {
         return this.getRs().getDate(columnName);
+    }
+
+    /* -------------------------- Type checker methods -------------------------- */
+    private boolean isInteger(Class<?> clazz) {
+        return (clazz == int.class || clazz == Integer.class);
+    }
+
+    private boolean iSFloat(Class<?> clazz) {
+        return (clazz == float.class || clazz == Float.class);
+    }
+
+    private boolean isDouble(Class<?> clazz) {
+        return (clazz == double.class || clazz == Double.class);
+    }
+
+    private boolean isLong(Class<?> clazz) {
+        return (clazz == long.class || clazz == Long.class);
+    }
+
+    private boolean isBoolean(Class<?> clazz) {
+        return (clazz == boolean.class || clazz == Boolean.class);
+    }
+
+    private boolean isString(Class<?> clazz) {
+        return (clazz == String.class);
+    }
+
+    private boolean isDate(Class<?> clazz) {
+        return (clazz == Date.class);
+    }
+
+    private boolean isTimestamp(Class<?> clazz) {
+        return (clazz == Timestamp.class);
+    }
+
+    private boolean isTime(Class<?> clazz) {
+        return (clazz == Time.class);
+    }
+
+    private boolean isBigDecimal(Class<?> clazz) {
+        return (clazz == BigDecimal.class);
+    }
+
+    private boolean isLocalDate(Class<?> clazz) {
+        return (clazz == LocalDate.class);
+    }
+
+    private boolean isLocalTime(Class<?> clazz) {
+        return (clazz == LocalTime.class);
+    }
+
+    private boolean isLocalDateTime(Class<?> clazz) {
+        return (clazz == LocalDateTime.class);
     }
 }
